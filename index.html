@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <title>Tarefas SAF</title>
+</head>
+
+<body>
+  <header>
+    <div class="topbar">
+      <div>
+        <h1>Tarefas SAF</h1>
+        <p class="subtitle">Organize demandas, prazos e prioridades.</p>
+        <p class="sync-status" id="syncStatus">Carregando dados...</p>
+      </div>
+      <button class="add-btn" id="openForm" title="Nova tarefa">+</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="dashboardView">
+      <div class="stats">
+        <div class="stat"><strong id="totalTasks">0</strong><span>Total</span></div>
+        <div class="stat"><strong id="pendingTasks">0</strong><span>Pendentes</span></div>
+        <div class="stat"><strong id="doneTasks">0</strong><span>Concluídas</span></div>
+      </div>
+    </section>
+
+    <section class="panel form-panel" id="formPanel">
+      <h3 class="panel-title" id="formTitle">Nova tarefa</h3>
+
+      <form id="taskForm">
+        <input type="hidden" id="taskId" />
+
+        <label for="name">Nome da tarefa</label>
+        <input id="name" required placeholder="Ex: Atualizar planilha de beneficiários" />
+
+        <label for="description">Descrição</label>
+        <textarea id="description" placeholder="Detalhe o que precisa ser feito..."></textarea>
+
+        <label for="requestedBy">Quem passou a tarefa</label>
+        <input id="requestedBy" placeholder="Ex: Coordenação, supervisor, colega..." />
+
+        <div class="row">
+          <div>
+            <label for="priority">Prioridade</label>
+            <select id="priority">
+              <option value="Alta">Alta</option>
+              <option value="Média" selected>Média</option>
+              <option value="Baixa">Baixa</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="date">Data</label>
+            <input id="date" type="date" required />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="secondary" type="button" id="cancelForm">Cancelar</button>
+          <button class="primary" type="submit">Salvar</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="tasksView">
+      <div class="filters">
+        <button class="chip active" data-filter="todas">Todas</button>
+        <button class="chip" data-filter="pendentes">Pendentes</button>
+        <button class="chip" data-filter="concluidas">Concluídas</button>
+        <button class="chip" id="openFilters" type="button">Filtrar</button>
+      </div>
+
+      <section class="panel filter-panel hidden" id="filterPanel">
+        <h3 class="panel-title">Filtros</h3>
+
+        <div class="row">
+          <div>
+            <label for="filterDate">Data</label>
+            <input id="filterDate" type="date" />
+          </div>
+
+          <div>
+            <label for="filterPriority">Prioridade</label>
+            <select id="filterPriority">
+              <option value="">Todas</option>
+              <option value="Alta">Alta</option>
+              <option value="Média">Média</option>
+              <option value="Baixa">Baixa</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="filterRequestedBy">Solicitante</label>
+        <input id="filterRequestedBy" placeholder="Nome de quem passou a tarefa" />
+
+        <div class="actions">
+          <button class="secondary" type="button" id="clearFilters">Limpar</button>
+          <button class="primary" type="button" id="applyFilters">Aplicar filtros</button>
+        </div>
+      </section>
+
+      <div class="task-list" id="taskList"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="dashboard">Início</button>
+    <button class="nav-btn" data-view="tasks">Tarefas</button>
+  </nav>
+
+  <script src="./js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/script.js"></script>
+</body>
+
+</html>
