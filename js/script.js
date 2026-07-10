@@ -30,6 +30,8 @@ const filterPanel = document.getElementById("filterPanel");
 const filterDateInput = document.getElementById("filterDate");
 const filterPriorityInput = document.getElementById("filterPriority");
 const filterRequestedByInput = document.getElementById("filterRequestedBy");
+const openFiltersButton = document.getElementById("openFilters");
+const filterCount = document.getElementById("filterCount");
 
 function setSyncStatus(message) {
     if (syncStatus) syncStatus.textContent = message;
@@ -182,9 +184,25 @@ function formatDate(value) {
 }
 
 function priorityClass(priority) {
-    if (priority === "Alta") return "alta";
-    if (priority === "Baixa") return "baixa";
-    return "media";
+    if (priority === "Alta") return "priority-high";
+    if (priority === "Baixa") return "priority-low";
+    return "priority-medium";
+}
+
+function activeFiltersCount() {
+    return Object.values(advancedFilters).filter(Boolean).length;
+}
+
+function updateFilterButton() {
+    const count = activeFiltersCount();
+    const isOpen = !filterPanel.classList.contains("hidden");
+
+    openFiltersButton.classList.toggle("is-open", isOpen);
+    openFiltersButton.classList.toggle("has-filters", count > 0);
+    openFiltersButton.setAttribute("aria-expanded", String(isOpen));
+
+    filterCount.textContent = count;
+    filterCount.classList.toggle("hidden", count === 0);
 }
 
 function getFilteredTasks() {
@@ -227,7 +245,7 @@ function renderTasks() {
     }
 
     taskList.innerHTML = filtered.map(task => `
-    <article class="task ${task.done ? "done" : ""}">
+    <article class="task ${priorityClass(task.priority)} ${task.done ? "done" : ""}">
       <div class="task-head">
         <h2>${escapeHTML(task.name)}</h2>
         <span class="badge ${priorityClass(task.priority)}">${task.priority}</span>
@@ -385,23 +403,9 @@ document.querySelectorAll(".chip[data-filter]").forEach(chip => {
     });
 });
 
-document.querySelectorAll(".nav-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        const view = btn.dataset.view;
-        document.getElementById("dashboardView").classList.toggle("hidden", view !== "dashboard");
-        document.getElementById("tasksView").classList.remove("hidden");
-
-        if (view === "dashboard") {
-            document.getElementById("tasksView").classList.remove("hidden");
-        }
-    });
-});
-
-document.getElementById("openFilters").addEventListener("click", () => {
+openFiltersButton.addEventListener("click", () => {
     filterPanel.classList.toggle("hidden");
+    updateFilterButton();
 });
 
 document.getElementById("applyFilters").addEventListener("click", () => {
@@ -411,6 +415,7 @@ document.getElementById("applyFilters").addEventListener("click", () => {
         requestedBy: filterRequestedByInput.value.trim()
     };
     filterPanel.classList.add("hidden");
+    updateFilterButton();
     renderTasks();
 });
 
@@ -423,8 +428,11 @@ document.getElementById("clearFilters").addEventListener("click", () => {
     filterDateInput.value = "";
     filterPriorityInput.value = "";
     filterRequestedByInput.value = "";
+    filterPanel.classList.add("hidden");
+    updateFilterButton();
     renderTasks();
 });
 
 resetForm();
+updateFilterButton();
 loadTasks();

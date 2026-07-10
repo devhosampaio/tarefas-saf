@@ -75,7 +75,9 @@
         <button class="chip active" data-filter="todas">Todas</button>
         <button class="chip" data-filter="pendentes">Pendentes</button>
         <button class="chip" data-filter="concluidas">Concluídas</button>
-        <button class="chip" id="openFilters" type="button">Filtrar</button>
+        <button class="chip filter-toggle" id="openFilters" type="button" aria-expanded="false">
+          Filtros <span class="filter-count hidden" id="filterCount">0</span>
+        </button>
       </div>
 
       <section class="panel filter-panel hidden" id="filterPanel">
@@ -110,11 +112,6 @@
       <div class="task-list" id="taskList"></div>
     </section>
   </main>
-
-  <nav class="bottom-nav">
-    <button class="nav-btn active" data-view="dashboard">Início</button>
-    <button class="nav-btn" data-view="tasks">Tarefas</button>
-  </nav>
 
   <script src="./js/config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
