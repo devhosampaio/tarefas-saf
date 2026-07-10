@@ -7,6 +7,8 @@ const db = SUPABASE_READY
     ? window.supabase.createClient(CONFIG.url, CONFIG.anonKey)
     : null;
 
+const SYNC_TIMEOUT_MS = 8000;
+
 let tasks = [];
 let currentFilter = "todas";
 let advancedFilters = {
@@ -73,6 +75,15 @@ function fromDatabaseTask(task) {
     };
 }
 
+function withTimeout(promise, message = "Tempo limite de sincronização") {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => {
+            setTimeout(() => reject(new Error(message)), SYNC_TIMEOUT_MS);
+        })
+    ]);
+}
+
 async function loadTasks() {
     if (!SUPABASE_READY) {
         tasks = getLocalTasks();
@@ -82,12 +93,25 @@ async function loadTasks() {
     }
 
     setSyncStatus("Sincronizando com Supabase...");
+    tasks = getLocalTasks();
+    render();
 
-    const { data, error } = await db
-        .from(SUPABASE_TABLE)
-        .select("*")
-        .order("date", { ascending: true });
+    let result;
+    try {
+        result = await withTimeout(
+            db
+                .from(SUPABASE_TABLE)
+                .select("*")
+                .order("date", { ascending: true })
+        );
+    } catch (error) {
+        console.error(error);
+        setSyncStatus("Nuvem indisponível. Usando dados locais.");
+        render();
+        return;
+    }
 
+    const { data, error } = result;
     if (error) {
         console.error(error);
         tasks = getLocalTasks();
@@ -113,11 +137,21 @@ async function migrateLocalTasks() {
         return;
     }
 
-    const { data, error } = await db
-        .from(SUPABASE_TABLE)
-        .upsert(missingTasks.map(toDatabaseTask))
-        .select("*");
+    let result;
+    try {
+        result = await withTimeout(
+            db
+                .from(SUPABASE_TABLE)
+                .upsert(missingTasks.map(toDatabaseTask))
+                .select("*")
+        );
+    } catch (error) {
+        console.error(error);
+        setSyncStatus("Nuvem ativa. Migração local demorou demais.");
+        return;
+    }
 
+    const { data, error } = result;
     if (error) {
         console.error(error);
         setSyncStatus("Nuvem ativa. Migração local falhou.");
@@ -139,10 +173,20 @@ async function saveTask(task) {
         return true;
     }
 
-    const { error } = await db
-        .from(SUPABASE_TABLE)
-        .upsert(toDatabaseTask(task));
+    let result;
+    try {
+        result = await withTimeout(
+            db
+                .from(SUPABASE_TABLE)
+                .upsert(toDatabaseTask(task))
+        );
+    } catch (error) {
+        console.error(error);
+        setSyncStatus("Erro ao salvar na nuvem");
+        return false;
+    }
 
+    const { error } = result;
     if (error) {
         console.error(error);
         setSyncStatus("Erro ao salvar na nuvem");
@@ -161,11 +205,21 @@ async function removeTask(id) {
         return true;
     }
 
-    const { error } = await db
-        .from(SUPABASE_TABLE)
-        .delete()
-        .eq("id", id);
+    let result;
+    try {
+        result = await withTimeout(
+            db
+                .from(SUPABASE_TABLE)
+                .delete()
+                .eq("id", id)
+        );
+    } catch (error) {
+        console.error(error);
+        setSyncStatus("Erro ao excluir na nuvem");
+        return false;
+    }
 
+    const { error } = result;
     if (error) {
         console.error(error);
         setSyncStatus("Erro ao excluir na nuvem");

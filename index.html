@@ -14,12 +14,14 @@
 <body>
   <header>
     <div class="topbar">
-      <div>
+      <div class="brand-block">
         <h1>Tarefas SAF</h1>
-        <p class="subtitle">Organize demandas, prazos e prioridades.</p>
-        <p class="sync-status" id="syncStatus">Carregando dados...</p>
+        <p class="subtitle">Demandas, prazos e responsáveis em uma visão limpa.</p>
       </div>
-      <button class="add-btn" id="openForm" title="Nova tarefa">+</button>
+      <div class="top-actions">
+        <p class="sync-status" id="syncStatus">Carregando dados...</p>
+        <button class="add-btn" id="openForm" title="Nova tarefa">Nova tarefa</button>
+      </div>
     </div>
   </header>
 
@@ -70,20 +72,26 @@
       </form>
     </section>
 
-    <section id="tasksView">
-      <div class="filters">
+    <section id="tasksView" class="workspace">
+      <div class="toolbar">
+        <div class="filters">
         <button class="chip active" data-filter="todas">Todas</button>
         <button class="chip" data-filter="pendentes">Pendentes</button>
         <button class="chip" data-filter="concluidas">Concluídas</button>
+        </div>
+
         <button class="chip filter-toggle" id="openFilters" type="button" aria-expanded="false">
           Filtros <span class="filter-count hidden" id="filterCount">0</span>
         </button>
       </div>
 
       <section class="panel filter-panel hidden" id="filterPanel">
-        <h3 class="panel-title">Filtros</h3>
+        <div class="filter-head">
+          <h3 class="panel-title">Refinar lista</h3>
+          <button class="text-btn" type="button" id="clearFilters">Limpar</button>
+        </div>
 
-        <div class="row">
+        <div class="filter-grid">
           <div>
             <label for="filterDate">Data</label>
             <input id="filterDate" type="date" />
@@ -98,14 +106,15 @@
               <option value="Baixa">Baixa</option>
             </select>
           </div>
-        </div>
 
-        <label for="filterRequestedBy">Solicitante</label>
-        <input id="filterRequestedBy" placeholder="Nome de quem passou a tarefa" />
+          <div>
+            <label for="filterRequestedBy">Solicitante</label>
+            <input id="filterRequestedBy" placeholder="Nome de quem passou a tarefa" />
+          </div>
 
-        <div class="actions">
-          <button class="secondary" type="button" id="clearFilters">Limpar</button>
-          <button class="primary" type="button" id="applyFilters">Aplicar filtros</button>
+          <div class="filter-actions">
+            <button class="primary" type="button" id="applyFilters">Aplicar</button>
+          </div>
         </div>
       </section>
 
