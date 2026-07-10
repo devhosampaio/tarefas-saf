@@ -1,12 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
   <title>Tarefas SAF</title>
 </head>
@@ -16,115 +13,243 @@
     <div class="topbar">
       <div class="brand-block">
         <h1>Tarefas SAF</h1>
-        <p class="subtitle">Demandas, prazos e responsáveis em uma visão limpa.</p>
+        <p class="subtitle">Demandas, reuniões, prazos e responsáveis em uma visão limpa.</p>
       </div>
       <div class="top-actions">
         <p class="sync-status" id="syncStatus">Carregando dados...</p>
         <button class="add-btn" id="openForm" title="Nova tarefa">Nova tarefa</button>
+        <button class="add-btn meeting-shortcut" id="newMeetingButton" title="Nova reunião">Nova reunião</button>
       </div>
     </div>
   </header>
 
   <main>
-    <section id="dashboardView">
-      <div class="stats">
-        <div class="stat"><strong id="totalTasks">0</strong><span>Total</span></div>
-        <div class="stat"><strong id="pendingTasks">0</strong><span>Pendentes</span></div>
-        <div class="stat"><strong id="doneTasks">0</strong><span>Concluídas</span></div>
-      </div>
-    </section>
+    <nav class="tabs" aria-label="Seções do aplicativo">
+      <button class="tab active" type="button" data-tab="tasksTab">Tarefas</button>
+      <button class="tab" type="button" data-tab="meetingsTab">Reuniões</button>
+    </nav>
 
-    <section class="panel form-panel" id="formPanel">
-      <h3 class="panel-title" id="formTitle">Nova tarefa</h3>
-
-      <form id="taskForm">
-        <input type="hidden" id="taskId" />
-
-        <label for="name">Nome da tarefa</label>
-        <input id="name" required placeholder="Ex: Atualizar planilha de beneficiários" />
-
-        <label for="description">Descrição</label>
-        <textarea id="description" placeholder="Detalhe o que precisa ser feito..."></textarea>
-
-        <label for="requestedBy">Quem passou a tarefa</label>
-        <input id="requestedBy" placeholder="Ex: Coordenação, supervisor, colega..." />
-
-        <div class="row">
-          <div>
-            <label for="priority">Prioridade</label>
-            <select id="priority">
-              <option value="Alta">Alta</option>
-              <option value="Média" selected>Média</option>
-              <option value="Baixa">Baixa</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="date">Data</label>
-            <input id="date" type="date" required />
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="secondary" type="button" id="cancelForm">Cancelar</button>
-          <button class="primary" type="submit">Salvar</button>
-        </div>
-      </form>
-    </section>
-
-    <section id="tasksView" class="workspace">
-      <div class="toolbar">
-        <div class="filters">
-        <button class="chip active" data-filter="todas">Todas</button>
-        <button class="chip" data-filter="pendentes">Pendentes</button>
-        <button class="chip" data-filter="concluidas">Concluídas</button>
-        </div>
-
-        <button class="chip filter-toggle" id="openFilters" type="button" aria-expanded="false">
-          Filtros <span class="filter-count hidden" id="filterCount">0</span>
-        </button>
-      </div>
-
-      <section class="panel filter-panel hidden" id="filterPanel">
-        <div class="filter-head">
-          <h3 class="panel-title">Refinar lista</h3>
-          <button class="text-btn" type="button" id="clearFilters">Limpar</button>
-        </div>
-
-        <div class="filter-grid">
-          <div>
-            <label for="filterDate">Data</label>
-            <input id="filterDate" type="date" />
-          </div>
-
-          <div>
-            <label for="filterPriority">Prioridade</label>
-            <select id="filterPriority">
-              <option value="">Todas</option>
-              <option value="Alta">Alta</option>
-              <option value="Média">Média</option>
-              <option value="Baixa">Baixa</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="filterRequestedBy">Solicitante</label>
-            <input id="filterRequestedBy" placeholder="Nome de quem passou a tarefa" />
-          </div>
-
-          <div class="filter-actions">
-            <button class="primary" type="button" id="applyFilters">Aplicar</button>
-          </div>
+    <section class="tab-panel active" id="tasksTab">
+      <section id="dashboardView">
+        <div class="stats">
+          <div class="stat"><strong id="totalTasks">0</strong><span>Total</span></div>
+          <div class="stat"><strong id="pendingTasks">0</strong><span>Pendentes</span></div>
+          <div class="stat"><strong id="doneTasks">0</strong><span>Concluídas</span></div>
         </div>
       </section>
 
-      <div class="task-list" id="taskList"></div>
+      <section class="panel form-panel" id="formPanel">
+        <h3 class="panel-title" id="formTitle">Nova tarefa</h3>
+
+        <form id="taskForm">
+          <input type="hidden" id="taskId" />
+
+          <label for="name">Nome da tarefa</label>
+          <input id="name" required placeholder="Ex: Atualizar planilha de beneficiários" />
+
+          <label for="description">Descrição</label>
+          <textarea id="description" placeholder="Detalhe o que precisa ser feito..."></textarea>
+
+          <label for="requestedBy">Quem passou a tarefa</label>
+          <input id="requestedBy" placeholder="Ex: Coordenação, supervisor, colega..." />
+
+          <div class="row">
+            <div>
+              <label for="priority">Prioridade</label>
+              <select id="priority">
+                <option value="Alta">Alta</option>
+                <option value="Média" selected>Média</option>
+                <option value="Baixa">Baixa</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="date">Data</label>
+              <input id="date" type="date" required />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="secondary" type="button" id="cancelForm">Cancelar</button>
+            <button class="primary" type="submit">Salvar</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="tasksView" class="workspace">
+        <div class="toolbar">
+          <div class="filters">
+            <button class="chip active" data-filter="todas">Todas</button>
+            <button class="chip" data-filter="pendentes">Pendentes</button>
+            <button class="chip" data-filter="concluidas">Concluídas</button>
+          </div>
+
+          <button class="chip filter-toggle" id="openFilters" type="button" aria-expanded="false">
+            Filtros <span class="filter-count hidden" id="filterCount">0</span>
+          </button>
+        </div>
+
+        <section class="panel filter-panel hidden" id="filterPanel">
+          <div class="filter-head">
+            <h3 class="panel-title">Refinar lista</h3>
+            <button class="text-btn" type="button" id="clearFilters">Limpar</button>
+          </div>
+
+          <div class="filter-grid">
+            <div>
+              <label for="filterDate">Data</label>
+              <input id="filterDate" type="date" />
+            </div>
+
+            <div>
+              <label for="filterPriority">Prioridade</label>
+              <select id="filterPriority">
+                <option value="">Todas</option>
+                <option value="Alta">Alta</option>
+                <option value="Média">Média</option>
+                <option value="Baixa">Baixa</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="filterRequestedBy">Solicitante</label>
+              <input id="filterRequestedBy" placeholder="Nome de quem passou a tarefa" />
+            </div>
+
+            <div class="filter-actions">
+              <button class="primary" type="button" id="applyFilters">Aplicar</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="task-list" id="taskList"></div>
+      </section>
+    </section>
+
+    <section class="tab-panel" id="meetingsTab">
+      <section class="summary" aria-label="Resumo das reuniões">
+        <div><strong id="totalMeetings">0</strong><span>reuniões</span></div>
+        <div><strong id="monthMeetings">0</strong><span>neste mês</span></div>
+        <div><strong id="totalHours">0h</strong><span>tempo total</span></div>
+      </section>
+
+      <section class="meeting-layout">
+        <form id="meetingForm" class="panel">
+          <input type="hidden" id="meetingId" />
+
+          <div class="section-title">
+            <h2 id="meetingFormTitle">Nova reunião</h2>
+            <button type="button" class="text-btn" id="clearMeetingFormButton">Limpar</button>
+          </div>
+
+          <label for="meetingSubject">Assunto principal</label>
+          <input id="meetingSubject" required placeholder="Ex: Alinhamento do projeto" />
+
+          <div class="row">
+            <div>
+              <label for="meetingDate">Data</label>
+              <input id="meetingDate" type="date" required />
+            </div>
+            <div>
+              <label for="meetingFormat">Formato</label>
+              <select id="meetingFormat">
+                <option value="Presencial">Presencial</option>
+                <option value="Online">Online</option>
+                <option value="Híbrida">Híbrida</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="meeting-time-grid">
+            <div>
+              <label for="meetingStartTime">Início</label>
+              <input id="meetingStartTime" type="time" required />
+            </div>
+            <div>
+              <label for="meetingEndTime">Término</label>
+              <input id="meetingEndTime" type="time" required />
+            </div>
+            <div>
+              <label for="meetingDuration">Duração automática</label>
+              <input id="meetingDuration" readonly value="0 min" />
+            </div>
+          </div>
+
+          <label for="meetingParticipants">Integrantes</label>
+          <textarea id="meetingParticipants" placeholder="Separe os nomes por vírgula ou linha"></textarea>
+
+          <label for="meetingMyRole">Minha participação</label>
+          <select id="meetingMyRole">
+            <option value="Conduzi a reunião">Conduzi a reunião</option>
+            <option value="Participei ativamente">Participei ativamente</option>
+            <option value="Acompanhei">Acompanhei</option>
+            <option value="Fui responsável por encaminhamentos">Fui responsável por encaminhamentos</option>
+          </select>
+
+          <label for="meetingLocation">Local ou link</label>
+          <input id="meetingLocation" placeholder="Sala, endereço ou link da reunião" />
+
+          <label for="meetingDecisions">Decisões e encaminhamentos</label>
+          <textarea id="meetingDecisions" placeholder="O que ficou definido? Quais próximos passos?"></textarea>
+
+          <div class="row">
+            <div>
+              <label for="meetingResponsible">Responsável pelo próximo passo</label>
+              <input id="meetingResponsible" placeholder="Nome ou equipe" />
+            </div>
+            <div>
+              <label for="meetingDeadline">Prazo do encaminhamento</label>
+              <input id="meetingDeadline" type="date" />
+            </div>
+          </div>
+
+          <label for="meetingStatus">Situação</label>
+          <select id="meetingStatus">
+            <option value="Agendada">Agendada</option>
+            <option value="Realizada">Realizada</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Cancelada">Cancelada</option>
+          </select>
+
+          <div class="actions">
+            <button type="submit" class="primary">Salvar reunião</button>
+            <button type="button" class="secondary" id="cancelMeetingEditButton">Cancelar edição</button>
+          </div>
+        </form>
+
+        <section class="panel">
+          <div class="section-title list-title">
+            <h2>Reuniões cadastradas</h2>
+            <input id="meetingSearchInput" class="search" placeholder="Buscar por assunto, integrante ou status" />
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Horário</th>
+                  <th>Duração</th>
+                  <th>Assunto</th>
+                  <th>Integrantes</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="meetingsTable"></tbody>
+            </table>
+          </div>
+
+          <p class="empty" id="meetingEmptyState">Nenhuma reunião cadastrada.</p>
+        </section>
+      </section>
     </section>
   </main>
 
   <script src="./js/config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/script.js"></script>
+  <script src="./js/meetings.js"></script>
 </body>
 
 </html>

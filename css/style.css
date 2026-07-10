@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg: #f5f5f5;
     --card: #ffffff;
     --text: #242424;
@@ -7,7 +7,6 @@
     --main: #3f3f3f;
     --main-soft: #ededed;
     --danger: #8f3a3a;
-    --radius: 4px;
     --priority-high: #b13f3f;
     --priority-medium: #a86b18;
     --priority-low: #2f6f5d;
@@ -20,10 +19,18 @@
 
 body {
     margin: 0;
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background: var(--bg);
     color: var(--text);
     padding-bottom: 48px;
+}
+
+button,
+input,
+textarea,
+select {
+    border-radius: 0;
+    font: inherit;
 }
 
 header {
@@ -52,14 +59,20 @@ header {
     flex: none;
 }
 
-h1 {
+h1,
+h2,
+h3,
+p {
     margin: 0;
+}
+
+h1 {
     font-size: 1.45rem;
     letter-spacing: 0;
 }
 
 .subtitle {
-    margin: 6px 0 0;
+    margin-top: 6px;
     color: var(--muted);
     font-size: .92rem;
 }
@@ -68,7 +81,6 @@ h1 {
     margin: 0;
     border: 1px solid var(--line);
     background: #fafafa;
-    border-radius: var(--radius);
     padding: 9px 10px;
     color: var(--muted);
     font-size: .78rem;
@@ -78,13 +90,15 @@ h1 {
 .add-btn {
     border: 0;
     min-height: 38px;
-    border-radius: var(--radius);
     background: var(--main);
     color: white;
     padding: 0 16px;
-    font: inherit;
     font-weight: 700;
     cursor: pointer;
+}
+
+.meeting-shortcut {
+    background: #2f6f5d;
 }
 
 main {
@@ -93,27 +107,65 @@ main {
     margin: 0 auto;
 }
 
-.stats {
+.tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 14px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    overflow-x: auto;
+}
+
+.tab {
+    border: 0;
+    border-right: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    min-height: 42px;
+    padding: 0 18px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: var(--main);
+    color: white;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+.stats,
+.summary {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin: 0 0 12px;
 }
 
-.stat {
+.stat,
+.summary div {
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
     padding: 12px;
 }
 
-.stat strong {
+.stat strong,
+.summary strong {
     display: block;
     font-size: 1.35rem;
     letter-spacing: 0;
 }
 
-.stat span {
+.stat span,
+.summary span {
+    display: block;
+    margin-top: 4px;
     font-size: .75rem;
     color: var(--muted);
 }
@@ -126,7 +178,6 @@ main {
 .panel {
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
     padding: 14px;
     margin-bottom: 12px;
 }
@@ -139,10 +190,23 @@ main {
     display: block;
 }
 
-.panel-title {
+.panel-title,
+.section-title h2 {
     margin: 0 0 14px;
     font-size: 1.05rem;
     letter-spacing: 0;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.section-title h2 {
+    margin: 0;
 }
 
 label {
@@ -157,10 +221,8 @@ textarea,
 select {
     width: 100%;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
     background: #fafafa;
     padding: 13px 14px;
-    font: inherit;
     color: var(--text);
     outline: none;
 }
@@ -177,10 +239,20 @@ select:focus {
     background: white;
 }
 
-.row {
+input[readonly] {
+    background: #eeeeee;
+    font-weight: 800;
+}
+
+.row,
+.meeting-time-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+}
+
+.meeting-time-grid {
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .actions {
@@ -192,7 +264,6 @@ select:focus {
 .primary,
 .secondary {
     border: 0;
-    border-radius: var(--radius);
     padding: 13px 14px;
     font-weight: 700;
     cursor: pointer;
@@ -216,7 +287,6 @@ select:focus {
     gap: 10px;
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: var(--radius);
     padding: 8px;
 }
 
@@ -259,7 +329,6 @@ select:focus {
     background: transparent;
     color: var(--muted);
     cursor: pointer;
-    font: inherit;
     font-size: .82rem;
     font-weight: 700;
     padding: 8px;
@@ -269,14 +338,15 @@ select:focus {
     flex: none;
     border: 1px solid var(--line);
     background: var(--card);
-    border-radius: var(--radius);
     padding: 9px 12px;
     color: var(--muted);
     cursor: pointer;
     font-weight: 650;
 }
 
-.chip.active {
+.chip.active,
+.filter-toggle.is-open,
+.filter-toggle.has-filters {
     background: var(--main);
     color: white;
     border-color: var(--main);
@@ -288,20 +358,12 @@ select:focus {
     gap: 8px;
 }
 
-.filter-toggle.is-open,
-.filter-toggle.has-filters {
-    background: #2f4f4a;
-    color: white;
-    border-color: #2f4f4a;
-}
-
 .filter-count {
     display: inline-grid;
     min-width: 20px;
     height: 20px;
     place-items: center;
     border: 1px solid currentColor;
-    border-radius: var(--radius);
     font-size: .7rem;
     font-weight: 800;
 }
@@ -316,7 +378,6 @@ select:focus {
     background: var(--card);
     border: 1px solid var(--line);
     border-top: 4px solid var(--line);
-    border-radius: var(--radius);
     padding: 14px;
 }
 
@@ -358,7 +419,6 @@ select:focus {
 }
 
 .badge {
-    border-radius: var(--radius);
     padding: 6px 8px;
     font-size: .72rem;
     font-weight: 800;
@@ -380,6 +440,12 @@ select:focus {
     color: var(--priority-low);
 }
 
+.plain-badge {
+    background: #eeeeee;
+    color: var(--main);
+    border: 1px solid var(--line);
+}
+
 .meta {
     display: flex;
     flex-wrap: wrap;
@@ -391,7 +457,6 @@ select:focus {
 
 .meta span {
     background: #f3f3f3;
-    border-radius: var(--radius);
     padding: 7px 9px;
 }
 
@@ -402,9 +467,9 @@ select:focus {
     margin-top: 14px;
 }
 
-.small-btn {
+.small-btn,
+.row-actions button {
     border: 0;
-    border-radius: var(--radius);
     padding: 11px 10px;
     font-weight: 700;
     background: #f3f3f3;
@@ -412,8 +477,73 @@ select:focus {
     cursor: pointer;
 }
 
-.small-btn.delete {
+.small-btn.delete,
+.row-actions .delete {
     color: var(--danger);
+}
+
+.meeting-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 460px) minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.search {
+    max-width: 360px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+}
+
+table {
+    width: 100%;
+    min-width: 880px;
+    border-collapse: collapse;
+    background: white;
+}
+
+th,
+td {
+    border-bottom: 1px solid var(--line);
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+    font-size: .9rem;
+}
+
+th {
+    background: #eeeeee;
+    color: #333333;
+    font-size: .75rem;
+    text-transform: uppercase;
+}
+
+td strong {
+    display: block;
+    max-width: 260px;
+}
+
+.cell-muted {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: .78rem;
+    line-height: 1.35;
+}
+
+.row-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.row-actions button {
+    min-height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    background: white;
 }
 
 .empty {
@@ -421,8 +551,16 @@ select:focus {
     color: var(--muted);
     background: var(--card);
     border: 1px dashed var(--line);
-    border-radius: var(--radius);
     padding: 32px 20px;
+}
+
+#meetingEmptyState {
+    display: none;
+    margin-top: 12px;
+}
+
+#meetingEmptyState.visible {
+    display: block;
 }
 
 .hidden {
@@ -430,31 +568,22 @@ select:focus {
 }
 
 @media (min-width: 900px) {
-    body {
-        padding-bottom: 48px;
-    }
-
     header {
         padding: 22px clamp(32px, 5vw, 72px);
-    }
-
-    .topbar,
-    main {
-        max-width: 1560px;
-        margin-left: auto;
-        margin-right: auto;
     }
 
     main {
         padding: 22px clamp(32px, 5vw, 72px) 0;
     }
 
-    .stats {
+    .stats,
+    .summary {
         gap: 14px;
         margin-bottom: 22px;
     }
 
     .stat,
+    .summary div,
     .panel,
     .task {
         padding: 20px;
@@ -477,28 +606,18 @@ select:focus {
     }
 }
 
-@media (min-width: 1400px) {
-    .topbar,
-    main {
-        max-width: 1560px;
+@media (max-width: 980px) {
+    .meeting-layout {
+        grid-template-columns: 1fr;
     }
-
-    main {
-        padding-left: clamp(48px, 7vw, 120px);
-        padding-right: clamp(48px, 7vw, 120px);
-    }
-
-    header {
-        padding-left: clamp(48px, 7vw, 120px);
-        padding-right: clamp(48px, 7vw, 120px);
-    }
-
 }
 
-@media (max-width: 420px) {
+@media (max-width: 520px) {
     .topbar,
     .top-actions,
-    .toolbar {
+    .toolbar,
+    .section-title,
+    .list-title {
         align-items: stretch;
         flex-direction: column;
     }
@@ -507,15 +626,17 @@ select:focus {
         white-space: normal;
     }
 
-    .add-btn {
+    .add-btn,
+    .search {
         width: 100%;
+        max-width: none;
     }
 
-    .row {
+    .row,
+    .meeting-time-grid,
+    .stats,
+    .summary,
+    .actions {
         grid-template-columns: 1fr;
-    }
-
-    .stats {
-        grid-template-columns: 1fr 1fr;
     }
 }
