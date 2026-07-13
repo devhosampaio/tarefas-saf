@@ -12,7 +12,7 @@
     --success: #2f6f5d;
     --danger: #9d2f2f;
     --priority-high: #b42318;
-    --priority-medium: #b54708;
+    --priority-medium: #d4a017;
     --priority-low: #28715f;
     --priority-continuous: #3d5a80;
     --shadow: 0 1px 2px rgba(16, 24, 40, .08);
@@ -429,8 +429,9 @@ input[readonly] {
 
 .task-list {
     display: grid;
-    align-items: start;
+    align-items: stretch;
     gap: 10px;
+    grid-auto-rows: 1fr;
 }
 
 .task {
@@ -439,6 +440,9 @@ input[readonly] {
     border-left: 5px solid var(--line);
     padding: 14px;
     box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 245px;
 }
 
 .task.priority-high {
@@ -499,9 +503,9 @@ input[readonly] {
 }
 
 .badge.priority-medium {
-    background: #fff4e5;
+    background: #fff8d6;
     color: var(--priority-medium);
-    border-color: #f0c891;
+    border-color: #ebd45f;
 }
 
 .badge.priority-low {
@@ -541,7 +545,8 @@ input[readonly] {
     display: grid;
     grid-template-columns: 1fr 1fr 40px;
     gap: 6px;
-    margin-top: 12px;
+    margin-top: auto;
+    padding-top: 12px;
 }
 
 .small-btn,
