@@ -16,6 +16,7 @@
     --priority-low: #28715f;
     --priority-continuous: #3d5a80;
     --shadow: 0 1px 2px rgba(16, 24, 40, .08);
+    --radius: 6px;
 }
 
 * {
@@ -35,7 +36,7 @@ button,
 input,
 textarea,
 select {
-    border-radius: 0;
+    border-radius: var(--radius);
     font: inherit;
 }
 
@@ -97,6 +98,7 @@ h1 {
     color: #dbe7f3;
     font-size: .76rem;
     white-space: nowrap;
+    border-radius: var(--radius);
 }
 
 .add-btn {
@@ -106,6 +108,7 @@ h1 {
     color: #183650;
     padding: 0 14px;
     font-weight: 700;
+    border-radius: var(--radius);
 }
 
 .add-btn:hover {
@@ -132,6 +135,7 @@ main {
     background: var(--surface);
     box-shadow: var(--shadow);
     overflow-x: auto;
+    border-radius: var(--radius);
 }
 
 .tab {
@@ -173,6 +177,7 @@ main {
     border-left: 4px solid var(--main);
     padding: 14px 16px;
     box-shadow: var(--shadow);
+    border-radius: var(--radius);
 }
 
 .stat strong,
@@ -202,6 +207,7 @@ main {
     padding: 16px;
     margin-bottom: 12px;
     box-shadow: var(--shadow);
+    border-radius: var(--radius);
 }
 
 .form-panel {
@@ -323,6 +329,7 @@ input[readonly] {
     border: 1px solid var(--line);
     padding: 8px;
     box-shadow: var(--shadow);
+    border-radius: var(--radius);
 }
 
 .filters {
@@ -367,6 +374,7 @@ input[readonly] {
     font-size: .82rem;
     font-weight: 700;
     padding: 8px 10px;
+    border-radius: var(--radius);
 }
 
 .chip {
@@ -376,6 +384,7 @@ input[readonly] {
     padding: 8px 12px;
     color: var(--muted);
     font-weight: 700;
+    border-radius: var(--radius);
 }
 
 .chip.active {
@@ -394,6 +403,7 @@ input[readonly] {
     border: 1px solid var(--line);
     background: var(--surface-alt);
     color: var(--main);
+    border-radius: var(--radius);
 }
 
 .icon-btn svg {
@@ -425,6 +435,7 @@ input[readonly] {
     color: white;
     font-size: .68rem;
     font-weight: 800;
+    border-radius: 999px;
 }
 
 .task-list {
@@ -435,30 +446,36 @@ input[readonly] {
 }
 
 .task {
-    background: var(--surface);
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
     border: 1px solid var(--line);
     border-left: 5px solid var(--line);
     padding: 14px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .08), 0 8px 18px rgba(16, 24, 40, .04);
     display: flex;
     flex-direction: column;
-    min-height: 245px;
+    height: 282px;
+    overflow: hidden;
+    border-radius: var(--radius);
 }
 
 .task.priority-high {
     border-left-color: var(--priority-high);
+    background: linear-gradient(180deg, #fffafa 0%, #ffffff 42%);
 }
 
 .task.priority-medium {
     border-left-color: var(--priority-medium);
+    background: linear-gradient(180deg, #fffdf1 0%, #ffffff 42%);
 }
 
 .task.priority-low {
     border-left-color: var(--priority-low);
+    background: linear-gradient(180deg, #f7fffb 0%, #ffffff 42%);
 }
 
 .task.priority-continuous {
     border-left-color: var(--priority-continuous);
+    background: linear-gradient(180deg, #f6f9fd 0%, #ffffff 42%);
 }
 
 .task.done {
@@ -477,6 +494,10 @@ input[readonly] {
     font-size: .98rem;
     line-height: 1.3;
     letter-spacing: 0;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .task p {
@@ -485,6 +506,10 @@ input[readonly] {
     line-height: 1.42;
     font-size: .88rem;
     white-space: pre-wrap;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
 }
 
 .badge {
@@ -494,6 +519,7 @@ input[readonly] {
     flex: none;
     border: 1px solid transparent;
     text-transform: uppercase;
+    border-radius: 999px;
 }
 
 .badge.priority-high {
@@ -533,20 +559,25 @@ input[readonly] {
     margin-top: 10px;
     color: var(--muted);
     font-size: .76rem;
+    max-height: 74px;
+    overflow: hidden;
 }
 
 .meta span {
     background: var(--surface-alt);
     border: 1px solid #e1e5ea;
     padding: 6px 8px;
+    border-radius: 999px;
 }
 
 .task-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr 40px;
+    grid-template-columns: 44px 44px 44px;
     gap: 6px;
     margin-top: auto;
     padding-top: 12px;
+    justify-content: end;
+    border-top: 1px solid #edf0f3;
 }
 
 .small-btn,
@@ -556,6 +587,7 @@ input[readonly] {
     font-weight: 700;
     background: var(--surface-alt);
     color: var(--text);
+    border-radius: var(--radius);
 }
 
 .small-btn:hover,
@@ -567,6 +599,52 @@ input[readonly] {
 .small-btn.delete,
 .row-actions .delete {
     color: var(--danger);
+}
+
+.icon-action,
+.icon-only {
+    min-width: 40px;
+    height: 38px;
+    display: inline-grid;
+    place-items: center;
+}
+
+.icon-action span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.icon-action svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+
+.icon-action:first-child {
+    color: var(--success);
+    background: #eef8f4;
+    border-color: #b9dccf;
+}
+
+.icon-action:nth-child(2) {
+    color: var(--main);
+    background: var(--main-soft);
+    border-color: #bdd0e3;
+}
+
+.icon-only {
+    font-size: 1.25rem;
+    line-height: 1;
+    background: #fff1f0;
+    border-color: #f4b8b3;
 }
 
 .meeting-layout {
@@ -583,6 +661,7 @@ input[readonly] {
 .table-wrap {
     overflow-x: auto;
     border: 1px solid var(--line);
+    border-radius: var(--radius);
 }
 
 table {

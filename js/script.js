@@ -340,11 +340,17 @@ function renderTasks() {
       </div>
 
       <div class="task-actions">
-        <button class="small-btn" onclick="toggleDone('${task.id}')">
-          ${task.done ? "Reabrir" : "Concluir"}
+        <button class="small-btn icon-action" onclick="toggleDone('${task.id}')" title="${task.done ? "Reabrir" : "Concluir"}" aria-label="${task.done ? "Reabrir tarefa" : "Concluir tarefa"}">
+          ${task.done
+            ? `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2"></path><path d="M18.5 2v4h-4"></path><path d="M21 12a9 9 0 0 1-15.5 6.2"></path><path d="M5.5 22v-4h4"></path></svg>`
+            : `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>`}
+          <span>${task.done ? "Reabrir" : "Concluir"}</span>
         </button>
-        <button class="small-btn" onclick="editTask('${task.id}')">Editar</button>
-        <button class="small-btn delete" onclick="deleteTask('${task.id}')">×</button>
+        <button class="small-btn icon-action" onclick="editTask('${task.id}')" title="Editar" aria-label="Editar tarefa">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
+          <span>Editar</span>
+        </button>
+        <button class="small-btn delete icon-only" onclick="deleteTask('${task.id}')" title="Excluir" aria-label="Excluir tarefa">×</button>
       </div>
     </article>
   `).join("");
