@@ -343,16 +343,7 @@ function updateMeetingSummary() {
     document.getElementById("monthMeetings").textContent = meetings.filter(meeting => {
         return meeting.date?.startsWith(`${currentYear}-${currentMonth}`);
     }).length;
-    const today = new Date().toISOString().split("T")[0];
-    const todayMeetingsMetric = document.getElementById("todayMeetingsMetric");
-    const totalHours = document.getElementById("totalHours");
-    const meetingHoursMetric = document.getElementById("meetingHoursMetric");
-
-    if (todayMeetingsMetric) {
-        todayMeetingsMetric.textContent = meetings.filter(meeting => meeting.date === today).length;
-    }
-    if (totalHours) totalHours.textContent = formatMeetingDuration(totalMinutes);
-    if (meetingHoursMetric) meetingHoursMetric.textContent = formatMeetingDuration(totalMinutes);
+    document.getElementById("totalHours").textContent = formatMeetingDuration(totalMinutes);
 }
 
 function getFilteredMeetings() {

@@ -356,33 +356,6 @@ function renderStats() {
     document.getElementById("totalTasks").textContent = tasks.length;
     document.getElementById("pendingTasks").textContent = tasks.filter(t => !t.done).length;
     document.getElementById("doneTasks").textContent = tasks.filter(t => t.done).length;
-
-    const pendingTasksMirror = document.getElementById("pendingTasksMirror");
-    const todayTasksMetric = document.getElementById("todayTasksMetric");
-    const overdueTasksMetric = document.getElementById("overdueTasksMetric");
-    const upcomingDeadlinesMetric = document.getElementById("upcomingDeadlinesMetric");
-    const doneWeekMetric = document.getElementById("doneWeekMetric");
-    const dashboardTaskPreview = document.getElementById("dashboardTaskPreview");
-    const today = new Date().toISOString().split("T")[0];
-    const pending = tasks.filter(task => !task.done);
-
-    if (pendingTasksMirror) pendingTasksMirror.textContent = pending.length;
-    if (todayTasksMetric) todayTasksMetric.textContent = pending.filter(task => task.date === today).length;
-    if (overdueTasksMetric) overdueTasksMetric.textContent = pending.filter(task => task.date && task.date < today).length;
-    if (upcomingDeadlinesMetric) upcomingDeadlinesMetric.textContent = pending.filter(task => task.date && task.date >= today).length;
-    if (doneWeekMetric) doneWeekMetric.textContent = tasks.filter(task => task.done).length;
-
-    if (dashboardTaskPreview) {
-        dashboardTaskPreview.innerHTML = pending.slice(0, 5).map(task => `
-            <div class="insight-item">
-                <span class="insight-dot"></span>
-                <div>
-                    <strong>${escapeHTML(task.name)}</strong>
-                    <small>${normalizePriority(task.priority)} · ${formatDate(task.date)}</small>
-                </div>
-            </div>
-        `).join("") || `<div class="empty">Nenhuma tarefa pendente.</div>`;
-    }
 }
 
 function renderTasks() {
@@ -547,7 +520,6 @@ function escapeHTML(text) {
 }
 
 document.getElementById("openForm").addEventListener("click", () => {
-    if (typeof showTab === "function") showTab("tasksTab");
     resetForm();
     openForm();
 });
