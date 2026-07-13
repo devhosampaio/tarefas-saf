@@ -12,6 +12,11 @@ create table if not exists public.tarefas (
 
 alter table public.tarefas enable row level security;
 
+drop policy if exists "Permitir leitura anonima" on public.tarefas;
+drop policy if exists "Permitir insercao anonima" on public.tarefas;
+drop policy if exists "Permitir atualizacao anonima" on public.tarefas;
+drop policy if exists "Permitir exclusao anonima" on public.tarefas;
+
 create policy "Permitir leitura anonima"
 on public.tarefas
 for select
@@ -57,6 +62,11 @@ create table if not exists public.reunioes (
 );
 
 alter table public.reunioes enable row level security;
+
+drop policy if exists "Permitir leitura anonima reunioes" on public.reunioes;
+drop policy if exists "Permitir insercao anonima reunioes" on public.reunioes;
+drop policy if exists "Permitir atualizacao anonima reunioes" on public.reunioes;
+drop policy if exists "Permitir exclusao anonima reunioes" on public.reunioes;
 
 create policy "Permitir leitura anonima reunioes"
 on public.reunioes
