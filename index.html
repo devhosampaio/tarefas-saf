@@ -17,6 +17,11 @@
       </div>
       <div class="top-actions">
         <p class="sync-status" id="syncStatus">Carregando dados...</p>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar modo noturno" title="Modo noturno">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8z"></path>
+          </svg>
+        </button>
         <button class="add-btn" id="openForm" title="Nova tarefa">Nova tarefa</button>
         <button class="add-btn meeting-shortcut" id="newMeetingButton" title="Nova reunião">Nova reunião</button>
       </div>
@@ -60,7 +65,7 @@
                 <option value="Alta">Alta</option>
                 <option value="Média" selected>Média</option>
                 <option value="Baixa">Baixa</option>
-                <option value="Contínua">Contínua</option>
+                <option value="Rotineira">Rotineira</option>
               </select>
             </div>
 
@@ -94,8 +99,8 @@
       <section id="tasksView" class="workspace">
         <div class="toolbar">
           <div class="filters">
-            <button class="chip active" data-filter="todas">Todas</button>
-            <button class="chip" data-filter="pendentes">Pendentes</button>
+            <button class="chip" data-filter="todas">Todas</button>
+            <button class="chip active" data-filter="pendentes">Pendentes</button>
             <button class="chip" data-filter="concluidas">Concluídas</button>
           </div>
 
@@ -134,7 +139,7 @@
                 <option value="Alta">Alta</option>
                 <option value="Média">Média</option>
                 <option value="Baixa">Baixa</option>
-                <option value="Contínua">Contínua</option>
+                <option value="Rotineira">Rotineira</option>
               </select>
             </div>
 

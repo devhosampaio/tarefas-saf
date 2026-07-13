@@ -10,7 +10,7 @@ const db = SUPABASE_READY
 const SYNC_TIMEOUT_MS = 8000;
 
 let tasks = [];
-let currentFilter = "todas";
+let currentFilter = "pendentes";
 let advancedFilters = {
     query: "",
     date: "",
@@ -22,7 +22,7 @@ const PRIORITY_ORDER = {
     "Alta": 0,
     "M\u00e9dia": 1,
     "Baixa": 2,
-    "Cont\u00ednua": 3
+    "Rotineira": 3
 };
 
 const formPanel = document.getElementById("formPanel");
@@ -42,6 +42,7 @@ const filterDateInput = document.getElementById("filterDate");
 const filterPriorityInput = document.getElementById("filterPriority");
 const filterRequestedByInput = document.getElementById("filterRequestedBy");
 const taskSearchInput = document.getElementById("taskSearchInput");
+const themeToggle = document.getElementById("themeToggle");
 const openFiltersButton = document.getElementById("openFilters");
 const filterCount = document.getElementById("filterCount");
 
@@ -55,7 +56,10 @@ function saveLocalTasks() {
 }
 
 function getLocalTasks() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    return (JSON.parse(localStorage.getItem(STORAGE_KEY)) || []).map(task => ({
+        ...task,
+        priority: normalizePriority(task.priority)
+    }));
 }
 
 function toDatabaseTask(task) {
@@ -89,7 +93,7 @@ function fromDatabaseTask(task) {
 
 function normalizePriority(priority) {
     if (priority === "MÃ©dia") return "M\u00e9dia";
-    if (priority === "ContÃ­nua") return "Cont\u00ednua";
+    if (priority === "ContÃ­nua" || priority === "Cont\u00ednua" || priority === "Contínua") return "Rotineira";
     return priority || "M\u00e9dia";
 }
 
@@ -259,7 +263,7 @@ function priorityClass(priority) {
     priority = normalizePriority(priority);
     if (priority === "Alta") return "priority-high";
     if (priority === "Baixa") return "priority-low";
-    if (priority === "Cont\u00ednua") return "priority-continuous";
+    if (priority === "Rotineira") return "priority-routine";
     return "priority-medium";
 }
 
@@ -273,6 +277,18 @@ function normalizeSearchText(value) {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
+}
+
+function applyTheme(theme) {
+    document.body.classList.toggle("dark-mode", theme === "dark");
+    themeToggle?.setAttribute("aria-pressed", String(theme === "dark"));
+    themeToggle?.setAttribute("title", theme === "dark" ? "Modo claro" : "Modo noturno");
+}
+
+function toggleTheme() {
+    const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+    localStorage.setItem("tarefas_saf_theme", nextTheme);
+    applyTheme(nextTheme);
 }
 
 function activeFiltersCount() {
@@ -319,7 +335,7 @@ function getFilteredTasks() {
     }
 
     if (advancedFilters.priority) {
-        filtered = filtered.filter(t => t.priority === advancedFilters.priority);
+        filtered = filtered.filter(t => normalizePriority(t.priority) === advancedFilters.priority);
     }
 
     if (advancedFilters.requestedBy) {
@@ -468,7 +484,7 @@ window.editTask = function (id) {
     nameInput.value = task.name;
     descInput.value = task.description;
     requestedByInput.value = task.requestedBy;
-    priorityInput.value = task.priority;
+    priorityInput.value = normalizePriority(task.priority);
     dateInput.value = task.date;
     reminderDayInput.value = task.reminderDay || "";
 
@@ -558,6 +574,9 @@ taskSearchInput.addEventListener("input", () => {
     renderTasks();
 });
 
+themeToggle?.addEventListener("click", toggleTheme);
+
+applyTheme(localStorage.getItem("tarefas_saf_theme") || "light");
 resetForm();
 updateFilterButton();
 loadTasks();
