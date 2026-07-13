@@ -53,19 +53,34 @@
           <label for="requestedBy">Quem passou a tarefa</label>
           <input id="requestedBy" placeholder="Ex: Coordenação, supervisor, colega..." />
 
-          <div class="row">
+          <div class="task-form-grid">
             <div>
               <label for="priority">Prioridade</label>
               <select id="priority">
                 <option value="Alta">Alta</option>
                 <option value="Média" selected>Média</option>
                 <option value="Baixa">Baixa</option>
+                <option value="Contínua">Contínua</option>
               </select>
             </div>
 
             <div>
               <label for="date">Data</label>
               <input id="date" type="date" required />
+            </div>
+
+            <div>
+              <label for="reminderDay">Lembrete semanal</label>
+              <select id="reminderDay">
+                <option value="">Sem lembrete</option>
+                <option value="Segunda-feira">Segunda-feira</option>
+                <option value="Terça-feira">Terça-feira</option>
+                <option value="Quarta-feira">Quarta-feira</option>
+                <option value="Quinta-feira">Quinta-feira</option>
+                <option value="Sexta-feira">Sexta-feira</option>
+                <option value="Sábado">Sábado</option>
+                <option value="Domingo">Domingo</option>
+              </select>
             </div>
           </div>
 
@@ -84,8 +99,11 @@
             <button class="chip" data-filter="concluidas">Concluídas</button>
           </div>
 
-          <button class="chip filter-toggle" id="openFilters" type="button" aria-expanded="false">
-            Filtros <span class="filter-count hidden" id="filterCount">0</span>
+          <button class="icon-btn filter-toggle" id="openFilters" type="button" aria-label="Abrir filtros" title="Filtros" aria-expanded="false">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M4 5h16l-6 7v5l-4 2v-7L4 5z"></path>
+            </svg>
+            <span class="filter-count hidden" id="filterCount">0</span>
           </button>
         </div>
 
@@ -108,6 +126,7 @@
                 <option value="Alta">Alta</option>
                 <option value="Média">Média</option>
                 <option value="Baixa">Baixa</option>
+                <option value="Contínua">Contínua</option>
               </select>
             </div>
 

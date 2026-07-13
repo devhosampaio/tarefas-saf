@@ -1,16 +1,23 @@
-create table if not exists public.tarefas (
+﻿create table if not exists public.tarefas (
     id uuid primary key,
     name text not null,
     description text,
     requested_by text,
     priority text not null default 'Média',
     date date not null,
+    reminder_day text,
     done boolean not null default false,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );
 
 alter table public.tarefas enable row level security;
+
+alter table public.tarefas
+add column if not exists reminder_day text;
+
+alter table public.tarefas
+alter column priority set default 'Média';
 
 drop policy if exists "Permitir leitura anonima" on public.tarefas;
 drop policy if exists "Permitir insercao anonima" on public.tarefas;
@@ -92,3 +99,5 @@ on public.reunioes
 for delete
 to anon
 using (true);
+
+

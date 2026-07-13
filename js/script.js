@@ -1,4 +1,4 @@
-const STORAGE_KEY = "tarefas_saf_v1";
+﻿const STORAGE_KEY = "tarefas_saf_v1";
 const CONFIG = window.TAREFAS_SAF_SUPABASE || {};
 const SUPABASE_TABLE = CONFIG.table || "tarefas";
 const SUPABASE_READY = Boolean(CONFIG.url && CONFIG.anonKey && window.supabase);
@@ -17,6 +17,13 @@ let advancedFilters = {
     requestedBy: ""
 };
 
+const PRIORITY_ORDER = {
+    "Alta": 0,
+    "M\u00e9dia": 1,
+    "Baixa": 2,
+    "Cont\u00ednua": 3
+};
+
 const formPanel = document.getElementById("formPanel");
 const taskForm = document.getElementById("taskForm");
 const taskList = document.getElementById("taskList");
@@ -27,6 +34,7 @@ const descInput = document.getElementById("description");
 const requestedByInput = document.getElementById("requestedBy");
 const priorityInput = document.getElementById("priority");
 const dateInput = document.getElementById("date");
+const reminderDayInput = document.getElementById("reminderDay");
 const syncStatus = document.getElementById("syncStatus");
 const filterPanel = document.getElementById("filterPanel");
 const filterDateInput = document.getElementById("filterDate");
@@ -54,8 +62,9 @@ function toDatabaseTask(task) {
         name: task.name,
         description: task.description || "",
         requested_by: task.requestedBy || "",
-        priority: task.priority,
+        priority: normalizePriority(task.priority),
         date: task.date,
+        reminder_day: task.reminderDay || "",
         done: Boolean(task.done),
         created_at: task.createdAt || new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -68,11 +77,18 @@ function fromDatabaseTask(task) {
         name: task.name,
         description: task.description || "",
         requestedBy: task.requested_by || "",
-        priority: task.priority,
+        priority: normalizePriority(task.priority),
         date: task.date,
+        reminderDay: task.reminder_day || "",
         done: Boolean(task.done),
         createdAt: task.created_at
     };
+}
+
+function normalizePriority(priority) {
+    if (priority === "MÃ©dia") return "M\u00e9dia";
+    if (priority === "ContÃ­nua") return "Cont\u00ednua";
+    return priority || "M\u00e9dia";
 }
 
 function withTimeout(promise, message = "Tempo limite de sincronização") {
@@ -238,9 +254,16 @@ function formatDate(value) {
 }
 
 function priorityClass(priority) {
+    priority = normalizePriority(priority);
     if (priority === "Alta") return "priority-high";
     if (priority === "Baixa") return "priority-low";
+    if (priority === "Cont\u00ednua") return "priority-continuous";
     return "priority-medium";
+}
+
+function priorityRank(priority) {
+    priority = normalizePriority(priority);
+    return PRIORITY_ORDER[priority] ?? 4;
 }
 
 function activeFiltersCount() {
@@ -280,6 +303,9 @@ function getFilteredTasks() {
 
     return filtered.sort((a, b) => {
         if (a.done !== b.done) return a.done ? 1 : -1;
+        if (priorityRank(a.priority) !== priorityRank(b.priority)) {
+            return priorityRank(a.priority) - priorityRank(b.priority);
+        }
         return new Date(a.date) - new Date(b.date);
     });
 }
@@ -302,7 +328,7 @@ function renderTasks() {
     <article class="task ${priorityClass(task.priority)} ${task.done ? "done" : ""}">
       <div class="task-head">
         <h2>${escapeHTML(task.name)}</h2>
-        <span class="badge ${priorityClass(task.priority)}">${task.priority}</span>
+        <span class="badge ${priorityClass(task.priority)}">${normalizePriority(task.priority)}</span>
       </div>
 
       ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
@@ -310,6 +336,7 @@ function renderTasks() {
       <div class="meta">
         <span>Data: ${formatDate(task.date)}</span>
         <span>Solicitante: ${escapeHTML(task.requestedBy || "Não informado")}</span>
+        ${task.reminderDay ? `<span>Lembrete: ${escapeHTML(task.reminderDay)}</span>` : ""}
       </div>
 
       <div class="task-actions">
@@ -335,6 +362,7 @@ function resetForm() {
     requestedByInput.value = "";
     priorityInput.value = "Média";
     dateInput.value = new Date().toISOString().split("T")[0];
+    reminderDayInput.value = "";
     document.getElementById("formTitle").textContent = "Nova tarefa";
 }
 
@@ -360,6 +388,7 @@ taskForm.addEventListener("submit", async event => {
         requestedBy: requestedByInput.value.trim(),
         priority: priorityInput.value,
         date: dateInput.value,
+        reminderDay: reminderDayInput.value,
         done: taskId.value ? tasks.find(t => t.id === taskId.value)?.done || false : false,
         createdAt: taskId.value ? tasks.find(t => t.id === taskId.value)?.createdAt : new Date().toISOString()
     };
@@ -409,6 +438,7 @@ window.editTask = function (id) {
     requestedByInput.value = task.requestedBy;
     priorityInput.value = task.priority;
     dateInput.value = task.date;
+    reminderDayInput.value = task.reminderDay || "";
 
     document.getElementById("formTitle").textContent = "Editar tarefa";
     openForm();
@@ -490,3 +520,5 @@ document.getElementById("clearFilters").addEventListener("click", () => {
 resetForm();
 updateFilterButton();
 loadTasks();
+
+
