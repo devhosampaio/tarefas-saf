@@ -337,6 +337,34 @@ input[readonly] {
     gap: 6px;
     overflow-x: auto;
     padding: 0;
+    flex: none;
+}
+
+.task-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+}
+
+.task-search-wrap svg {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    width: 17px;
+    height: 17px;
+    transform: translateY(-50%);
+    fill: none;
+    stroke: var(--muted);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    pointer-events: none;
+}
+
+.task-search {
+    min-height: 40px;
+    padding-left: 36px;
+    background: white;
 }
 
 .filter-panel {
@@ -781,6 +809,7 @@ td strong {
     }
 
     .add-btn,
+    .task-search-wrap,
     .search {
         width: 100%;
         max-width: none;

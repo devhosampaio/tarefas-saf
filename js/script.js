@@ -12,6 +12,7 @@ const SYNC_TIMEOUT_MS = 8000;
 let tasks = [];
 let currentFilter = "todas";
 let advancedFilters = {
+    query: "",
     date: "",
     priority: "",
     requestedBy: ""
@@ -40,6 +41,7 @@ const filterPanel = document.getElementById("filterPanel");
 const filterDateInput = document.getElementById("filterDate");
 const filterPriorityInput = document.getElementById("filterPriority");
 const filterRequestedByInput = document.getElementById("filterRequestedBy");
+const taskSearchInput = document.getElementById("taskSearchInput");
 const openFiltersButton = document.getElementById("openFilters");
 const filterCount = document.getElementById("filterCount");
 
@@ -266,6 +268,13 @@ function priorityRank(priority) {
     return PRIORITY_ORDER[priority] ?? 4;
 }
 
+function normalizeSearchText(value) {
+    return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
 function activeFiltersCount() {
     return Object.values(advancedFilters).filter(Boolean).length;
 }
@@ -287,6 +296,23 @@ function getFilteredTasks() {
 
     if (currentFilter === "pendentes") filtered = filtered.filter(t => !t.done);
     if (currentFilter === "concluidas") filtered = filtered.filter(t => t.done);
+
+    if (advancedFilters.query) {
+        const query = normalizeSearchText(advancedFilters.query);
+        filtered = filtered.filter(task => {
+            const searchable = normalizeSearchText([
+                task.name,
+                task.description,
+                task.requestedBy,
+                normalizePriority(task.priority),
+                task.date,
+                task.reminderDay,
+                task.done ? "concluida concluída" : "pendente"
+            ].join(" "));
+
+            return searchable.includes(query);
+        });
+    }
 
     if (advancedFilters.date) {
         filtered = filtered.filter(t => t.date === advancedFilters.date);
@@ -500,6 +526,7 @@ openFiltersButton.addEventListener("click", () => {
 
 document.getElementById("applyFilters").addEventListener("click", () => {
     advancedFilters = {
+        ...advancedFilters,
         date: filterDateInput.value,
         priority: filterPriorityInput.value,
         requestedBy: filterRequestedByInput.value.trim()
@@ -511,14 +538,22 @@ document.getElementById("applyFilters").addEventListener("click", () => {
 
 document.getElementById("clearFilters").addEventListener("click", () => {
     advancedFilters = {
+        query: "",
         date: "",
         priority: "",
         requestedBy: ""
     };
+    taskSearchInput.value = "";
     filterDateInput.value = "";
     filterPriorityInput.value = "";
     filterRequestedByInput.value = "";
     filterPanel.classList.add("hidden");
+    updateFilterButton();
+    renderTasks();
+});
+
+taskSearchInput.addEventListener("input", () => {
+    advancedFilters.query = taskSearchInput.value.trim();
     updateFilterButton();
     renderTasks();
 });
