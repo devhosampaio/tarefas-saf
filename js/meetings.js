@@ -1,6 +1,12 @@
-﻿const MEETINGS_STORAGE_KEY = "reunioes_cadastradas_v1";
+const MEETINGS_STORAGE_KEY = "reunioes_cadastradas_v1";
+const MEETINGS_CONFIG = window.TAREFAS_SAF_SUPABASE || {};
+const MEETINGS_SUPABASE_TABLE = MEETINGS_CONFIG.meetingsTable || "reunioes";
+const MEETINGS_SUPABASE_READY = Boolean(MEETINGS_CONFIG.url && MEETINGS_CONFIG.anonKey && window.supabase);
+const meetingsDb = MEETINGS_SUPABASE_READY
+    ? window.supabase.createClient(MEETINGS_CONFIG.url, MEETINGS_CONFIG.anonKey)
+    : null;
 
-let meetings = JSON.parse(localStorage.getItem(MEETINGS_STORAGE_KEY)) || [];
+let meetings = [];
 
 const meetingFields = {
     id: document.getElementById("meetingId"),
@@ -25,8 +31,206 @@ const meetingEmptyState = document.getElementById("meetingEmptyState");
 const meetingSearchInput = document.getElementById("meetingSearchInput");
 const meetingFormTitle = document.getElementById("meetingFormTitle");
 
-function saveMeetings() {
+function setMeetingsSyncStatus(message) {
+    const syncStatus = document.getElementById("syncStatus");
+    if (syncStatus) syncStatus.textContent = message;
+}
+
+function saveLocalMeetings() {
     localStorage.setItem(MEETINGS_STORAGE_KEY, JSON.stringify(meetings));
+}
+
+function getLocalMeetings() {
+    return JSON.parse(localStorage.getItem(MEETINGS_STORAGE_KEY)) || [];
+}
+
+function toDatabaseMeeting(meeting) {
+    return {
+        id: meeting.id,
+        subject: meeting.subject,
+        date: meeting.date,
+        format: meeting.format,
+        start_time: meeting.startTime,
+        end_time: meeting.endTime,
+        duration_minutes: meeting.durationMinutes,
+        participants: meeting.participants || "",
+        my_role: meeting.myRole,
+        location: meeting.location || "",
+        decisions: meeting.decisions || "",
+        responsible: meeting.responsible || "",
+        deadline: meeting.deadline || null,
+        status: meeting.status,
+        created_at: meeting.createdAt || new Date().toISOString(),
+        updated_at: new Date().toISOString()
+    };
+}
+
+function fromDatabaseMeeting(meeting) {
+    return {
+        id: meeting.id,
+        subject: meeting.subject,
+        date: meeting.date,
+        format: meeting.format,
+        startTime: meeting.start_time,
+        endTime: meeting.end_time,
+        durationMinutes: meeting.duration_minutes,
+        participants: meeting.participants || "",
+        myRole: meeting.my_role,
+        location: meeting.location || "",
+        decisions: meeting.decisions || "",
+        responsible: meeting.responsible || "",
+        deadline: meeting.deadline || "",
+        status: meeting.status,
+        createdAt: meeting.created_at,
+        updatedAt: meeting.updated_at
+    };
+}
+
+async function loadMeetings() {
+    if (!MEETINGS_SUPABASE_READY) {
+        meetings = getLocalMeetings();
+        renderMeetingArea();
+        return;
+    }
+
+    meetings = getLocalMeetings();
+    renderMeetingArea();
+
+    let result;
+    try {
+        result = await withTimeout(
+            meetingsDb
+                .from(MEETINGS_SUPABASE_TABLE)
+                .select("*")
+                .order("date", { ascending: false })
+                .order("start_time", { ascending: false })
+        );
+    } catch (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Nuvem indisponível. Usando reuniões locais.");
+        return;
+    }
+
+    const { data, error } = result;
+    if (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Falha na nuvem. Usando reuniões locais.");
+        return;
+    }
+
+    meetings = data.map(fromDatabaseMeeting);
+    await migrateLocalMeetings();
+    setMeetingsSyncStatus("Sincronizado na nuvem");
+    renderMeetingArea();
+}
+
+async function migrateLocalMeetings() {
+    const localMeetings = getLocalMeetings();
+    const missingMeetings = localMeetings.filter(localMeeting => {
+        return !meetings.some(meeting => meeting.id === localMeeting.id);
+    });
+
+    if (!MEETINGS_SUPABASE_READY) return;
+
+    if (missingMeetings.length === 0) {
+        localStorage.removeItem(MEETINGS_STORAGE_KEY);
+        return;
+    }
+
+    let result;
+    try {
+        result = await withTimeout(
+            meetingsDb
+                .from(MEETINGS_SUPABASE_TABLE)
+                .upsert(missingMeetings.map(toDatabaseMeeting))
+                .select("*")
+        );
+    } catch (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Nuvem ativa. Migração de reuniões falhou.");
+        return;
+    }
+
+    const { data, error } = result;
+    if (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Nuvem ativa. Migração de reuniões falhou.");
+        return;
+    }
+
+    const migratedMeetings = data.map(fromDatabaseMeeting);
+    meetings = [
+        ...meetings,
+        ...migratedMeetings.filter(migratedMeeting => {
+            return !meetings.some(meeting => meeting.id === migratedMeeting.id);
+        })
+    ];
+    localStorage.removeItem(MEETINGS_STORAGE_KEY);
+}
+
+async function saveMeeting(meeting) {
+    if (!MEETINGS_SUPABASE_READY) {
+        saveLocalMeetings();
+        renderMeetingArea();
+        return true;
+    }
+
+    let result;
+    try {
+        result = await withTimeout(
+            meetingsDb
+                .from(MEETINGS_SUPABASE_TABLE)
+                .upsert(toDatabaseMeeting(meeting))
+        );
+    } catch (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Erro ao salvar reunião na nuvem");
+        return false;
+    }
+
+    const { error } = result;
+    if (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Erro ao salvar reunião na nuvem");
+        return false;
+    }
+
+    setMeetingsSyncStatus("Sincronizado na nuvem");
+    renderMeetingArea();
+    return true;
+}
+
+async function removeMeeting(id) {
+    if (!MEETINGS_SUPABASE_READY) {
+        saveLocalMeetings();
+        renderMeetingArea();
+        return true;
+    }
+
+    let result;
+    try {
+        result = await withTimeout(
+            meetingsDb
+                .from(MEETINGS_SUPABASE_TABLE)
+                .delete()
+                .eq("id", id)
+        );
+    } catch (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Erro ao excluir reunião na nuvem");
+        return false;
+    }
+
+    const { error } = result;
+    if (error) {
+        console.error(error);
+        setMeetingsSyncStatus("Erro ao excluir reunião na nuvem");
+        return false;
+    }
+
+    setMeetingsSyncStatus("Sincronizado na nuvem");
+    renderMeetingArea();
+    return true;
 }
 
 function minutesFromTime(time) {
@@ -136,7 +340,9 @@ function updateMeetingSummary() {
     const totalMinutes = meetings.reduce((sum, meeting) => sum + Number(meeting.durationMinutes || 0), 0);
 
     document.getElementById("totalMeetings").textContent = meetings.length;
-    document.getElementById("monthMeetings").textContent = meetings.filter(meeting => meeting.date?.startsWith(`${currentYear}-${currentMonth}`)).length;
+    document.getElementById("monthMeetings").textContent = meetings.filter(meeting => {
+        return meeting.date?.startsWith(`${currentYear}-${currentMonth}`);
+    }).length;
     document.getElementById("totalHours").textContent = formatMeetingDuration(totalMinutes);
 }
 
@@ -186,7 +392,7 @@ function renderMeetingArea() {
     renderMeetings();
 }
 
-meetingForm.addEventListener("submit", event => {
+meetingForm.addEventListener("submit", async event => {
     event.preventDefault();
 
     if (meetingFields.endTime.value < meetingFields.startTime.value) {
@@ -195,6 +401,7 @@ meetingForm.addEventListener("submit", event => {
         return;
     }
 
+    const previousMeetings = [...meetings];
     const meeting = getMeetingFormData();
 
     if (meetingFields.id.value) {
@@ -203,9 +410,16 @@ meetingForm.addEventListener("submit", event => {
         meetings.push(meeting);
     }
 
-    saveMeetings();
-    resetMeetingForm();
     renderMeetingArea();
+    setMeetingsSyncStatus("Salvando...");
+
+    const saved = await saveMeeting(meeting);
+    if (saved) {
+        resetMeetingForm();
+    } else {
+        meetings = previousMeetings;
+        renderMeetingArea();
+    }
 });
 
 window.editMeeting = function (id) {
@@ -213,14 +427,21 @@ window.editMeeting = function (id) {
     if (meeting) fillMeetingForm(meeting);
 };
 
-window.deleteMeeting = function (id) {
+window.deleteMeeting = async function (id) {
     const meeting = meetings.find(item => item.id === id);
     if (!meeting) return;
 
     if (confirm(`Excluir a reunião "${meeting.subject}"?`)) {
+        const previousMeetings = [...meetings];
         meetings = meetings.filter(item => item.id !== id);
-        saveMeetings();
         renderMeetingArea();
+        setMeetingsSyncStatus("Excluindo...");
+
+        const removed = await removeMeeting(id);
+        if (!removed) {
+            meetings = previousMeetings;
+            renderMeetingArea();
+        }
     }
 };
 
@@ -251,4 +472,4 @@ function showTab(tabId) {
 }
 
 resetMeetingForm();
-renderMeetingArea();
+loadMeetings();

@@ -10,10 +10,11 @@
 window.TAREFAS_SAF_SUPABASE = {
     url: "https://SEU-PROJETO.supabase.co",
     anonKey: "SUA_ANON_PUBLIC_KEY",
-    table: "tarefas"
+    table: "tarefas",
+    meetingsTable: "reunioes"
 };
 ```
 
-Depois disso, o app deixa de depender do armazenamento do navegador e passa a sincronizar as tarefas pelo Supabase.
+Depois disso, o app deixa de depender do armazenamento do navegador e passa a sincronizar as tarefas e reuniões pelo Supabase.
 
 Observacao: as politicas em `supabase-schema.sql` liberam leitura e escrita anonimas. Para um uso publico, o ideal e adicionar login e politicas por usuario.
