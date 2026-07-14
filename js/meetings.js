@@ -444,9 +444,20 @@ function renderMeetingArea() {
 meetingForm.addEventListener("submit", async event => {
     event.preventDefault();
 
+    const submitButton = meetingForm.querySelector("button[type='submit']");
+    const originalSubmitText = submitButton?.textContent || "Salvar reunião";
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Salvando...";
+    }
+
     if (meetingFields.endTime.value < meetingFields.startTime.value) {
         alert("O horário de término precisa ser maior ou igual ao horário de início.");
         meetingFields.endTime.focus();
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalSubmitText;
+        }
         return;
     }
 
@@ -468,6 +479,11 @@ meetingForm.addEventListener("submit", async event => {
     } else {
         meetings = previousMeetings;
         renderMeetingArea();
+    }
+
+    if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalSubmitText;
     }
 });
 

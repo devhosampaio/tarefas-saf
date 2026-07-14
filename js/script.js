@@ -603,12 +603,11 @@ function renderCalendar() {
             <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""}" type="button" data-date="${isoDate}" aria-label="Adicionar tarefa em ${formatDate(isoDate)}">
                 <span class="calendar-date">${date.getDate()}</span>
                 <span class="calendar-items">
-                    ${dayTasks.slice(0, 4).map(task => `
+                    ${dayTasks.map(task => `
                         <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}">
                             ${escapeHTML(task.name)}
                         </span>
                     `).join("")}
-                    ${dayTasks.length > 4 ? `<span class="calendar-more">+${dayTasks.length - 4} tarefas</span>` : ""}
                 </span>
             </button>
         `;
@@ -651,6 +650,13 @@ function closeForm() {
 taskForm.addEventListener("submit", async event => {
     event.preventDefault();
 
+    const submitButton = taskForm.querySelector("button[type='submit']");
+    const originalSubmitText = submitButton?.textContent || "Salvar";
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Salvando...";
+    }
+
     const previousTasks = [...tasks];
     const data = {
         id: taskId.value || crypto.randomUUID(),
@@ -680,6 +686,11 @@ taskForm.addEventListener("submit", async event => {
     } else {
         tasks = previousTasks;
         render();
+    }
+
+    if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalSubmitText;
     }
 });
 
