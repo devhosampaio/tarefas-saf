@@ -139,7 +139,7 @@ function showCalendarTaskPreview(taskId, dayElement) {
     if (!task) return;
 
     const priority = normalizePriority(task.priority);
-    calendarTaskPreview.className = `calendar-task-preview ${priorityClass(priority)}`;
+    calendarTaskPreview.className = `calendar-task-preview ${priorityClass(priority)} ${task.done ? "done" : ""}`;
     calendarTaskPreview.innerHTML = `
         <h3>${escapeHTML(task.name)}</h3>
         ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}

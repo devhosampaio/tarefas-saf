@@ -459,10 +459,9 @@ main {
 .calendar-more {
     min-width: 0;
     display: block;
-    overflow: visible;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: normal;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     border: 1px solid transparent;
     border-left-width: 4px;
     border-radius: var(--radius);
@@ -509,7 +508,10 @@ main {
 }
 
 .calendar-task.done {
-    opacity: .55;
+    border-left-color: #98a2b3;
+    background: #f1f3f5;
+    color: #667085;
+    opacity: .9;
     text-decoration: line-through;
 }
 
@@ -585,6 +587,10 @@ main {
     border-left-color: var(--priority-routine);
 }
 
+.calendar-task-preview.done {
+    border-left-color: #98a2b3;
+}
+
 .calendar-task-preview h3 {
     margin: 0;
     font-size: .98rem;
@@ -634,6 +640,12 @@ body.dark-mode .calendar-task.priority-low {
 body.dark-mode .calendar-task.priority-routine,
 body.dark-mode .calendar-task.priority-continuous {
     background: #172744;
+}
+
+body.dark-mode .calendar-task.done {
+    border-left-color: #667085;
+    background: #26303d;
+    color: #b8c0cc;
 }
 
 .panel {
@@ -1014,8 +1026,35 @@ body.dark-mode .task.priority-continuous {
     background: linear-gradient(180deg, #172744 0%, #182230 48%);
 }
 
+body.dark-mode .task.done {
+    border-left-color: #667085;
+    background: linear-gradient(180deg, #222b38 0%, #182230 48%);
+    color: #b8c0cc;
+}
+
+body.dark-mode .task.done .badge {
+    background: #26303d;
+    border-color: #3b4656;
+    color: #b8c0cc;
+}
+
 .task.done {
-    opacity: .62;
+    border-left-color: #98a2b3;
+    background: linear-gradient(180deg, #f7f8fa 0%, #ffffff 48%);
+    color: #667085;
+    opacity: .9;
+}
+
+.task.done .badge {
+    background: #f1f3f5;
+    border-color: #d0d5dd;
+    color: #667085;
+}
+
+.task.done h2,
+.task.done p,
+.task.done .meta {
+    color: #667085;
 }
 
 .task-head {
