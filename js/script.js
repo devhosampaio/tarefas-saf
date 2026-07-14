@@ -227,6 +227,42 @@ async function saveTask(task) {
     return true;
 }
 
+async function saveTaskDate(id, date) {
+    if (!SUPABASE_READY) {
+        saveLocalTasks();
+        setSyncStatus("Salvando neste navegador");
+        return true;
+    }
+
+    let result;
+    try {
+        result = await withTimeout(
+            db
+                .from(SUPABASE_TABLE)
+                .update({
+                    date,
+                    updated_at: new Date().toISOString()
+                })
+                .eq("id", id)
+        );
+    } catch (error) {
+        console.error(error);
+        setSyncStatus("Erro ao programar tarefa na nuvem");
+        return false;
+    }
+
+    const { error } = result;
+    if (error) {
+        console.error(error);
+        setSyncStatus("Erro ao programar tarefa na nuvem");
+        return false;
+    }
+
+    setSyncStatus("Tarefa programada para hoje");
+    render();
+    return true;
+}
+
 async function removeTask(id) {
     if (!SUPABASE_READY) {
         saveLocalTasks();
@@ -549,13 +585,21 @@ window.scheduleTaskToday = async function (id) {
     const task = tasks.find(item => item.id === id);
     if (!task) return;
 
-    const nextTask = { ...task, date: toISODate(new Date()) };
+    const today = toISODate(new Date());
+    if (task.date === today) {
+        calendarDate = new Date();
+        render();
+        setSyncStatus("Essa tarefa já está marcada para hoje");
+        return;
+    }
+
+    const nextTask = { ...task, date: today };
     tasks = tasks.map(item => item.id === id ? nextTask : item);
     calendarDate = new Date();
     render();
-    setSyncStatus("Salvando...");
+    setSyncStatus("Programando para hoje...");
 
-    const saved = await saveTask(nextTask);
+    const saved = await saveTaskDate(id, today);
     if (!saved) {
         tasks = previousTasks;
         render();
