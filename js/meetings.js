@@ -305,6 +305,36 @@ function resetMeetingForm() {
     meetingFields.duration.value = "0 min";
     meetingFormTitle.textContent = "Nova reunião";
     document.getElementById("cancelMeetingEditButton").style.display = "none";
+    closeMeetingPopover();
+}
+
+function placeMeetingPopover(x, y) {
+    const margin = 12;
+    meetingForm.style.left = `${x}px`;
+    meetingForm.style.top = `${y}px`;
+
+    requestAnimationFrame(() => {
+        const rect = meetingForm.getBoundingClientRect();
+        const nextLeft = Math.min(Math.max(margin, x), window.innerWidth - rect.width - margin);
+        const nextTop = Math.min(Math.max(margin, y), window.innerHeight - rect.height - margin);
+        meetingForm.style.left = `${nextLeft}px`;
+        meetingForm.style.top = `${nextTop}px`;
+    });
+}
+
+function closeMeetingPopover() {
+    meetingForm.classList.remove("floating-popover");
+    meetingForm.style.left = "";
+    meetingForm.style.top = "";
+}
+
+function openMeetingFormPopover(date, x, y) {
+    showTab("meetingsTab");
+    resetMeetingForm();
+    meetingFields.date.value = date;
+    meetingForm.classList.add("floating-popover");
+    placeMeetingPopover(x, y);
+    meetingFields.subject.focus();
 }
 
 function getMeetingFormData() {
@@ -489,6 +519,10 @@ function showTab(tabId) {
         panel.classList.toggle("active", panel.id === tabId);
     });
 }
+
+window.showTab = showTab;
+window.openMeetingFormPopover = openMeetingFormPopover;
+window.closeMeetingPopover = closeMeetingPopover;
 
 resetMeetingForm();
 window.loadMeetings = loadMeetings;

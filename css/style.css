@@ -318,6 +318,7 @@ main {
 }
 
 .calendar-panel {
+    position: relative;
     min-height: calc(100vh - 190px);
     display: grid;
     grid-template-rows: auto auto 1fr;
@@ -474,6 +475,38 @@ main {
     font-weight: 800;
 }
 
+.calendar-context-menu {
+    position: fixed;
+    z-index: 80;
+    min-width: 172px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 12px 28px rgba(16, 24, 40, .18);
+    padding: 5px;
+    border-radius: var(--radius);
+}
+
+.calendar-context-menu button {
+    width: 100%;
+    min-height: 36px;
+    display: block;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    padding: 0 10px;
+    text-align: left;
+    font-weight: 700;
+    border-radius: calc(var(--radius) - 2px);
+}
+
+.calendar-context-menu button:hover,
+.calendar-context-menu button:focus {
+    background: var(--main-soft);
+    color: var(--main);
+    outline: none;
+}
+
 body.dark-mode .calendar-task.priority-high {
     background: #3a2024;
 }
@@ -508,6 +541,20 @@ body.dark-mode .calendar-task.priority-continuous {
 
 .form-panel.active {
     display: block;
+}
+
+.floating-popover {
+    position: fixed;
+    z-index: 90;
+    width: min(440px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+    margin: 0;
+    box-shadow: 0 18px 44px rgba(16, 24, 40, .22);
+}
+
+form.floating-popover {
+    border-top: 3px solid var(--main);
 }
 
 .panel-title,

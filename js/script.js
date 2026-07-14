@@ -53,6 +53,7 @@ const calendarTitle = document.getElementById("calendarTitle");
 const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 const todayMonthButton = document.getElementById("todayMonth");
+const calendarContextMenu = document.getElementById("calendarContextMenu");
 const authGate = document.getElementById("authGate");
 const appShell = document.getElementById("appShell");
 const authForm = document.getElementById("authForm");
@@ -64,9 +65,40 @@ const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
 
 let calendarDate = new Date();
+let selectedCalendarDate = "";
+let selectedCalendarPointer = { x: 0, y: 0 };
 
 function setSyncStatus(message) {
     if (syncStatus) syncStatus.textContent = message;
+}
+
+function placeFloatingElement(element, x, y) {
+    if (!element) return;
+
+    const margin = 12;
+    element.style.left = `${x}px`;
+    element.style.top = `${y}px`;
+
+    requestAnimationFrame(() => {
+        const rect = element.getBoundingClientRect();
+        const nextLeft = Math.min(Math.max(margin, x), window.innerWidth - rect.width - margin);
+        const nextTop = Math.min(Math.max(margin, y), window.innerHeight - rect.height - margin);
+        element.style.left = `${nextLeft}px`;
+        element.style.top = `${nextTop}px`;
+    });
+}
+
+function hideCalendarContextMenu() {
+    calendarContextMenu?.classList.add("hidden");
+}
+
+function showCalendarContextMenu(date, x, y) {
+    if (!calendarContextMenu) return;
+
+    selectedCalendarDate = date;
+    selectedCalendarPointer = { x, y };
+    calendarContextMenu.classList.remove("hidden");
+    placeFloatingElement(calendarContextMenu, x, y);
 }
 
 function setAuthMessage(message, isError = false) {
@@ -595,13 +627,24 @@ function resetForm() {
 }
 
 function openForm() {
+    formPanel.classList.remove("floating-popover");
+    formPanel.style.left = "";
+    formPanel.style.top = "";
     formPanel.classList.add("active");
     nameInput.focus();
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function openFormPopover(x, y) {
+    formPanel.classList.add("active", "floating-popover");
+    placeFloatingElement(formPanel, x, y);
+    nameInput.focus();
+}
+
 function closeForm() {
-    formPanel.classList.remove("active");
+    formPanel.classList.remove("active", "floating-popover");
+    formPanel.style.left = "";
+    formPanel.style.top = "";
     resetForm();
 }
 
@@ -867,6 +910,7 @@ monthCalendar?.addEventListener("click", event => {
     const taskItem = event.target.closest(".calendar-task");
     if (taskItem?.dataset.taskId) {
         event.stopPropagation();
+        hideCalendarContextMenu();
         editTask(taskItem.dataset.taskId);
         return;
     }
@@ -874,11 +918,54 @@ monthCalendar?.addEventListener("click", event => {
     const day = event.target.closest(".calendar-day");
     if (!day?.dataset.date) return;
 
-    resetForm();
-    dateInput.value = day.dataset.date;
-    document.getElementById("formTitle").textContent = "Nova tarefa";
-    openForm();
+    event.preventDefault();
+    showCalendarContextMenu(day.dataset.date, event.clientX, event.clientY);
 });
+
+calendarContextMenu?.addEventListener("click", event => {
+    const button = event.target.closest("[data-calendar-action]");
+    if (!button) return;
+
+    const { x, y } = selectedCalendarPointer;
+    const date = selectedCalendarDate || toISODate(new Date());
+    hideCalendarContextMenu();
+
+    if (button.dataset.calendarAction === "new-task") {
+        closeForm();
+        window.closeMeetingPopover?.();
+        window.showTab?.("tasksTab");
+        resetForm();
+        dateInput.value = date;
+        document.getElementById("formTitle").textContent = "Nova tarefa";
+        openFormPopover(x, y);
+        return;
+    }
+
+    if (button.dataset.calendarAction === "new-meeting") {
+        closeForm();
+        window.openMeetingFormPopover?.(date, x, y);
+    }
+});
+
+document.addEventListener("click", event => {
+    if (event.target.closest("#calendarContextMenu") || event.target.closest(".calendar-day")) return;
+    hideCalendarContextMenu();
+});
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        hideCalendarContextMenu();
+    }
+});
+
+window.addEventListener("scroll", hideCalendarContextMenu, true);
+
+window.openTaskFormPopover = function (date, x, y) {
+    resetForm();
+    dateInput.value = date;
+    document.getElementById("formTitle").textContent = "Nova tarefa";
+    openFormPopover(x, y);
+};
 
 prevMonthButton?.addEventListener("click", () => {
     calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
