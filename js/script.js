@@ -79,6 +79,7 @@ function toDatabaseTask(task) {
         date: task.date,
         reminder_day: task.reminderDay || "",
         done: Boolean(task.done),
+        completed_at: task.completedAt || null,
         created_at: task.createdAt || new Date().toISOString(),
         updated_at: new Date().toISOString()
     };
@@ -94,6 +95,7 @@ function fromDatabaseTask(task) {
         date: task.date,
         reminderDay: task.reminder_day || "",
         done: Boolean(task.done),
+        completedAt: task.completed_at || "",
         createdAt: task.created_at
     };
 }
@@ -329,6 +331,18 @@ function priorityRank(priority) {
     return PRIORITY_ORDER[priority] ?? 4;
 }
 
+function isRoutineTask(task) {
+    return normalizePriority(task.priority) === "Rotineira";
+}
+
+function shouldShowTaskOnCalendarDay(task, isoDate) {
+    if (!isRoutineTask(task)) return task.date === isoDate;
+    if (!task.date || isoDate < task.date) return false;
+    if (!task.done) return true;
+
+    return Boolean(task.completedAt) && isoDate < task.completedAt;
+}
+
 function normalizeSearchText(value) {
     return String(value || "")
         .toLowerCase()
@@ -486,7 +500,7 @@ function renderCalendar() {
     monthCalendar.innerHTML = days.map(date => {
         const isoDate = toISODate(date);
         const dayTasks = tasks
-            .filter(task => task.date === isoDate)
+            .filter(task => shouldShowTaskOnCalendarDay(task, isoDate))
             .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
         const isCurrentMonth = date.getMonth() === month;
         const isToday = isoDate === today;
@@ -542,6 +556,7 @@ taskForm.addEventListener("submit", async event => {
         date: dateInput.value,
         reminderDay: reminderDayInput.value,
         done: taskId.value ? tasks.find(t => t.id === taskId.value)?.done || false : false,
+        completedAt: taskId.value ? tasks.find(t => t.id === taskId.value)?.completedAt || "" : "",
         createdAt: taskId.value ? tasks.find(t => t.id === taskId.value)?.createdAt : new Date().toISOString()
     };
 
@@ -568,7 +583,12 @@ window.toggleDone = async function (id) {
     const updatedTask = tasks.find(task => task.id === id);
     if (!updatedTask) return;
 
-    const nextTask = { ...updatedTask, done: !updatedTask.done };
+    const willBeDone = !updatedTask.done;
+    const nextTask = {
+        ...updatedTask,
+        done: willBeDone,
+        completedAt: willBeDone ? toISODate(new Date()) : ""
+    };
     tasks = tasks.map(task => task.id === id ? nextTask : task);
     render();
     setSyncStatus("Salvando...");

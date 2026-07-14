@@ -7,6 +7,7 @@
     date date not null,
     reminder_day text,
     done boolean not null default false,
+    completed_at date,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );
@@ -15,6 +16,9 @@ alter table public.tarefas enable row level security;
 
 alter table public.tarefas
 add column if not exists reminder_day text;
+
+alter table public.tarefas
+add column if not exists completed_at date;
 
 alter table public.tarefas
 alter column priority set default 'Média';
