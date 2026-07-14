@@ -45,6 +45,13 @@ const taskSearchInput = document.getElementById("taskSearchInput");
 const themeToggle = document.getElementById("themeToggle");
 const openFiltersButton = document.getElementById("openFilters");
 const filterCount = document.getElementById("filterCount");
+const monthCalendar = document.getElementById("monthCalendar");
+const calendarTitle = document.getElementById("calendarTitle");
+const prevMonthButton = document.getElementById("prevMonth");
+const nextMonthButton = document.getElementById("nextMonth");
+const todayMonthButton = document.getElementById("todayMonth");
+
+let calendarDate = new Date();
 
 function setSyncStatus(message) {
     if (syncStatus) syncStatus.textContent = message;
@@ -259,6 +266,20 @@ function formatDate(value) {
     return `${day}/${month}/${year}`;
 }
 
+function toISODate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function formatMonthTitle(date) {
+    return new Intl.DateTimeFormat("pt-BR", {
+        month: "long",
+        year: "numeric"
+    }).format(date);
+}
+
 function priorityClass(priority) {
     priority = normalizePriority(priority);
     if (priority === "Alta") return "priority-high";
@@ -400,7 +421,50 @@ function renderTasks() {
 
 function render() {
     renderStats();
+    renderCalendar();
     renderTasks();
+}
+
+function renderCalendar() {
+    if (!monthCalendar || !calendarTitle) return;
+
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const gridStart = new Date(firstDay);
+    gridStart.setDate(firstDay.getDate() - firstDay.getDay());
+    const today = toISODate(new Date());
+
+    calendarTitle.textContent = formatMonthTitle(calendarDate);
+
+    const days = Array.from({ length: 42 }, (_, index) => {
+        const date = new Date(gridStart);
+        date.setDate(gridStart.getDate() + index);
+        return date;
+    });
+
+    monthCalendar.innerHTML = days.map(date => {
+        const isoDate = toISODate(date);
+        const dayTasks = tasks
+            .filter(task => task.date === isoDate)
+            .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
+        const isCurrentMonth = date.getMonth() === month;
+        const isToday = isoDate === today;
+
+        return `
+            <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""}" type="button" data-date="${isoDate}" aria-label="Adicionar tarefa em ${formatDate(isoDate)}">
+                <span class="calendar-date">${date.getDate()}</span>
+                <span class="calendar-items">
+                    ${dayTasks.slice(0, 4).map(task => `
+                        <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}">
+                            ${escapeHTML(task.name)}
+                        </span>
+                    `).join("")}
+                    ${dayTasks.length > 4 ? `<span class="calendar-more">+${dayTasks.length - 4} tarefas</span>` : ""}
+                </span>
+            </button>
+        `;
+    }).join("");
 }
 
 function resetForm() {
@@ -575,6 +639,38 @@ taskSearchInput.addEventListener("input", () => {
 });
 
 themeToggle?.addEventListener("click", toggleTheme);
+
+monthCalendar?.addEventListener("click", event => {
+    const taskItem = event.target.closest(".calendar-task");
+    if (taskItem?.dataset.taskId) {
+        event.stopPropagation();
+        editTask(taskItem.dataset.taskId);
+        return;
+    }
+
+    const day = event.target.closest(".calendar-day");
+    if (!day?.dataset.date) return;
+
+    resetForm();
+    dateInput.value = day.dataset.date;
+    document.getElementById("formTitle").textContent = "Nova tarefa";
+    openForm();
+});
+
+prevMonthButton?.addEventListener("click", () => {
+    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+    renderCalendar();
+});
+
+nextMonthButton?.addEventListener("click", () => {
+    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+    renderCalendar();
+});
+
+todayMonthButton?.addEventListener("click", () => {
+    calendarDate = new Date();
+    renderCalendar();
+});
 
 applyTheme(localStorage.getItem("tarefas_saf_theme") || "light");
 resetForm();
