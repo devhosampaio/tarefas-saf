@@ -553,7 +553,7 @@ function renderTasks() {
             : `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>`}
           <span>${task.done ? "Reabrir" : "Concluir"}</span>
         </button>
-        <button class="small-btn icon-action" onclick="editTask('${task.id}')" title="Editar" aria-label="Editar tarefa">
+        <button class="small-btn icon-action" onclick="editTask('${task.id}', event)" title="Editar" aria-label="Editar tarefa">
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
           <span>Editar</span>
         </button>
@@ -731,7 +731,7 @@ window.scheduleTaskToday = async function (id) {
     }
 }
 
-window.editTask = function (id) {
+window.editTask = function (id, sourceEvent) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
 
@@ -744,7 +744,20 @@ window.editTask = function (id) {
     reminderDayInput.value = task.reminderDay || "";
 
     document.getElementById("formTitle").textContent = "Editar tarefa";
-    openForm();
+    window.closeMeetingPopover?.();
+
+    if (sourceEvent?.clientX && sourceEvent?.clientY) {
+        openFormPopover(sourceEvent.clientX, sourceEvent.clientY);
+        return;
+    }
+
+    const activeElementRect = document.activeElement?.getBoundingClientRect?.();
+    if (activeElementRect) {
+        openFormPopover(activeElementRect.left, activeElementRect.bottom + 6);
+        return;
+    }
+
+    openFormPopover(window.innerWidth / 2 - 220, 96);
 }
 
 window.deleteTask = async function (id) {
@@ -911,7 +924,7 @@ monthCalendar?.addEventListener("click", event => {
     if (taskItem?.dataset.taskId) {
         event.stopPropagation();
         hideCalendarContextMenu();
-        editTask(taskItem.dataset.taskId);
+        editTask(taskItem.dataset.taskId, event);
         return;
     }
 

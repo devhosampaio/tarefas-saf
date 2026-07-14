@@ -827,8 +827,8 @@ input[readonly] {
     box-shadow: 0 1px 2px rgba(16, 24, 40, .08), 0 8px 18px rgba(16, 24, 40, .04);
     display: flex;
     flex-direction: column;
-    height: 282px;
-    overflow: hidden;
+    min-height: 282px;
+    overflow: visible;
     border-radius: var(--radius);
 }
 
@@ -890,10 +890,8 @@ body.dark-mode .task.priority-continuous {
     font-size: .98rem;
     line-height: 1.3;
     letter-spacing: 0;
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 .task p {
@@ -902,10 +900,8 @@ body.dark-mode .task.priority-continuous {
     line-height: 1.42;
     font-size: .88rem;
     white-space: pre-wrap;
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 .badge {
@@ -956,8 +952,7 @@ body.dark-mode .task.priority-continuous {
     margin-top: 10px;
     color: var(--muted);
     font-size: .76rem;
-    max-height: 74px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .meta span {
