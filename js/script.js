@@ -54,6 +54,7 @@ const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 const todayMonthButton = document.getElementById("todayMonth");
 const calendarContextMenu = document.getElementById("calendarContextMenu");
+const calendarTaskPreview = document.getElementById("calendarTaskPreview");
 const authGate = document.getElementById("authGate");
 const appShell = document.getElementById("appShell");
 const authForm = document.getElementById("authForm");
@@ -95,10 +96,64 @@ function hideCalendarContextMenu() {
 function showCalendarContextMenu(date, x, y) {
     if (!calendarContextMenu) return;
 
+    hideCalendarTaskPreview();
     selectedCalendarDate = date;
     selectedCalendarPointer = { x, y };
     calendarContextMenu.classList.remove("hidden");
     placeFloatingElement(calendarContextMenu, x, y);
+}
+
+function hideCalendarTaskPreview() {
+    calendarTaskPreview?.classList.add("hidden");
+    calendarTaskPreview?.setAttribute("aria-hidden", "true");
+}
+
+function placePreviewBesideDay(dayElement) {
+    if (!calendarTaskPreview || !dayElement) return;
+
+    const margin = 12;
+    const dayRect = dayElement.getBoundingClientRect();
+    calendarTaskPreview.style.left = `${dayRect.right + 8}px`;
+    calendarTaskPreview.style.top = `${dayRect.top}px`;
+
+    requestAnimationFrame(() => {
+        const previewRect = calendarTaskPreview.getBoundingClientRect();
+        const hasRoomRight = dayRect.right + 8 + previewRect.width <= window.innerWidth - margin;
+        const left = hasRoomRight
+            ? dayRect.right + 8
+            : Math.max(margin, dayRect.left - previewRect.width - 8);
+        const top = Math.min(
+            Math.max(margin, dayRect.top),
+            window.innerHeight - previewRect.height - margin
+        );
+
+        calendarTaskPreview.style.left = `${left}px`;
+        calendarTaskPreview.style.top = `${top}px`;
+    });
+}
+
+function showCalendarTaskPreview(taskId, dayElement) {
+    if (!calendarTaskPreview) return;
+
+    const task = tasks.find(item => item.id === taskId);
+    if (!task) return;
+
+    const priority = normalizePriority(task.priority);
+    calendarTaskPreview.className = `calendar-task-preview ${priorityClass(priority)}`;
+    calendarTaskPreview.innerHTML = `
+        <h3>${escapeHTML(task.name)}</h3>
+        ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
+        <div class="calendar-preview-meta">
+            <span>${escapeHTML(priority)}</span>
+            <span>Fazer em: ${formatDate(task.date)}</span>
+            <span>${task.done ? "Concluída" : "Pendente"}</span>
+            ${task.requestedBy ? `<span>Solicitante: ${escapeHTML(task.requestedBy)}</span>` : ""}
+            ${task.reminderDay ? `<span>Lembrete: ${escapeHTML(task.reminderDay)}</span>` : ""}
+        </div>
+    `;
+    calendarTaskPreview.classList.remove("hidden");
+    calendarTaskPreview.setAttribute("aria-hidden", "false");
+    placePreviewBesideDay(dayElement);
 }
 
 function setAuthMessage(message, isError = false) {
@@ -604,7 +659,7 @@ function renderCalendar() {
                 <span class="calendar-date">${date.getDate()}</span>
                 <span class="calendar-items">
                     ${dayTasks.map(task => `
-                        <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}">
+                        <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}" tabindex="0">
                             ${escapeHTML(task.name)}
                         </span>
                     `).join("")}
@@ -935,6 +990,7 @@ monthCalendar?.addEventListener("click", event => {
     if (taskItem?.dataset.taskId) {
         event.stopPropagation();
         hideCalendarContextMenu();
+        hideCalendarTaskPreview();
         editTask(taskItem.dataset.taskId, event);
         return;
     }
@@ -944,6 +1000,38 @@ monthCalendar?.addEventListener("click", event => {
 
     event.preventDefault();
     showCalendarContextMenu(day.dataset.date, event.clientX, event.clientY);
+});
+
+monthCalendar?.addEventListener("mouseover", event => {
+    const taskItem = event.target.closest(".calendar-task");
+    if (!taskItem?.dataset.taskId) return;
+
+    showCalendarTaskPreview(
+        taskItem.dataset.taskId,
+        taskItem.closest(".calendar-day")
+    );
+});
+
+monthCalendar?.addEventListener("focusin", event => {
+    const taskItem = event.target.closest(".calendar-task");
+    if (!taskItem?.dataset.taskId) return;
+
+    showCalendarTaskPreview(
+        taskItem.dataset.taskId,
+        taskItem.closest(".calendar-day")
+    );
+});
+
+monthCalendar?.addEventListener("mouseout", event => {
+    const taskItem = event.target.closest(".calendar-task");
+    if (!taskItem || taskItem.contains(event.relatedTarget)) return;
+    hideCalendarTaskPreview();
+});
+
+monthCalendar?.addEventListener("focusout", event => {
+    if (event.target.closest(".calendar-task")) {
+        hideCalendarTaskPreview();
+    }
 });
 
 calendarContextMenu?.addEventListener("click", event => {
@@ -979,10 +1067,14 @@ document.addEventListener("click", event => {
 document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
         hideCalendarContextMenu();
+        hideCalendarTaskPreview();
     }
 });
 
-window.addEventListener("scroll", hideCalendarContextMenu, true);
+window.addEventListener("scroll", () => {
+    hideCalendarContextMenu();
+    hideCalendarTaskPreview();
+}, true);
 
 window.openTaskFormPopover = function (date, x, y) {
     resetForm();
