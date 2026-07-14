@@ -47,6 +47,7 @@ function getLocalMeetings() {
 function toDatabaseMeeting(meeting) {
     return {
         id: meeting.id,
+        user_id: window.tarefasSafCurrentUser?.id,
         subject: meeting.subject,
         date: meeting.date,
         format: meeting.format,
@@ -93,6 +94,12 @@ async function loadMeetings() {
         return;
     }
 
+    if (!window.tarefasSafCurrentUser) {
+        meetings = [];
+        renderMeetingArea();
+        return;
+    }
+
     meetings = getLocalMeetings();
     renderMeetingArea();
 
@@ -102,6 +109,7 @@ async function loadMeetings() {
             meetingsDb
                 .from(MEETINGS_SUPABASE_TABLE)
                 .select("*")
+                .eq("user_id", window.tarefasSafCurrentUser.id)
                 .order("date", { ascending: false })
                 .order("start_time", { ascending: false })
         );
@@ -130,7 +138,7 @@ async function migrateLocalMeetings() {
         return !meetings.some(meeting => meeting.id === localMeeting.id);
     });
 
-    if (!MEETINGS_SUPABASE_READY) return;
+    if (!MEETINGS_SUPABASE_READY || !window.tarefasSafCurrentUser) return;
 
     if (missingMeetings.length === 0) {
         localStorage.removeItem(MEETINGS_STORAGE_KEY);
@@ -175,6 +183,11 @@ async function saveMeeting(meeting) {
         return true;
     }
 
+    if (!window.tarefasSafCurrentUser) {
+        setMeetingsSyncStatus("Entre para salvar reunião na nuvem");
+        return false;
+    }
+
     let result;
     try {
         result = await withTimeout(
@@ -207,6 +220,11 @@ async function removeMeeting(id) {
         return true;
     }
 
+    if (!window.tarefasSafCurrentUser) {
+        setMeetingsSyncStatus("Entre para excluir reunião na nuvem");
+        return false;
+    }
+
     let result;
     try {
         result = await withTimeout(
@@ -214,6 +232,7 @@ async function removeMeeting(id) {
                 .from(MEETINGS_SUPABASE_TABLE)
                 .delete()
                 .eq("id", id)
+                .eq("user_id", window.tarefasSafCurrentUser.id)
         );
     } catch (error) {
         console.error(error);
@@ -472,4 +491,14 @@ function showTab(tabId) {
 }
 
 resetMeetingForm();
-loadMeetings();
+window.loadMeetings = loadMeetings;
+window.clearMeetingsForSignedOutUser = function () {
+    meetings = [];
+    renderMeetingArea();
+};
+
+if (!MEETINGS_SUPABASE_READY || window.tarefasSafCurrentUser) {
+    loadMeetings();
+} else {
+    renderMeetingArea();
+}

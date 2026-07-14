@@ -6,10 +6,13 @@ const SUPABASE_READY = Boolean(CONFIG.url && CONFIG.anonKey && window.supabase);
 const db = SUPABASE_READY
     ? window.supabase.createClient(CONFIG.url, CONFIG.anonKey)
     : null;
+window.tarefasSafDb = db;
 
 const SYNC_TIMEOUT_MS = 8000;
 
 let tasks = [];
+let currentUser = null;
+window.tarefasSafCurrentUser = null;
 let currentFilter = "pendentes";
 let advancedFilters = {
     query: "",
@@ -50,11 +53,43 @@ const calendarTitle = document.getElementById("calendarTitle");
 const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 const todayMonthButton = document.getElementById("todayMonth");
+const authGate = document.getElementById("authGate");
+const appShell = document.getElementById("appShell");
+const authForm = document.getElementById("authForm");
+const authEmail = document.getElementById("authEmail");
+const authPassword = document.getElementById("authPassword");
+const authMessage = document.getElementById("authMessage");
+const signUpButton = document.getElementById("signUpButton");
+const signOutButton = document.getElementById("signOutButton");
+const userIdentity = document.getElementById("userIdentity");
 
 let calendarDate = new Date();
 
 function setSyncStatus(message) {
     if (syncStatus) syncStatus.textContent = message;
+}
+
+function setAuthMessage(message, isError = false) {
+    if (!authMessage) return;
+    authMessage.textContent = message;
+    authMessage.classList.toggle("error", isError);
+}
+
+function setSignedInState(user) {
+    currentUser = user || null;
+    window.tarefasSafCurrentUser = currentUser;
+
+    authGate?.classList.toggle("hidden", Boolean(currentUser));
+    appShell?.classList.toggle("hidden", !currentUser && SUPABASE_READY);
+    signOutButton?.classList.toggle("hidden", !currentUser);
+    userIdentity?.classList.toggle("hidden", !currentUser);
+    document.querySelectorAll(".requires-auth").forEach(element => {
+        element.classList.toggle("hidden", !currentUser);
+    });
+
+    if (userIdentity && currentUser) {
+        userIdentity.textContent = currentUser.email || "Usuário conectado";
+    }
 }
 
 function saveLocalTasks() {
@@ -72,6 +107,7 @@ function getLocalTasks() {
 function toDatabaseTask(task) {
     return {
         id: task.id,
+        user_id: currentUser?.id,
         name: task.name,
         description: task.description || "",
         requested_by: task.requestedBy || "",
@@ -117,8 +153,16 @@ function withTimeout(promise, message = "Tempo limite de sincronização") {
 
 async function loadTasks() {
     if (!SUPABASE_READY) {
+        setSignedInState({ email: "Modo local" });
         tasks = getLocalTasks();
         setSyncStatus("Salvando neste navegador");
+        render();
+        return;
+    }
+
+    if (!currentUser) {
+        tasks = [];
+        setSyncStatus("Entre para sincronizar");
         render();
         return;
     }
@@ -133,6 +177,7 @@ async function loadTasks() {
             db
                 .from(SUPABASE_TABLE)
                 .select("*")
+                .eq("user_id", currentUser.id)
                 .order("date", { ascending: true })
         );
     } catch (error) {
@@ -161,7 +206,7 @@ async function migrateLocalTasks() {
     const localTasks = getLocalTasks();
     const missingTasks = localTasks.filter(localTask => !tasks.some(task => task.id === localTask.id));
 
-    if (!SUPABASE_READY) return;
+    if (!SUPABASE_READY || !currentUser) return;
 
     if (missingTasks.length === 0) {
         localStorage.removeItem(STORAGE_KEY);
@@ -204,6 +249,11 @@ async function saveTask(task) {
         return true;
     }
 
+    if (!currentUser) {
+        setSyncStatus("Entre para salvar na nuvem");
+        return false;
+    }
+
     let result;
     try {
         result = await withTimeout(
@@ -236,6 +286,11 @@ async function saveTaskDate(id, date) {
         return true;
     }
 
+    if (!currentUser) {
+        setSyncStatus("Entre para salvar na nuvem");
+        return false;
+    }
+
     let result;
     try {
         result = await withTimeout(
@@ -246,6 +301,7 @@ async function saveTaskDate(id, date) {
                     updated_at: new Date().toISOString()
                 })
                 .eq("id", id)
+                .eq("user_id", currentUser.id)
         );
     } catch (error) {
         console.error(error);
@@ -272,6 +328,11 @@ async function removeTask(id) {
         return true;
     }
 
+    if (!currentUser) {
+        setSyncStatus("Entre para excluir na nuvem");
+        return false;
+    }
+
     let result;
     try {
         result = await withTimeout(
@@ -279,6 +340,7 @@ async function removeTask(id) {
                 .from(SUPABASE_TABLE)
                 .delete()
                 .eq("id", id)
+                .eq("user_id", currentUser.id)
         );
     } catch (error) {
         console.error(error);
@@ -735,6 +797,72 @@ taskSearchInput.addEventListener("input", () => {
 
 themeToggle?.addEventListener("click", toggleTheme);
 
+authForm?.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!SUPABASE_READY) {
+        setAuthMessage("Supabase não está configurado. O app vai usar modo local.", true);
+        loadTasks();
+        return;
+    }
+
+    setAuthMessage("Entrando...");
+    const { data, error } = await db.auth.signInWithPassword({
+        email: authEmail.value.trim(),
+        password: authPassword.value
+    });
+
+    if (error) {
+        setAuthMessage(error.message || "Não foi possível entrar.", true);
+        return;
+    }
+
+    setSignedInState(data.user);
+    setAuthMessage("");
+    await loadTasks();
+    window.loadMeetings?.();
+});
+
+signUpButton?.addEventListener("click", async () => {
+    if (!SUPABASE_READY) {
+        setAuthMessage("Supabase não está configurado.", true);
+        return;
+    }
+
+    setAuthMessage("Criando conta...");
+    const { data, error } = await db.auth.signUp({
+        email: authEmail.value.trim(),
+        password: authPassword.value
+    });
+
+    if (error) {
+        setAuthMessage(error.message || "Não foi possível criar a conta.", true);
+        return;
+    }
+
+    if (data.session) {
+        setSignedInState(data.user);
+        setAuthMessage("");
+        await loadTasks();
+        window.loadMeetings?.();
+        return;
+    }
+
+    setAuthMessage("Conta criada. Se o Supabase pedir confirmação, verifique seu e-mail antes de entrar.");
+});
+
+signOutButton?.addEventListener("click", async () => {
+    if (SUPABASE_READY) {
+        await db.auth.signOut();
+    }
+
+    tasks = [];
+    setSignedInState(null);
+    render();
+    window.clearMeetingsForSignedOutUser?.();
+    setSyncStatus("Sessão encerrada");
+});
+
 monthCalendar?.addEventListener("click", event => {
     const taskItem = event.target.closest(".calendar-task");
     if (taskItem?.dataset.taskId) {
@@ -770,6 +898,28 @@ todayMonthButton?.addEventListener("click", () => {
 applyTheme(localStorage.getItem("tarefas_saf_theme") || "light");
 resetForm();
 updateFilterButton();
-loadTasks();
+
+async function initializeAuth() {
+    if (!SUPABASE_READY) {
+        await loadTasks();
+        return;
+    }
+
+    const { data } = await db.auth.getSession();
+    setSignedInState(data.session?.user || null);
+
+    db.auth.onAuthStateChange((_event, session) => {
+        setSignedInState(session?.user || null);
+    });
+
+    if (data.session?.user) {
+        await loadTasks();
+    } else {
+        setSyncStatus("Entre para sincronizar");
+        render();
+    }
+}
+
+initializeAuth();
 
 

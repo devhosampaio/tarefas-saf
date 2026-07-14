@@ -17,18 +17,40 @@
       </div>
       <div class="top-actions">
         <p class="sync-status" id="syncStatus">Carregando dados...</p>
+        <span class="user-pill hidden" id="userIdentity"></span>
+        <button class="secondary top-signout hidden" id="signOutButton" type="button">Sair</button>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar modo noturno" title="Modo noturno">
           <svg aria-hidden="true" viewBox="0 0 24 24">
             <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8z"></path>
           </svg>
         </button>
-        <button class="add-btn" id="openForm" title="Nova tarefa">Nova tarefa</button>
-        <button class="add-btn meeting-shortcut" id="newMeetingButton" title="Nova reunião">Nova reunião</button>
+        <button class="add-btn requires-auth hidden" id="openForm" title="Nova tarefa">Nova tarefa</button>
+        <button class="add-btn meeting-shortcut requires-auth hidden" id="newMeetingButton" title="Nova reunião">Nova reunião</button>
       </div>
     </div>
   </header>
 
-  <main>
+  <section class="auth-gate" id="authGate">
+    <form class="auth-card" id="authForm">
+      <h2>Entrar no Tarefas SAF</h2>
+      <p>Use sua conta para sincronizar tarefas e reuniões com segurança.</p>
+
+      <label for="authEmail">E-mail</label>
+      <input id="authEmail" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com" />
+
+      <label for="authPassword">Senha</label>
+      <input id="authPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="Mínimo de 6 caracteres" />
+
+      <div class="auth-actions">
+        <button class="primary" type="submit">Entrar</button>
+        <button class="secondary" type="button" id="signUpButton">Criar conta</button>
+      </div>
+
+      <p class="auth-message" id="authMessage"></p>
+    </form>
+  </section>
+
+  <main id="appShell" class="hidden">
     <nav class="tabs" aria-label="Seções do aplicativo">
       <button class="tab active" type="button" data-tab="tasksTab">Tarefas</button>
       <button class="tab" type="button" data-tab="meetingsTab">Reuniões</button>
