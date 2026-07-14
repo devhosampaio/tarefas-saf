@@ -67,7 +67,10 @@ const userIdentity = document.getElementById("userIdentity");
 
 let calendarDate = new Date();
 let selectedCalendarDate = "";
+let selectedCalendarTaskId = "";
 let selectedCalendarPointer = { x: 0, y: 0 };
+let calendarLongPressTimer = null;
+let suppressNextCalendarClick = false;
 
 function setSyncStatus(message) {
     if (syncStatus) syncStatus.textContent = message;
@@ -93,12 +96,37 @@ function hideCalendarContextMenu() {
     calendarContextMenu?.classList.add("hidden");
 }
 
-function showCalendarContextMenu(date, x, y) {
+function renderCalendarContextMenu(mode) {
+    if (!calendarContextMenu) return;
+
+    if (mode === "task") {
+        calendarContextMenu.innerHTML = `
+            <button type="button" data-calendar-action="edit-task" role="menuitem">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
+                <span>Editar tarefa</span>
+            </button>
+            <button type="button" data-calendar-action="delete-task" role="menuitem" class="danger-menu-item">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
+                <span>Excluir tarefa</span>
+            </button>
+        `;
+        return;
+    }
+
+    calendarContextMenu.innerHTML = `
+        <button type="button" data-calendar-action="new-task" role="menuitem">Nova tarefa</button>
+        <button type="button" data-calendar-action="new-meeting" role="menuitem">Nova reunião</button>
+    `;
+}
+
+function showCalendarContextMenu(mode, date, taskId, x, y) {
     if (!calendarContextMenu) return;
 
     hideCalendarTaskPreview();
     selectedCalendarDate = date;
+    selectedCalendarTaskId = taskId || "";
     selectedCalendarPointer = { x, y };
+    renderCalendarContextMenu(mode);
     calendarContextMenu.classList.remove("hidden");
     placeFloatingElement(calendarContextMenu, x, y);
 }
@@ -771,6 +799,18 @@ window.toggleDone = async function (id) {
     }
 }
 
+async function completeTaskFromCalendar(id) {
+    const task = tasks.find(item => item.id === id);
+    if (!task) return;
+
+    if (task.done) {
+        setSyncStatus("Tarefa já concluída");
+        return;
+    }
+
+    await toggleDone(id);
+}
+
 window.scheduleTaskToday = async function (id) {
     const task = tasks.find(item => item.id === id);
     if (!task) return;
@@ -985,13 +1025,61 @@ signOutButton?.addEventListener("click", async () => {
     setSyncStatus("Sessão encerrada");
 });
 
+monthCalendar?.addEventListener("pointerdown", event => {
+    if (event.pointerType !== "touch") return;
+
+    window.clearTimeout(calendarLongPressTimer);
+    calendarLongPressTimer = window.setTimeout(() => {
+        const taskItem = event.target.closest(".calendar-task");
+        if (taskItem?.dataset.taskId) {
+            const day = taskItem.closest(".calendar-day");
+            suppressNextCalendarClick = true;
+            showCalendarContextMenu("task", day?.dataset.date || "", taskItem.dataset.taskId, event.clientX, event.clientY);
+            return;
+        }
+
+        const day = event.target.closest(".calendar-day");
+        if (day?.dataset.date) {
+            suppressNextCalendarClick = true;
+            showCalendarContextMenu("day", day.dataset.date, "", event.clientX, event.clientY);
+        }
+    }, 550);
+});
+
+["pointerup", "pointercancel", "pointerleave"].forEach(eventName => {
+    monthCalendar?.addEventListener(eventName, () => {
+        window.clearTimeout(calendarLongPressTimer);
+    });
+});
+
 monthCalendar?.addEventListener("click", event => {
+    if (suppressNextCalendarClick) {
+        event.preventDefault();
+        event.stopPropagation();
+        suppressNextCalendarClick = false;
+        return;
+    }
+
     const taskItem = event.target.closest(".calendar-task");
     if (taskItem?.dataset.taskId) {
         event.stopPropagation();
+        event.preventDefault();
         hideCalendarContextMenu();
         hideCalendarTaskPreview();
-        editTask(taskItem.dataset.taskId, event);
+        completeTaskFromCalendar(taskItem.dataset.taskId);
+        return;
+    }
+
+    hideCalendarContextMenu();
+});
+
+monthCalendar?.addEventListener("contextmenu", event => {
+    const taskItem = event.target.closest(".calendar-task");
+    if (taskItem?.dataset.taskId) {
+        event.preventDefault();
+        event.stopPropagation();
+        const day = taskItem.closest(".calendar-day");
+        showCalendarContextMenu("task", day?.dataset.date || "", taskItem.dataset.taskId, event.clientX, event.clientY);
         return;
     }
 
@@ -999,7 +1087,7 @@ monthCalendar?.addEventListener("click", event => {
     if (!day?.dataset.date) return;
 
     event.preventDefault();
-    showCalendarContextMenu(day.dataset.date, event.clientX, event.clientY);
+    showCalendarContextMenu("day", day.dataset.date, "", event.clientX, event.clientY);
 });
 
 monthCalendar?.addEventListener("mouseover", event => {
@@ -1040,7 +1128,18 @@ calendarContextMenu?.addEventListener("click", event => {
 
     const { x, y } = selectedCalendarPointer;
     const date = selectedCalendarDate || toISODate(new Date());
+    const taskId = selectedCalendarTaskId;
     hideCalendarContextMenu();
+
+    if (button.dataset.calendarAction === "edit-task") {
+        editTask(taskId, { clientX: x, clientY: y });
+        return;
+    }
+
+    if (button.dataset.calendarAction === "delete-task") {
+        deleteTask(taskId);
+        return;
+    }
 
     if (button.dataset.calendarAction === "new-task") {
         closeForm();
@@ -1060,7 +1159,7 @@ calendarContextMenu?.addEventListener("click", event => {
 });
 
 document.addEventListener("click", event => {
-    if (event.target.closest("#calendarContextMenu") || event.target.closest(".calendar-day")) return;
+    if (event.target.closest("#calendarContextMenu")) return;
     hideCalendarContextMenu();
 });
 
