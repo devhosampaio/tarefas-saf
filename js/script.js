@@ -449,7 +449,7 @@ function renderTasks() {
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
           <span>Editar</span>
         </button>
-        <button class="small-btn icon-action schedule-today" onclick="scheduleTaskToday('${task.id}')" title="Fazer hoje" aria-label="Programar tarefa para hoje">
+        <button class="small-btn icon-action schedule-today" type="button" data-action="schedule-today" data-task-id="${task.id}" title="Fazer hoje" aria-label="Programar tarefa para hoje">
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M8 15h5"></path></svg>
           <span>Fazer hoje</span>
         </button>
@@ -581,7 +581,6 @@ window.toggleDone = async function (id) {
 }
 
 window.scheduleTaskToday = async function (id) {
-    const previousTasks = [...tasks];
     const task = tasks.find(item => item.id === id);
     if (!task) return;
 
@@ -601,7 +600,8 @@ window.scheduleTaskToday = async function (id) {
 
     const saved = await saveTaskDate(id, today);
     if (!saved) {
-        tasks = previousTasks;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        setSyncStatus("Programado localmente. Nuvem indisponível.");
         render();
     }
 }
@@ -663,6 +663,15 @@ document.querySelectorAll(".chip[data-filter]").forEach(chip => {
         currentFilter = chip.dataset.filter;
         renderTasks();
     });
+});
+
+taskList.addEventListener("click", event => {
+    const button = event.target.closest("[data-action='schedule-today']");
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    scheduleTaskToday(button.dataset.taskId);
 });
 
 openFiltersButton.addEventListener("click", () => {
