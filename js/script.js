@@ -397,7 +397,7 @@ function renderTasks() {
       ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
 
       <div class="meta">
-        <span>Data: ${formatDate(task.date)}</span>
+        <span>Fazer em: ${formatDate(task.date)}</span>
         <span>Solicitante: ${escapeHTML(task.requestedBy || "Não informado")}</span>
         ${task.reminderDay ? `<span>Lembrete: ${escapeHTML(task.reminderDay)}</span>` : ""}
       </div>
@@ -412,6 +412,10 @@ function renderTasks() {
         <button class="small-btn icon-action" onclick="editTask('${task.id}')" title="Editar" aria-label="Editar tarefa">
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
           <span>Editar</span>
+        </button>
+        <button class="small-btn icon-action schedule-today" onclick="scheduleTaskToday('${task.id}')" title="Fazer hoje" aria-label="Programar tarefa para hoje">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M8 15h5"></path></svg>
+          <span>Fazer hoje</span>
         </button>
         <button class="small-btn delete icon-only" onclick="deleteTask('${task.id}')" title="Excluir" aria-label="Excluir tarefa">×</button>
       </div>
@@ -530,6 +534,24 @@ window.toggleDone = async function (id) {
 
     const nextTask = { ...updatedTask, done: !updatedTask.done };
     tasks = tasks.map(task => task.id === id ? nextTask : task);
+    render();
+    setSyncStatus("Salvando...");
+
+    const saved = await saveTask(nextTask);
+    if (!saved) {
+        tasks = previousTasks;
+        render();
+    }
+}
+
+window.scheduleTaskToday = async function (id) {
+    const previousTasks = [...tasks];
+    const task = tasks.find(item => item.id === id);
+    if (!task) return;
+
+    const nextTask = { ...task, date: toISODate(new Date()) };
+    tasks = tasks.map(item => item.id === id ? nextTask : item);
+    calendarDate = new Date();
     render();
     setSyncStatus("Salvando...");
 

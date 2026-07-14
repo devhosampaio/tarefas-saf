@@ -857,7 +857,7 @@ body.dark-mode .task.priority-continuous {
 
 .task-actions {
     display: grid;
-    grid-template-columns: 44px 44px 44px;
+    grid-template-columns: repeat(4, 44px);
     gap: 6px;
     margin-top: auto;
     padding-top: 12px;
@@ -934,6 +934,12 @@ body.dark-mode .row-actions button:hover {
     border-color: #bdd0e3;
 }
 
+.schedule-today {
+    color: var(--priority-routine);
+    background: #eaf2ff;
+    border-color: #a8c7ff;
+}
+
 .icon-only {
     font-size: 1.25rem;
     line-height: 1;
@@ -949,6 +955,11 @@ body.dark-mode .icon-action:first-child {
 body.dark-mode .icon-action:nth-child(2) {
     background: #1f3550;
     border-color: #3f638a;
+}
+
+body.dark-mode .schedule-today {
+    background: #172744;
+    border-color: #345b99;
 }
 
 body.dark-mode .icon-only {
