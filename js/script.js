@@ -58,6 +58,8 @@ const calendarContextMenu = document.getElementById("calendarContextMenu");
 const calendarTaskPreview = document.getElementById("calendarTaskPreview");
 const miniCalendar = document.getElementById("miniCalendar");
 const miniCalendarTitle = document.getElementById("miniCalendarTitle");
+const miniPrevMonthButton = document.getElementById("miniPrevMonth");
+const miniNextMonthButton = document.getElementById("miniNextMonth");
 const authGate = document.getElementById("authGate");
 const appShell = document.getElementById("appShell");
 const authForm = document.getElementById("authForm");
@@ -1484,6 +1486,16 @@ miniCalendar?.addEventListener("click", event => {
 
     const [year, month, day] = dayButton.dataset.miniDate.split("-").map(Number);
     calendarDate = new Date(year, month - 1, day);
+    renderCalendar();
+});
+
+miniPrevMonthButton?.addEventListener("click", () => {
+    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+    renderCalendar();
+});
+
+miniNextMonthButton?.addEventListener("click", () => {
+    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
     renderCalendar();
 });
 

@@ -540,10 +540,34 @@ main {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
     color: var(--text);
     font-size: .86rem;
     font-weight: 700;
     text-transform: capitalize;
+}
+
+.mini-calendar-controls {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.mini-calendar-controls button {
+    width: 28px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+    color: var(--muted);
+    font-size: .78rem;
+    font-weight: 700;
+    border-radius: 4px;
+}
+
+.mini-calendar-controls button:hover {
+    color: var(--main);
+    border-color: color-mix(in srgb, var(--main) 42%, var(--line));
 }
 
 .mini-calendar-weekdays,
@@ -595,7 +619,7 @@ main {
 .mini-calendar-day.has-tasks::after {
     content: "";
     position: absolute;
-    bottom: 4px;
+    bottom: 1px;
     width: 4px;
     height: 4px;
     border-radius: 999px;
@@ -804,7 +828,7 @@ main {
 }
 
 .calendar-actions {
-    display: flex;
+    display: none;
     gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
