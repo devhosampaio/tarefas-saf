@@ -64,6 +64,7 @@ const miniCalendar = document.getElementById("miniCalendar");
 const miniCalendarTitle = document.getElementById("miniCalendarTitle");
 const miniPrevMonthButton = document.getElementById("miniPrevMonth");
 const miniNextMonthButton = document.getElementById("miniNextMonth");
+const miniCalendarPopupToggle = document.getElementById("miniCalendarPopupToggle");
 const authGate = document.getElementById("authGate");
 const appShell = document.getElementById("appShell");
 const authForm = document.getElementById("authForm");
@@ -688,6 +689,10 @@ function toggleTheme() {
 
 function applySidebarState(isCollapsed) {
     appShell?.classList.toggle("is-sidebar-collapsed", isCollapsed);
+    if (!isCollapsed) {
+        appShell?.classList.remove("is-mini-calendar-open");
+        miniCalendarPopupToggle?.setAttribute("aria-expanded", "false");
+    }
     sidebarToggle?.setAttribute("aria-label", isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral");
     sidebarToggle?.setAttribute("title", isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral");
 }
@@ -696,6 +701,13 @@ function toggleSidebar() {
     const isCollapsed = !appShell?.classList.contains("is-sidebar-collapsed");
     localStorage.setItem("tarefas_saf_sidebar_collapsed", String(isCollapsed));
     applySidebarState(isCollapsed);
+}
+
+function toggleMiniCalendarPopup() {
+    if (!appShell?.classList.contains("is-sidebar-collapsed")) return;
+
+    const isOpen = appShell.classList.toggle("is-mini-calendar-open");
+    miniCalendarPopupToggle?.setAttribute("aria-expanded", String(isOpen));
 }
 
 function activeFiltersCount() {
@@ -1362,6 +1374,18 @@ taskSearchInput.addEventListener("input", () => {
 
 themeToggle?.addEventListener("click", toggleTheme);
 sidebarToggle?.addEventListener("click", toggleSidebar);
+miniCalendarPopupToggle?.addEventListener("click", event => {
+    event.stopPropagation();
+    toggleMiniCalendarPopup();
+});
+
+document.addEventListener("click", event => {
+    if (!appShell?.classList.contains("is-mini-calendar-open")) return;
+    if (event.target.closest(".mini-calendar") || event.target.closest("#miniCalendarPopupToggle")) return;
+
+    appShell.classList.remove("is-mini-calendar-open");
+    miniCalendarPopupToggle?.setAttribute("aria-expanded", "false");
+});
 
 authForm?.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1658,6 +1682,8 @@ document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
         hideCalendarContextMenu();
         hideCalendarTaskPreview();
+        appShell?.classList.remove("is-mini-calendar-open");
+        miniCalendarPopupToggle?.setAttribute("aria-expanded", "false");
     }
 });
 
