@@ -423,6 +423,11 @@ h1 {
     stroke-width: 2;
 }
 
+.add-btn svg *,
+.calendar-context-menu svg * {
+    vector-effect: non-scaling-stroke;
+}
+
 .add-btn:hover {
     background: var(--main-dark);
 }

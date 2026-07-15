@@ -116,8 +116,22 @@ function renderCalendarContextMenu(mode) {
     }
 
     calendarContextMenu.innerHTML = `
-        <button type="button" data-calendar-action="new-task" role="menuitem">Nova tarefa</button>
-        <button type="button" data-calendar-action="new-meeting" role="menuitem">Nova reunião</button>
+        <button type="button" data-calendar-action="new-task" role="menuitem">
+            <svg aria-hidden="true" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+            </svg>
+            <span>Nova tarefa</span>
+        </button>
+        <button type="button" data-calendar-action="new-meeting" role="menuitem">
+            <svg aria-hidden="true" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 3v4"></path>
+                <path d="M17 3v4"></path>
+                <path d="M4 8h16"></path>
+                <rect x="4" y="5" width="16" height="16" rx="2"></rect>
+            </svg>
+            <span>Nova reunião</span>
+        </button>
     `;
 }
 
