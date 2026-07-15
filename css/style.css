@@ -518,13 +518,89 @@ main {
 .sidebar-footer {
     display: grid;
     gap: 8px;
-    margin-top: auto;
+    margin-top: 0;
 }
 
 .app-content {
     min-width: 0;
     padding: 18px;
 }
+
+.mini-calendar {
+    display: grid;
+    gap: 10px;
+    margin-top: auto;
+    padding: 12px;
+    background: var(--surface-alt);
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.mini-calendar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text);
+    font-size: .86rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.mini-calendar-weekdays,
+.mini-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+}
+
+.mini-calendar-weekdays span {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: .66rem;
+    font-weight: 700;
+}
+
+.mini-calendar-day {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font-size: .75rem;
+    font-weight: 600;
+    border-radius: 9px;
+}
+
+.mini-calendar-day:hover {
+    background: color-mix(in srgb, var(--main-soft) 56%, transparent);
+}
+
+.mini-calendar-day.muted {
+    color: color-mix(in srgb, var(--muted) 56%, transparent);
+}
+
+.mini-calendar-day.today {
+    box-shadow: inset 0 0 0 1px var(--main);
+}
+
+.mini-calendar-day.selected {
+    background: var(--main);
+    color: white;
+}
+
+.mini-calendar-day.has-tasks::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: .72;
 }
 
 .auth-gate {
@@ -1939,6 +2015,10 @@ body.dark-mode .row-actions button {
 
     .sidebar-actions {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .mini-calendar {
+        padding: 10px;
     }
 
     .sidebar-footer {

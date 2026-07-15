@@ -56,6 +56,8 @@ const nextMonthButton = document.getElementById("nextMonth");
 const todayMonthButton = document.getElementById("todayMonth");
 const calendarContextMenu = document.getElementById("calendarContextMenu");
 const calendarTaskPreview = document.getElementById("calendarTaskPreview");
+const miniCalendar = document.getElementById("miniCalendar");
+const miniCalendarTitle = document.getElementById("miniCalendarTitle");
 const authGate = document.getElementById("authGate");
 const appShell = document.getElementById("appShell");
 const authForm = document.getElementById("authForm");
@@ -716,6 +718,37 @@ function render() {
     renderTasks();
 }
 
+function renderMiniCalendar() {
+    if (!miniCalendar || !miniCalendarTitle) return;
+
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const today = toISODate(new Date());
+    const selected = toISODate(calendarDate);
+    const firstDay = new Date(year, month, 1);
+    const gridStart = new Date(firstDay);
+    gridStart.setDate(firstDay.getDate() - firstDay.getDay());
+
+    miniCalendarTitle.textContent = formatMonthTitle(calendarDate);
+
+    miniCalendar.innerHTML = Array.from({ length: 42 }, (_, index) => {
+        const date = new Date(gridStart);
+        date.setDate(gridStart.getDate() + index);
+
+        const isoDate = toISODate(date);
+        const isCurrentMonth = date.getMonth() === month;
+        const isToday = isoDate === today;
+        const isSelected = isoDate === selected;
+        const hasTasks = tasks.some(task => shouldShowTaskOnCalendarDay(task, isoDate));
+
+        return `
+            <button class="mini-calendar-day ${isCurrentMonth ? "" : "muted"} ${isToday ? "today" : ""} ${isSelected ? "selected" : ""} ${hasTasks ? "has-tasks" : ""}" type="button" data-mini-date="${isoDate}" aria-label="${formatDate(isoDate)}">
+                <span>${date.getDate()}</span>
+            </button>
+        `;
+    }).join("");
+}
+
 function renderCalendar() {
     if (!monthCalendar || !calendarTitle) return;
 
@@ -766,6 +799,7 @@ function renderCalendar() {
     calendarWeekdays.innerHTML = weekdayLabels.map(label => `<span>${label}</span>`).join("");
     calendarWeekdays.className = `calendar-weekdays calendar-view-${calendarView}`;
     monthCalendar.className = `month-calendar calendar-view-${calendarView}`;
+    renderMiniCalendar();
 
     monthCalendar.innerHTML = days.map(date => {
         const isoDate = toISODate(date);
@@ -1441,6 +1475,15 @@ nextMonthButton?.addEventListener("click", () => {
 
 todayMonthButton?.addEventListener("click", () => {
     calendarDate = new Date();
+    renderCalendar();
+});
+
+miniCalendar?.addEventListener("click", event => {
+    const dayButton = event.target.closest("[data-mini-date]");
+    if (!dayButton) return;
+
+    const [year, month, day] = dayButton.dataset.miniDate.split("-").map(Number);
+    calendarDate = new Date(year, month - 1, day);
     renderCalendar();
 });
 
