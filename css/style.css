@@ -8,7 +8,7 @@
     --liquid-blur: 0px;
     --liquid-border: #e5e7eb;
     --liquid-shadow: 0 8px 30px rgba(15, 23, 42, .05);
-    --liquid-radius: 14px;
+    --liquid-radius: 6px;
     --liquid-noise-opacity: 0;
     --liquid-transition: .18s ease;
     --acrylic-rgb: 255 255 255;
@@ -409,7 +409,7 @@ h1 {
     color: white;
     padding: 0 14px;
     font-weight: 600;
-    border-radius: 999px;
+    border-radius: 6px;
 }
 
 .add-btn svg {
@@ -532,7 +532,7 @@ main {
     margin-top: auto;
     padding: 12px;
     background: var(--surface-alt);
-    border-radius: 16px;
+    border-radius: 6px;
     box-shadow: inset 0 0 0 1px var(--line);
 }
 
@@ -572,7 +572,7 @@ main {
     color: var(--text);
     font-size: .75rem;
     font-weight: 600;
-    border-radius: 9px;
+    border-radius: 4px;
 }
 
 .mini-calendar-day:hover {
@@ -655,7 +655,7 @@ main {
     box-shadow: none;
     overflow-x: auto;
     padding: 4px;
-    border-radius: 999px;
+    border-radius: 6px;
 }
 
 .app-sidebar .tabs {
@@ -663,7 +663,7 @@ main {
     gap: 4px;
     margin: 0;
     padding: 4px;
-    border-radius: 14px;
+    border-radius: 6px;
 }
 
 .tab {
@@ -674,7 +674,7 @@ main {
     padding: 0 16px;
     font-weight: 500;
     font-size: .9rem;
-    border-radius: 999px;
+    border-radius: 4px;
 }
 
 .app-sidebar .tab {
@@ -682,7 +682,7 @@ main {
     width: 100%;
     text-align: left;
     min-height: 38px;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
 .tab.active {
@@ -723,7 +723,7 @@ main {
     overflow: hidden;
     border: 0;
     background: var(--surface-solid);
-    border-radius: 16px;
+    border-radius: 6px;
     box-shadow: inset 0 0 0 1px var(--line);
 }
 
@@ -773,7 +773,7 @@ main {
     overflow: hidden;
     background: var(--surface-solid);
     border: 0;
-    border-radius: 22px;
+    border-radius: 6px;
     box-shadow: inset 0 0 0 1px var(--line), var(--shadow);
 }
 
@@ -814,7 +814,7 @@ main {
     background: var(--surface-alt);
     box-shadow: none;
     padding: 3px;
-    border-radius: 999px;
+    border-radius: 6px;
 }
 
 .view-btn {
@@ -825,7 +825,7 @@ main {
     padding: 0 10px;
     font-size: .8rem;
     font-weight: 600;
-    border-radius: 999px;
+    border-radius: 4px;
 }
 
 .view-btn.active {
@@ -980,7 +980,7 @@ main {
     text-overflow: ellipsis;
     border: 1px solid transparent;
     border-left-width: 3px;
-    border-radius: 8px;
+    border-radius: 4px;
     min-height: 30px;
     padding: 6px 9px;
     background: var(--surface-alt);
@@ -1058,7 +1058,7 @@ main {
     border: 1px solid var(--line-strong);
     box-shadow: 0 12px 28px rgba(15, 23, 42, .14);
     padding: 5px;
-    border-radius: 12px;
+    border-radius: 6px;
     animation: menuIn .14s ease-out;
 }
 
@@ -1074,7 +1074,7 @@ main {
     padding: 0 10px;
     text-align: left;
     font-weight: 500;
-    border-radius: 8px;
+    border-radius: 4px;
 }
 
 .calendar-context-menu svg {
@@ -1117,7 +1117,7 @@ main {
     border-left: 5px solid var(--line);
     box-shadow: 0 16px 36px rgba(15, 23, 42, .16);
     padding: 14px;
-    border-radius: 14px;
+    border-radius: 6px;
     pointer-events: none;
     animation: popoverIn .14s ease-out;
 }
@@ -1173,7 +1173,7 @@ main {
     padding: 5px 7px;
     font-size: .72rem;
     font-weight: 700;
-    border-radius: 999px;
+    border-radius: 4px;
 }
 
 body.dark-mode .calendar-task.priority-high {
@@ -1206,14 +1206,14 @@ body.dark-mode .calendar-task.done {
     padding: 16px;
     margin-bottom: 12px;
     box-shadow: inset 0 0 0 1px var(--line);
-    border-radius: 16px;
+    border-radius: 6px;
 }
 
 .calendar-panel.panel {
     padding: 0;
     overflow: hidden;
     background: var(--surface-solid);
-    border-radius: 22px;
+    border-radius: 6px;
     border: 0;
     box-shadow: inset 0 0 0 1px var(--line), var(--shadow);
 }
@@ -1388,7 +1388,7 @@ input[readonly] {
     border: 0;
     padding: 7px;
     box-shadow: inset 0 0 0 1px var(--line);
-    border-radius: 16px;
+    border-radius: 6px;
 }
 
 .filters {
@@ -1471,7 +1471,7 @@ input[readonly] {
     padding: 8px 12px;
     color: var(--muted);
     font-weight: 600;
-    border-radius: 999px;
+    border-radius: 6px;
 }
 
 .chip.active {
@@ -1541,7 +1541,7 @@ input[readonly] {
     flex-direction: column;
     min-height: 282px;
     overflow: visible;
-    border-radius: 12px;
+    border-radius: 6px;
     box-shadow: inset 0 0 0 1px var(--line);
 }
 
@@ -1665,7 +1665,7 @@ body.dark-mode .task.done .badge {
     flex: none;
     border: 1px solid transparent;
     text-transform: uppercase;
-    border-radius: 999px;
+    border-radius: 4px;
 }
 
 .badge.priority-high {
@@ -1713,7 +1713,7 @@ body.dark-mode .task.done .badge {
     background: var(--surface-alt);
     border: 1px solid var(--line);
     padding: 6px 8px;
-    border-radius: 999px;
+    border-radius: 4px;
 }
 
 .task-actions {
@@ -2038,7 +2038,7 @@ body.dark-mode .row-actions button {
         padding: 4px;
         background: var(--surface-alt);
         border-bottom: 0;
-        border-radius: 14px;
+        border-radius: 6px;
     }
 
     .tab {
