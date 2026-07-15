@@ -9,26 +9,6 @@
 </head>
 
 <body>
-  <header>
-    <div class="topbar">
-      <div class="brand-block">
-        <h1>Tarefas SAF</h1>
-      </div>
-      <div class="top-actions">
-        <p class="sync-status" id="syncStatus">Carregando dados...</p>
-        <span class="user-pill hidden" id="userIdentity"></span>
-        <button class="secondary top-signout hidden" id="signOutButton" type="button">Sair</button>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar modo noturno" title="Modo noturno">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8z"></path>
-          </svg>
-        </button>
-        <button class="add-btn requires-auth hidden" id="openForm" title="Nova tarefa">Nova tarefa</button>
-        <button class="add-btn meeting-shortcut requires-auth hidden" id="newMeetingButton" title="Nova reunião">Nova reunião</button>
-      </div>
-    </div>
-  </header>
-
   <section class="auth-gate" id="authGate">
     <form class="auth-card" id="authForm">
       <h2>Entrar no Tarefas SAF</h2>
@@ -50,10 +30,34 @@
   </section>
 
   <main id="appShell" class="hidden">
-    <nav class="tabs" aria-label="Seções do aplicativo">
-      <button class="tab active" type="button" data-tab="tasksTab">Tarefas</button>
-      <button class="tab" type="button" data-tab="meetingsTab">Reuniões</button>
-    </nav>
+    <aside class="app-sidebar" aria-label="Menu principal">
+      <div class="sidebar-brand">
+        <h1>Tarefas SAF</h1>
+        <p class="sync-status" id="syncStatus">Carregando dados...</p>
+      </div>
+
+      <nav class="tabs" aria-label="Seções do aplicativo">
+        <button class="tab active" type="button" data-tab="tasksTab">Tarefas</button>
+        <button class="tab" type="button" data-tab="meetingsTab">Reuniões</button>
+      </nav>
+
+      <div class="sidebar-actions">
+        <button class="add-btn requires-auth hidden" id="openForm" title="Nova tarefa">Nova tarefa</button>
+        <button class="add-btn meeting-shortcut requires-auth hidden" id="newMeetingButton" title="Nova reunião">Nova reunião</button>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="user-pill hidden" id="userIdentity"></span>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar modo noturno" title="Modo noturno">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8z"></path>
+          </svg>
+        </button>
+        <button class="secondary top-signout hidden" id="signOutButton" type="button">Sair</button>
+      </div>
+    </aside>
+
+    <div class="app-content">
 
     <section class="tab-panel active" id="tasksTab">
       <section class="calendar-panel panel" aria-label="Calendário de tarefas">
@@ -333,6 +337,7 @@
         </section>
       </section>
     </section>
+    </div>
   </main>
 
   <script src="./js/config.js"></script>

@@ -553,16 +553,11 @@ function isRoutineTask(task) {
     return normalizePriority(task.priority) === "Rotineira";
 }
 
-function shouldCarryTaskToToday(task, isoDate) {
-    const today = toISODate(new Date());
-    return !task.done && isoDate === today && task.date < today;
-}
-
 function shouldShowTaskOnCalendarDay(task, isoDate) {
     if (isWeekendDate(isoDate)) return false;
 
     if (!isRoutineTask(task)) {
-        return task.date === isoDate || task.completedAt === isoDate || shouldCarryTaskToToday(task, isoDate);
+        return task.date === isoDate || task.completedAt === isoDate;
     }
 
     if (!task.date || isoDate < task.date) return false;
@@ -766,7 +761,7 @@ function renderCalendar() {
                 <span class="calendar-date">${date.getDate()}</span>
                 <span class="calendar-items">
                     ${dayTasks.map(task => `
-                        <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}" tabindex="0">
+                        <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}" tabindex="0" draggable="true">
                             ${escapeHTML(task.name)}
                         </span>
                     `).join("")}
@@ -1201,6 +1196,29 @@ monthCalendar?.addEventListener("dragover", event => {
         if (activeDay !== day) activeDay.classList.remove("drag-over");
     });
     day.classList.add("drag-over");
+});
+
+monthCalendar?.addEventListener("dragstart", event => {
+    const taskItem = event.target.closest(".calendar-task[data-task-id]");
+    if (!taskItem) return;
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", taskItem.dataset.taskId);
+    taskItem.classList.add("dragging");
+    suppressNextCalendarClick = true;
+    hideCalendarContextMenu();
+    hideCalendarTaskPreview();
+});
+
+monthCalendar?.addEventListener("dragend", event => {
+    const taskItem = event.target.closest(".calendar-task[data-task-id]");
+    taskItem?.classList.remove("dragging");
+    document.querySelectorAll(".calendar-day.drag-over").forEach(day => {
+        day.classList.remove("drag-over");
+    });
+    window.setTimeout(() => {
+        suppressNextCalendarClick = false;
+    }, 250);
 });
 
 monthCalendar?.addEventListener("dragleave", event => {

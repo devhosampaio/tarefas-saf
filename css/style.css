@@ -459,9 +459,55 @@ body.dark-mode .meeting-shortcut {
 }
 
 main {
-    padding: 16px 18px 18px;
-    max-width: 1560px;
-    margin: 0 auto;
+    padding: 0;
+    max-width: none;
+    margin: 0;
+}
+
+#appShell {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 248px minmax(0, 1fr);
+    background: var(--bg);
+}
+
+#appShell.hidden {
+    display: none;
+}
+
+.app-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 18px 14px;
+    background: var(--surface-solid);
+    border-right: 1px solid var(--line);
+}
+
+.sidebar-brand {
+    display: grid;
+    gap: 8px;
+    padding: 2px 4px 0;
+}
+
+.sidebar-actions {
+    display: grid;
+    gap: 8px;
+}
+
+.sidebar-footer {
+    display: grid;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.app-content {
+    min-width: 0;
+    padding: 18px;
+}
 }
 
 .auth-gate {
@@ -519,6 +565,14 @@ main {
     border-radius: 999px;
 }
 
+.app-sidebar .tabs {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 4px;
+    border-radius: 14px;
+}
+
 .tab {
     border: 0;
     background: transparent;
@@ -530,10 +584,33 @@ main {
     border-radius: 999px;
 }
 
+.app-sidebar .tab {
+    justify-content: flex-start;
+    width: 100%;
+    text-align: left;
+    min-height: 38px;
+    border-radius: 10px;
+}
+
 .tab.active {
     background: var(--surface-solid);
     color: var(--text);
     box-shadow: 0 1px 4px rgba(15, 23, 42, .08);
+}
+
+.app-sidebar .add-btn,
+.app-sidebar .top-signout,
+.app-sidebar .theme-toggle {
+    width: 100%;
+}
+
+.app-sidebar .add-btn,
+.app-sidebar .top-signout {
+    justify-content: center;
+}
+
+.app-sidebar .theme-toggle {
+    height: 38px;
 }
 
 .tab-panel {
@@ -822,6 +899,11 @@ main {
 .calendar-task:hover {
     filter: saturate(1.04);
     box-shadow: 0 2px 7px rgba(15, 23, 42, .10);
+}
+
+.calendar-task.dragging {
+    cursor: grabbing;
+    opacity: .55;
 }
 
 .calendar-task.priority-high {
@@ -1741,7 +1823,7 @@ body.dark-mode .row-actions button {
 
 @media (min-width: 900px) {
     .topbar,
-    main {
+    .app-content {
         padding-left: clamp(28px, 4vw, 72px);
         padding-right: clamp(28px, 4vw, 72px);
     }
@@ -1804,18 +1886,48 @@ body.dark-mode .row-actions button {
     }
 
     main {
+        padding: 0;
+    }
+
+    #appShell {
+        grid-template-columns: 1fr;
+    }
+
+    .app-sidebar {
+        position: static;
+        height: auto;
+        gap: 10px;
+        padding: 12px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .sidebar-brand {
+        padding: 0;
+    }
+
+    .sidebar-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .sidebar-footer {
+        grid-template-columns: 1fr 42px 1fr;
+        align-items: center;
+        margin-top: 0;
+    }
+
+    .app-content {
         padding: 12px;
     }
 
     .tabs {
-        position: sticky;
-        top: 0;
-        z-index: 30;
-        margin: 0 -12px 12px;
-        padding: 8px 12px;
-        background: var(--bg);
-        border-bottom: 1px solid var(--line);
-        border-radius: 0;
+        position: static;
+        z-index: auto;
+        margin: 0;
+        padding: 4px;
+        background: var(--surface-alt);
+        border-bottom: 0;
+        border-radius: 14px;
     }
 
     .tab {
