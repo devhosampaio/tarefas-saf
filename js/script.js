@@ -512,8 +512,16 @@ function isRoutineTask(task) {
     return normalizePriority(task.priority) === "Rotineira";
 }
 
+function shouldCarryTaskToToday(task, isoDate) {
+    const today = toISODate(new Date());
+    return !task.done && isoDate === today && task.date < today;
+}
+
 function shouldShowTaskOnCalendarDay(task, isoDate) {
-    if (!isRoutineTask(task)) return task.date === isoDate;
+    if (!isRoutineTask(task)) {
+        return task.date === isoDate || shouldCarryTaskToToday(task, isoDate);
+    }
+
     if (!task.date || isoDate < task.date) return false;
     if (!task.done) return true;
 
