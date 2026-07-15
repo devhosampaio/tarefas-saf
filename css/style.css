@@ -43,6 +43,7 @@
     --priority-routine: #169fe6;
     --shadow: var(--liquid-shadow);
     --radius: var(--acrylic-radius);
+    --icon-button-size: 34px;
 }
 
 * {
@@ -569,8 +570,8 @@ main {
 }
 
 .sidebar-toggle {
-    width: 30px;
-    height: 30px;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
     display: inline-grid;
     place-items: center;
     flex: none;
@@ -586,8 +587,8 @@ main {
 }
 
 .sidebar-toggle svg {
-    width: 17px;
-    height: 17px;
+    width: 18px;
+    height: 18px;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
@@ -640,14 +641,18 @@ main {
 }
 
 #appShell.is-sidebar-collapsed .tabs {
-    padding: 3px;
+    padding: 4px;
+    gap: 4px;
 }
 
 #appShell.is-sidebar-collapsed .tab {
-    min-height: 34px;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    min-height: var(--icon-button-size);
     padding: 0;
     font-size: 0;
     justify-content: center;
+    justify-self: center;
 }
 
 #appShell.is-sidebar-collapsed .tab svg {
@@ -1826,6 +1831,15 @@ input[readonly] {
     border-radius: var(--radius);
 }
 
+.calendar-actions .text-btn {
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    line-height: 1;
+}
+
 .chip {
     flex: none;
     border: 1px solid var(--line);
@@ -2400,6 +2414,10 @@ body.dark-mode .row-actions button {
 
     #appShell.is-sidebar-collapsed .tab {
         font-size: .9rem;
+        width: auto;
+        height: auto;
+        min-height: 42px;
+        justify-self: stretch;
     }
 
     .mini-calendar {
