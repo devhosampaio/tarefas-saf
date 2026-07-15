@@ -39,6 +39,10 @@ const requestedByInput = document.getElementById("requestedBy");
 const priorityInput = document.getElementById("priority");
 const dateInput = document.getElementById("date");
 const reminderDayInput = document.getElementById("reminderDay");
+const routineTaskInput = document.getElementById("routineTask");
+const routineOptions = document.getElementById("routineOptions");
+const routineFrequencyInput = document.getElementById("routineFrequency");
+const routineDays = document.getElementById("routineDays");
 const syncStatus = document.getElementById("syncStatus");
 const filterPanel = document.getElementById("filterPanel");
 const filterDateInput = document.getElementById("filterDate");
@@ -588,6 +592,27 @@ function isRoutineTask(task) {
     return normalizePriority(task.priority) === "Rotineira";
 }
 
+function getRoutineDayInputs() {
+    return Array.from(document.querySelectorAll("input[name='routineDay']"));
+}
+
+function weekdayNameFromDate(isoDate) {
+    const [year, month, day] = isoDate.split("-").map(Number);
+    return new Intl.DateTimeFormat("pt-BR", { weekday: "long", timeZone: "UTC" })
+        .format(new Date(Date.UTC(year, month - 1, day)))
+        .replace(/^\w/, char => char.toUpperCase());
+}
+
+function routineMatchesDate(task, isoDate) {
+    const reminder = task.reminderDay || "";
+    if (!reminder || reminder === "Todo dia") return true;
+
+    const selectedDays = reminder.split(",").map(day => day.trim()).filter(Boolean);
+    if (selectedDays.length === 0) return true;
+
+    return selectedDays.includes(weekdayNameFromDate(isoDate));
+}
+
 function shouldShowTaskOnCalendarDay(task, isoDate) {
     if (isWeekendDate(isoDate)) return false;
 
@@ -596,9 +621,50 @@ function shouldShowTaskOnCalendarDay(task, isoDate) {
     }
 
     if (!task.date || isoDate < task.date) return false;
+    if (!routineMatchesDate(task, isoDate)) return false;
     if (!task.done) return true;
 
     return Boolean(task.completedAt) && isoDate <= task.completedAt;
+}
+
+function getNextBusinessDate(date = new Date()) {
+    const nextDate = new Date(date);
+    while (nextDate.getDay() === 0 || nextDate.getDay() === 6) {
+        nextDate.setDate(nextDate.getDate() + 1);
+    }
+    return toISODate(nextDate);
+}
+
+function updateRoutineOptionsVisibility() {
+    const isRoutine = Boolean(routineTaskInput?.checked);
+    routineOptions?.classList.toggle("hidden", !isRoutine);
+    routineDays?.classList.toggle("hidden", !isRoutine || routineFrequencyInput?.value !== "selected-days");
+}
+
+function getRoutineReminderValue() {
+    if (!routineTaskInput?.checked) return "";
+    if (routineFrequencyInput?.value !== "selected-days") return "Todo dia";
+
+    return getRoutineDayInputs()
+        .filter(input => input.checked)
+        .map(input => input.value)
+        .join(",");
+}
+
+function applyRoutineSettings(task) {
+    const isRoutine = isRoutineTask(task);
+    const selectedDays = (task.reminderDay || "").split(",").map(day => day.trim()).filter(Boolean);
+
+    if (routineTaskInput) routineTaskInput.checked = isRoutine;
+    if (routineFrequencyInput) {
+        routineFrequencyInput.value = isRoutine && selectedDays.length > 0 && task.reminderDay !== "Todo dia"
+            ? "selected-days"
+            : "daily";
+    }
+    getRoutineDayInputs().forEach(input => {
+        input.checked = selectedDays.includes(input.value);
+    });
+    updateRoutineOptionsVisibility();
 }
 
 function normalizeSearchText(value) {
@@ -863,8 +929,14 @@ function resetForm() {
     descInput.value = "";
     requestedByInput.value = "";
     priorityInput.value = "Média";
-    dateInput.value = new Date().toISOString().split("T")[0];
+    dateInput.value = getNextBusinessDate();
     reminderDayInput.value = "";
+    if (routineTaskInput) routineTaskInput.checked = false;
+    if (routineFrequencyInput) routineFrequencyInput.value = "daily";
+    getRoutineDayInputs().forEach(input => {
+        input.checked = false;
+    });
+    updateRoutineOptionsVisibility();
     document.getElementById("formTitle").textContent = "Nova tarefa";
 }
 
@@ -900,9 +972,20 @@ taskForm.addEventListener("submit", async event => {
         submitButton.textContent = "Salvando...";
     }
 
-    if (isWeekendDate(dateInput.value)) {
+    const selectedDate = dateInput.value || getNextBusinessDate();
+    if (isWeekendDate(selectedDate)) {
         setSyncStatus("Sábado e domingo estão desativados");
-        dateInput.focus();
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalSubmitText;
+        }
+        return;
+    }
+
+    const isRoutine = Boolean(routineTaskInput?.checked);
+    const reminderValue = getRoutineReminderValue();
+    if (isRoutine && routineFrequencyInput?.value === "selected-days" && !reminderValue) {
+        setSyncStatus("Selecione pelo menos um dia para a tarefa rotineira");
         if (submitButton) {
             submitButton.disabled = false;
             submitButton.textContent = originalSubmitText;
@@ -916,9 +999,9 @@ taskForm.addEventListener("submit", async event => {
         name: nameInput.value.trim(),
         description: descInput.value.trim(),
         requestedBy: requestedByInput.value.trim(),
-        priority: priorityInput.value,
-        date: dateInput.value,
-        reminderDay: reminderDayInput.value,
+        priority: isRoutine ? "Rotineira" : "Média",
+        date: selectedDate,
+        reminderDay: reminderValue,
         done: taskId.value ? tasks.find(t => t.id === taskId.value)?.done || false : false,
         completedAt: taskId.value ? tasks.find(t => t.id === taskId.value)?.completedAt || "" : "",
         createdAt: taskId.value ? tasks.find(t => t.id === taskId.value)?.createdAt : new Date().toISOString()
@@ -1145,6 +1228,7 @@ window.editTask = function (id, sourceEvent) {
     priorityInput.value = normalizePriority(task.priority);
     dateInput.value = task.date;
     reminderDayInput.value = task.reminderDay || "";
+    applyRoutineSettings(task);
 
     document.getElementById("formTitle").textContent = "Editar tarefa";
     window.closeMeetingPopover?.();
@@ -1196,6 +1280,9 @@ document.getElementById("openForm").addEventListener("click", () => {
 });
 
 document.getElementById("cancelForm").addEventListener("click", closeForm);
+
+routineTaskInput?.addEventListener("change", updateRoutineOptionsVisibility);
+routineFrequencyInput?.addEventListener("change", updateRoutineOptionsVisibility);
 
 document.querySelectorAll(".chip[data-filter]").forEach(chip => {
     chip.addEventListener("click", () => {

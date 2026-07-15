@@ -1569,6 +1569,55 @@ input[readonly] {
     font-weight: 800;
 }
 
+.routine-control {
+    margin-top: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface-alt);
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.checkbox-line {
+    display: inline-flex;
+    width: auto;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--text);
+    font-size: .86rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.checkbox-line input[type="checkbox"] {
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    min-height: 16px;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--main);
+    cursor: pointer;
+}
+
+.routine-options {
+    margin-top: 10px;
+}
+
+.routine-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.routine-days .checkbox-line {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+}
+
 .row,
 .task-form-grid,
 .meeting-time-grid {
