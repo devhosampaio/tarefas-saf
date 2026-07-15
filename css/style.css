@@ -856,11 +856,15 @@ main {
 }
 
 .calendar-actions {
-    display: none;
+    display: flex;
     gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
     justify-self: end;
+}
+
+#todayMonth {
+    display: none;
 }
 
 .calendar-view-switch {
