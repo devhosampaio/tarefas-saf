@@ -643,6 +643,7 @@ main {
 #appShell.is-sidebar-collapsed .tabs {
     padding: 4px;
     gap: 4px;
+    overflow: hidden;
 }
 
 #appShell.is-sidebar-collapsed .tab {
@@ -656,8 +657,8 @@ main {
 }
 
 #appShell.is-sidebar-collapsed .tab svg {
-    width: 18px;
-    height: 18px;
+    width: 19px;
+    height: 19px;
 }
 
 #appShell.is-sidebar-collapsed .mini-calendar-popup-toggle {
@@ -861,9 +862,13 @@ main {
     border: 1px solid var(--line);
     background: var(--surface-alt);
     box-shadow: none;
-    overflow-x: auto;
+    overflow: hidden;
     padding: 4px;
     border-radius: 6px;
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .app-sidebar .tabs {
