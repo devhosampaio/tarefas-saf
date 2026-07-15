@@ -1044,8 +1044,8 @@ main {
     border-radius: 4px;
     min-height: 30px;
     padding: 6px 9px;
-    background: var(--surface-alt);
-    color: var(--text);
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
     font-size: .82rem;
     font-weight: 600;
     line-height: 1.28;
@@ -1073,28 +1073,28 @@ main {
 }
 
 .calendar-task.priority-high {
-    border-left-color: var(--priority-high);
-    background: rgba(246, 229, 226, .76);
-    color: var(--priority-high);
+    border-left-color: #d7a62f;
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
 }
 
 .calendar-task.priority-medium {
-    border-left-color: var(--priority-medium);
-    background: rgba(246, 238, 214, .78);
-    color: #856f3f;
+    border-left-color: #d7a62f;
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
 }
 
 .calendar-task.priority-low {
-    border-left-color: var(--priority-low);
-    background: rgba(226, 240, 235, .78);
-    color: var(--priority-low);
+    border-left-color: #d7a62f;
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
 }
 
 .calendar-task.priority-routine,
 .calendar-task.priority-continuous {
-    border-left-color: var(--priority-routine);
-    background: rgba(226, 235, 246, .78);
-    color: var(--priority-routine);
+    border-left-color: #d7a62f;
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
 }
 
 .calendar-task.done {
@@ -1195,20 +1195,20 @@ main {
 }
 
 .calendar-task-preview.priority-high {
-    border-left-color: var(--priority-high);
+    border-left-color: #d7a62f;
 }
 
 .calendar-task-preview.priority-medium {
-    border-left-color: var(--priority-medium);
+    border-left-color: #d7a62f;
 }
 
 .calendar-task-preview.priority-low {
-    border-left-color: var(--priority-low);
+    border-left-color: #d7a62f;
 }
 
 .calendar-task-preview.priority-routine,
 .calendar-task-preview.priority-continuous {
-    border-left-color: var(--priority-routine);
+    border-left-color: #d7a62f;
 }
 
 .calendar-task-preview.done {
@@ -1249,21 +1249,28 @@ main {
 }
 
 body.dark-mode .calendar-task.priority-high {
-    background: #3a2024;
+    border-left-color: #e5c76b;
+    background: #3b3213;
+    color: #e5c76b;
 }
 
 body.dark-mode .calendar-task.priority-medium {
+    border-left-color: #e5c76b;
     background: #3b3213;
-    color: var(--priority-medium);
+    color: #e5c76b;
 }
 
 body.dark-mode .calendar-task.priority-low {
-    background: #16352d;
+    border-left-color: #e5c76b;
+    background: #3b3213;
+    color: #e5c76b;
 }
 
 body.dark-mode .calendar-task.priority-routine,
 body.dark-mode .calendar-task.priority-continuous {
-    background: #172744;
+    border-left-color: #e5c76b;
+    background: #3b3213;
+    color: #e5c76b;
 }
 
 body.dark-mode .calendar-task.done {
@@ -1632,23 +1639,23 @@ input[readonly] {
 }
 
 .task.priority-high {
-    border-left-color: var(--priority-high);
+    border-left-color: #d7a62f;
     background: var(--surface-solid);
 }
 
 .task.priority-medium {
-    border-left-color: var(--priority-medium);
+    border-left-color: #d7a62f;
     background: var(--surface-solid);
 }
 
 .task.priority-low {
-    border-left-color: var(--priority-low);
+    border-left-color: #d7a62f;
     background: var(--surface-solid);
 }
 
 .task.priority-routine,
 .task.priority-continuous {
-    border-left-color: var(--priority-routine);
+    border-left-color: #d7a62f;
     background: var(--surface-solid);
 }
 
@@ -1741,28 +1748,28 @@ body.dark-mode .task.done .badge {
 }
 
 .badge.priority-high {
-    background: rgba(246, 229, 226, .78);
-    color: var(--priority-high);
-    border-color: rgba(182, 107, 99, .32);
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
+    border-color: rgba(215, 166, 47, .36);
 }
 
 .badge.priority-medium {
-    background: rgba(246, 238, 214, .78);
-    color: var(--priority-medium);
-    border-color: rgba(169, 139, 72, .32);
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
+    border-color: rgba(215, 166, 47, .36);
 }
 
 .badge.priority-low {
-    background: rgba(226, 240, 235, .78);
-    color: var(--priority-low);
-    border-color: rgba(95, 139, 125, .32);
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
+    border-color: rgba(215, 166, 47, .36);
 }
 
 .badge.priority-routine,
 .badge.priority-continuous {
-    background: rgba(226, 235, 246, .78);
-    color: var(--priority-routine);
-    border-color: rgba(95, 127, 168, .32);
+    background: rgba(255, 236, 170, .88);
+    color: #6f5200;
+    border-color: rgba(215, 166, 47, .36);
 }
 
 .plain-badge {
