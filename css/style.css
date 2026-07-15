@@ -1091,7 +1091,7 @@ main {
     min-height: clamp(84px, 13vh, 142px);
     display: flex;
     flex-direction: column;
-    gap: clamp(4px, .9vh, 7px);
+    gap: clamp(7px, 1.1vh, 10px);
     border: 0;
     background: var(--surface-solid);
     color: var(--text);
@@ -2347,7 +2347,7 @@ body.dark-mode .row-actions button {
 
     .calendar-day {
         min-height: 74px;
-        gap: 4px;
+        gap: 6px;
         padding: 6px;
     }
 
