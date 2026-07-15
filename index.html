@@ -56,20 +56,25 @@
     </nav>
 
     <section class="tab-panel active" id="tasksTab">
-      <section class="calendar-panel panel" aria-label="Calendário mensal de tarefas">
+      <section class="calendar-panel panel" aria-label="Calendário de tarefas">
         <div class="calendar-header">
           <div>
             <h2 id="calendarTitle">Calendário</h2>
-            <p>Clique em uma data para cadastrar uma tarefa nesse dia.</p>
+            <p>Clique com o botão direito em uma data para cadastrar nesse dia.</p>
           </div>
           <div class="calendar-actions">
+            <div class="calendar-view-switch" aria-label="Visualização do calendário">
+              <button class="view-btn active" type="button" data-calendar-view="day">Diária</button>
+              <button class="view-btn" type="button" data-calendar-view="week">Semanal</button>
+              <button class="view-btn" type="button" data-calendar-view="month">Mensal</button>
+            </div>
             <button class="text-btn" type="button" id="prevMonth">Mês anterior</button>
             <button class="text-btn" type="button" id="todayMonth">Hoje</button>
             <button class="text-btn" type="button" id="nextMonth">Próximo mês</button>
           </div>
         </div>
 
-        <div class="calendar-weekdays" aria-hidden="true">
+        <div class="calendar-weekdays" id="calendarWeekdays" aria-hidden="true">
           <span>Dom</span>
           <span>Seg</span>
           <span>Ter</span>

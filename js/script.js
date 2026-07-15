@@ -50,6 +50,7 @@ const openFiltersButton = document.getElementById("openFilters");
 const filterCount = document.getElementById("filterCount");
 const monthCalendar = document.getElementById("monthCalendar");
 const calendarTitle = document.getElementById("calendarTitle");
+const calendarWeekdays = document.getElementById("calendarWeekdays");
 const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 const todayMonthButton = document.getElementById("todayMonth");
@@ -66,6 +67,7 @@ const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
 
 let calendarDate = new Date();
+let calendarView = "day";
 let selectedCalendarDate = "";
 let selectedCalendarTaskId = "";
 let selectedCalendarPointer = { x: 0, y: 0 };
@@ -502,6 +504,38 @@ function formatMonthTitle(date) {
     }).format(date);
 }
 
+function formatDayTitle(date) {
+    return new Intl.DateTimeFormat("pt-BR", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    }).format(date);
+}
+
+function startOfWorkWeek(date) {
+    const start = new Date(date);
+    const day = start.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    start.setDate(start.getDate() + diff);
+    return start;
+}
+
+function formatWeekTitle(days) {
+    const first = days[0];
+    const last = days[days.length - 1];
+    const firstLabel = new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit"
+    }).format(first);
+    const lastLabel = new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    }).format(last);
+    return `${firstLabel} - ${lastLabel}`;
+}
+
 function priorityClass(priority) {
     priority = normalizePriority(priority);
     if (priority === "Alta") return "priority-high";
@@ -678,25 +712,52 @@ function renderCalendar() {
 
     const year = calendarDate.getFullYear();
     const month = calendarDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const gridStart = new Date(firstDay);
-    gridStart.setDate(firstDay.getDate() - firstDay.getDay());
     const today = toISODate(new Date());
+    let days = [];
+    let weekdayLabels = [];
 
-    calendarTitle.textContent = formatMonthTitle(calendarDate);
+    if (calendarView === "day") {
+        days = [new Date(calendarDate)];
+        weekdayLabels = [new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(calendarDate)];
+        calendarTitle.textContent = formatDayTitle(calendarDate);
+        prevMonthButton.textContent = "Dia anterior";
+        nextMonthButton.textContent = "Próximo dia";
+    } else if (calendarView === "week") {
+        const weekStart = startOfWorkWeek(calendarDate);
+        days = Array.from({ length: 5 }, (_, index) => {
+            const date = new Date(weekStart);
+            date.setDate(weekStart.getDate() + index);
+            return date;
+        });
+        weekdayLabels = ["Seg", "Ter", "Qua", "Qui", "Sex"];
+        calendarTitle.textContent = formatWeekTitle(days);
+        prevMonthButton.textContent = "Semana anterior";
+        nextMonthButton.textContent = "Próxima semana";
+    } else {
+        const firstDay = new Date(year, month, 1);
+        const gridStart = new Date(firstDay);
+        gridStart.setDate(firstDay.getDate() - firstDay.getDay());
+        days = Array.from({ length: 42 }, (_, index) => {
+            const date = new Date(gridStart);
+            date.setDate(gridStart.getDate() + index);
+            return date;
+        });
+        weekdayLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+        calendarTitle.textContent = formatMonthTitle(calendarDate);
+        prevMonthButton.textContent = "Mês anterior";
+        nextMonthButton.textContent = "Próximo mês";
+    }
 
-    const days = Array.from({ length: 42 }, (_, index) => {
-        const date = new Date(gridStart);
-        date.setDate(gridStart.getDate() + index);
-        return date;
-    });
+    calendarWeekdays.innerHTML = weekdayLabels.map(label => `<span>${label}</span>`).join("");
+    calendarWeekdays.className = `calendar-weekdays calendar-view-${calendarView}`;
+    monthCalendar.className = `month-calendar calendar-view-${calendarView}`;
 
     monthCalendar.innerHTML = days.map(date => {
         const isoDate = toISODate(date);
         const dayTasks = tasks
             .filter(task => shouldShowTaskOnCalendarDay(task, isoDate))
             .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
-        const isCurrentMonth = date.getMonth() === month;
+        const isCurrentMonth = calendarView !== "month" || date.getMonth() === month;
         const isToday = isoDate === today;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
@@ -1291,13 +1352,35 @@ window.openTaskFormPopover = function (date, x, y) {
     openFormPopover(x, y);
 };
 
+document.querySelectorAll("[data-calendar-view]").forEach(button => {
+    button.addEventListener("click", () => {
+        calendarView = button.dataset.calendarView || "day";
+        document.querySelectorAll("[data-calendar-view]").forEach(item => {
+            item.classList.toggle("active", item === button);
+        });
+        renderCalendar();
+    });
+});
+
 prevMonthButton?.addEventListener("click", () => {
-    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+    if (calendarView === "day") {
+        calendarDate.setDate(calendarDate.getDate() - 1);
+    } else if (calendarView === "week") {
+        calendarDate.setDate(calendarDate.getDate() - 7);
+    } else {
+        calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+    }
     renderCalendar();
 });
 
 nextMonthButton?.addEventListener("click", () => {
-    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+    if (calendarView === "day") {
+        calendarDate.setDate(calendarDate.getDate() + 1);
+    } else if (calendarView === "week") {
+        calendarDate.setDate(calendarDate.getDate() + 7);
+    } else {
+        calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+    }
     renderCalendar();
 });
 
