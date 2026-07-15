@@ -360,7 +360,7 @@ async function migrateLocalTasks() {
 async function saveTask(task) {
     if (!SUPABASE_READY) {
         saveLocalTasks();
-        setSyncStatus("Salvando neste navegador");
+        setSyncStatus(successMessage);
         return true;
     }
 
@@ -394,7 +394,7 @@ async function saveTask(task) {
     return true;
 }
 
-async function saveTaskDate(id, date) {
+async function saveTaskDate(id, date, successMessage = "Data da tarefa atualizada") {
     if (!SUPABASE_READY) {
         saveLocalTasks();
         setSyncStatus("Salvando neste navegador");
@@ -431,7 +431,7 @@ async function saveTaskDate(id, date) {
         return false;
     }
 
-    setSyncStatus("Tarefa programada para hoje");
+    setSyncStatus(successMessage);
     render();
     return true;
 }
@@ -623,7 +623,7 @@ function renderTasks() {
     }
 
     taskList.innerHTML = filtered.map(task => `
-    <article class="task ${priorityClass(task.priority)} ${task.done ? "done" : ""}">
+    <article class="task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" draggable="true" data-task-id="${task.id}">
       <div class="task-head">
         <h2>${escapeHTML(task.name)}</h2>
         <span class="badge ${priorityClass(task.priority)}">${normalizePriority(task.priority)}</span>
@@ -832,10 +832,32 @@ window.scheduleTaskToday = async function (id) {
     render();
     setSyncStatus("Programando para hoje...");
 
-    const saved = await saveTaskDate(id, today);
+    const saved = await saveTaskDate(id, today, "Tarefa programada para hoje");
     if (!saved) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
         setSyncStatus("Programado localmente. Nuvem indisponível.");
+        render();
+    }
+}
+
+async function moveTaskToDate(id, date) {
+    const task = tasks.find(item => item.id === id);
+    if (!task || !date) return;
+
+    if (task.date === date) {
+        setSyncStatus(`Tarefa já está em ${formatDate(date)}`);
+        return;
+    }
+
+    const previousTasks = [...tasks];
+    const nextTask = { ...task, date };
+    tasks = tasks.map(item => item.id === id ? nextTask : item);
+    render();
+    setSyncStatus(`Movendo para ${formatDate(date)}...`);
+
+    const saved = await saveTaskDate(id, date, `Tarefa movida para ${formatDate(date)}`);
+    if (!saved) {
+        tasks = previousTasks;
         render();
     }
 }
@@ -919,6 +941,25 @@ taskList.addEventListener("click", event => {
     event.preventDefault();
     event.stopPropagation();
     scheduleTaskToday(button.dataset.taskId);
+});
+
+taskList.addEventListener("dragstart", event => {
+    const taskCard = event.target.closest(".task[data-task-id]");
+    if (!taskCard) return;
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", taskCard.dataset.taskId);
+    taskCard.classList.add("dragging");
+    hideCalendarContextMenu();
+    hideCalendarTaskPreview();
+});
+
+taskList.addEventListener("dragend", event => {
+    const taskCard = event.target.closest(".task[data-task-id]");
+    taskCard?.classList.remove("dragging");
+    document.querySelectorAll(".calendar-day.drag-over").forEach(day => {
+        day.classList.remove("drag-over");
+    });
 });
 
 openFiltersButton.addEventListener("click", () => {
@@ -1047,6 +1088,37 @@ monthCalendar?.addEventListener("pointerdown", event => {
             showCalendarContextMenu("day", day.dataset.date, "", event.clientX, event.clientY);
         }
     }, 550);
+});
+
+monthCalendar?.addEventListener("dragover", event => {
+    const day = event.target.closest(".calendar-day");
+    if (!day?.dataset.date) return;
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    document.querySelectorAll(".calendar-day.drag-over").forEach(activeDay => {
+        if (activeDay !== day) activeDay.classList.remove("drag-over");
+    });
+    day.classList.add("drag-over");
+});
+
+monthCalendar?.addEventListener("dragleave", event => {
+    const day = event.target.closest(".calendar-day");
+    if (!day || day.contains(event.relatedTarget)) return;
+    day.classList.remove("drag-over");
+});
+
+monthCalendar?.addEventListener("drop", event => {
+    const day = event.target.closest(".calendar-day");
+    if (!day?.dataset.date) return;
+
+    event.preventDefault();
+    const draggedTaskId = event.dataTransfer.getData("text/plain");
+    document.querySelectorAll(".calendar-day.drag-over").forEach(activeDay => {
+        activeDay.classList.remove("drag-over");
+    });
+
+    moveTaskToDate(draggedTaskId, day.dataset.date);
 });
 
 ["pointerup", "pointercancel", "pointerleave"].forEach(eventName => {

@@ -415,6 +415,13 @@ main {
     background: color-mix(in srgb, var(--surface-alt) 65%, var(--surface));
 }
 
+.calendar-day.drag-over {
+    position: relative;
+    z-index: 3;
+    background: var(--main-soft);
+    box-shadow: inset 0 0 0 2px var(--main);
+}
+
 .calendar-day:focus-visible {
     position: relative;
     z-index: 2;
@@ -1005,6 +1012,16 @@ input[readonly] {
     min-height: 282px;
     overflow: visible;
     border-radius: var(--radius);
+}
+
+.task[draggable="true"] {
+    cursor: grab;
+}
+
+.task.dragging {
+    cursor: grabbing;
+    opacity: .56;
+    transform: scale(.99);
 }
 
 .task.priority-high {
