@@ -108,6 +108,9 @@ function renderCalendarContextMenu(mode) {
     if (!calendarContextMenu) return;
 
     if (mode === "task") {
+        const selectedTask = tasks.find(task => task.id === selectedCalendarTaskId);
+        const isDone = Boolean(selectedTask?.done);
+
         calendarContextMenu.innerHTML = `
             <button type="button" data-calendar-action="edit-task" role="menuitem">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
@@ -117,9 +120,9 @@ function renderCalendarContextMenu(mode) {
                 <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
                 <span>Copiar tarefa</span>
             </button>
-            <button type="button" data-calendar-action="complete-task" role="menuitem">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>
-                <span>Marcar como concluída</span>
+            <button type="button" data-calendar-action="${isDone ? "uncomplete-task" : "complete-task"}" role="menuitem">
+                <svg aria-hidden="true" viewBox="0 0 24 24">${isDone ? `<path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path>` : `<path d="M20 6 9 17l-5-5"></path>`}</svg>
+                <span>${isDone ? "Desmarcar concluído" : "Marcar como concluída"}</span>
             </button>
             <button type="button" data-calendar-action="delete-task" role="menuitem" class="danger-menu-item">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
@@ -1016,6 +1019,33 @@ async function completeTaskFromCalendar(id, completionDate) {
     }
 }
 
+async function uncompleteTaskFromCalendar(id) {
+    const previousTasks = [...tasks];
+    const task = tasks.find(item => item.id === id);
+    if (!task) return;
+
+    if (!task.done) {
+        setSyncStatus("Tarefa já está ativa");
+        return;
+    }
+
+    const nextTask = {
+        ...task,
+        done: false,
+        completedAt: ""
+    };
+
+    tasks = tasks.map(item => item.id === id ? nextTask : item);
+    render();
+    setSyncStatus("Salvando...");
+
+    const saved = await saveTask(nextTask);
+    if (!saved) {
+        tasks = previousTasks;
+        render();
+    }
+}
+
 window.scheduleTaskToday = async function (id) {
     const task = tasks.find(item => item.id === id);
     if (!task) return;
@@ -1497,6 +1527,11 @@ calendarContextMenu?.addEventListener("click", event => {
 
     if (button.dataset.calendarAction === "complete-task") {
         completeTaskFromCalendar(taskId, date);
+        return;
+    }
+
+    if (button.dataset.calendarAction === "uncomplete-task") {
+        uncompleteTaskFromCalendar(taskId);
         return;
     }
 
