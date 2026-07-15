@@ -117,6 +117,10 @@ function renderCalendarContextMenu(mode) {
                 <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
                 <span>Copiar tarefa</span>
             </button>
+            <button type="button" data-calendar-action="complete-task" role="menuitem">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>
+                <span>Marcar como concluída</span>
+            </button>
             <button type="button" data-calendar-action="delete-task" role="menuitem" class="danger-menu-item">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
                 <span>Excluir tarefa</span>
@@ -840,7 +844,8 @@ function renderCalendar() {
                 <span class="calendar-items">
                     ${dayTasks.map(task => `
                         <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}" tabindex="0" draggable="true">
-                            ${escapeHTML(task.name)}
+                            <span class="calendar-task-title">${escapeHTML(task.name)}</span>
+                            ${task.done ? `<span class="calendar-task-status"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg><span>Concluído</span></span>` : ""}
                         </span>
                     `).join("")}
                 </span>
@@ -971,6 +976,33 @@ async function toggleTaskFromCalendar(id, completionDate) {
         ...task,
         done: willBeDone,
         completedAt: willBeDone ? completionDate : ""
+    };
+
+    tasks = tasks.map(item => item.id === id ? nextTask : item);
+    render();
+    setSyncStatus("Salvando...");
+
+    const saved = await saveTask(nextTask);
+    if (!saved) {
+        tasks = previousTasks;
+        render();
+    }
+}
+
+async function completeTaskFromCalendar(id, completionDate) {
+    const previousTasks = [...tasks];
+    const task = tasks.find(item => item.id === id);
+    if (!task) return;
+
+    if (task.done) {
+        setSyncStatus("Tarefa já concluída");
+        return;
+    }
+
+    const nextTask = {
+        ...task,
+        done: true,
+        completedAt: completionDate || toISODate(new Date())
     };
 
     tasks = tasks.map(item => item.id === id ? nextTask : item);
@@ -1380,12 +1412,10 @@ monthCalendar?.addEventListener("click", event => {
 
     const taskItem = event.target.closest(".calendar-task");
     if (taskItem?.dataset.taskId) {
-        const day = taskItem.closest(".calendar-day");
         event.stopPropagation();
         event.preventDefault();
         hideCalendarContextMenu();
         hideCalendarTaskPreview();
-        toggleTaskFromCalendar(taskItem.dataset.taskId, day?.dataset.date || toISODate(new Date()));
         return;
     }
 
@@ -1462,6 +1492,11 @@ calendarContextMenu?.addEventListener("click", event => {
 
     if (button.dataset.calendarAction === "copy-task") {
         copyCalendarTask(taskId);
+        return;
+    }
+
+    if (button.dataset.calendarAction === "complete-task") {
+        completeTaskFromCalendar(taskId, date);
         return;
     }
 

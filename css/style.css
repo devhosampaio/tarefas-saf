@@ -1162,6 +1162,33 @@ main {
     box-shadow: none;
 }
 
+.calendar-task-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendar-task-status {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    color: #1f7a4f;
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+.calendar-task-status svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .calendar-task:hover {
     filter: saturate(1.04);
     box-shadow: 0 2px 7px rgba(15, 23, 42, .10);
@@ -1198,11 +1225,11 @@ main {
 }
 
 .calendar-task.done {
-    border-left-color: #98a2b3;
-    background: rgba(236, 240, 243, .78);
-    color: #667085;
-    opacity: .9;
-    text-decoration: line-through;
+    border-left-color: #42a675;
+    background: rgba(217, 245, 229, .92);
+    color: #1f7a4f;
+    opacity: 1;
+    text-decoration: none;
 }
 
 .calendar-more {
@@ -1312,7 +1339,7 @@ main {
 }
 
 .calendar-task-preview.done {
-    border-left-color: #98a2b3;
+    border-left-color: #42a675;
 }
 
 .calendar-task-preview h3 {
@@ -1374,9 +1401,13 @@ body.dark-mode .calendar-task.priority-continuous {
 }
 
 body.dark-mode .calendar-task.done {
-    border-left-color: #667085;
-    background: #26303d;
-    color: #b8c0cc;
+    border-left-color: #75c69e;
+    background: #173b2b;
+    color: #9be0b8;
+}
+
+body.dark-mode .calendar-task-status {
+    color: #9be0b8;
 }
 
 .panel {
