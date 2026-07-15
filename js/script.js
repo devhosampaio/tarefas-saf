@@ -786,8 +786,8 @@ function renderCalendar() {
         });
         weekdayLabels = ["Seg", "Ter", "Qua", "Qui", "Sex"];
         calendarTitle.textContent = formatWeekTitle(days);
-        prevMonthButton.textContent = "Semana anterior";
-        nextMonthButton.textContent = "Próxima semana";
+        prevMonthButton.textContent = "<";
+        nextMonthButton.textContent = ">";
         prevMonthButton.setAttribute("aria-label", "Semana anterior");
         nextMonthButton.setAttribute("aria-label", "Próxima semana");
     } else {
@@ -801,8 +801,8 @@ function renderCalendar() {
         });
         weekdayLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
         calendarTitle.textContent = formatMonthTitle(calendarDate);
-        prevMonthButton.textContent = "Mês anterior";
-        nextMonthButton.textContent = "Próximo mês";
+        prevMonthButton.textContent = "<";
+        nextMonthButton.textContent = ">";
         prevMonthButton.setAttribute("aria-label", "Mês anterior");
         nextMonthButton.setAttribute("aria-label", "Próximo mês");
     }
