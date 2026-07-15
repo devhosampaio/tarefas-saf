@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --bg: #f3f4f6;
     --liquid-bg: #f3f4f6;
     --liquid-card-opacity: 1;
@@ -27,8 +27,9 @@
     --surface-solid: #ffffff;
     --surface-alt: #f7f7f8;
     --glass-highlight: transparent;
-    --text: #202124;
-    --muted: #73777f;
+    --text: #111827;
+    --body-text: #5f6673;
+    --muted: #7b828e;
     --line: var(--acrylic-border);
     --line-strong: #d1d5db;
     --main: #169fe6;
@@ -58,7 +59,7 @@ body {
     margin: 0;
     font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
-    color: var(--text);
+    color: var(--body-text);
     padding-bottom: 0;
     height: 100vh;
     height: 100dvh;
@@ -90,7 +91,8 @@ body.dark-mode {
     --surface-solid: #17202c;
     --surface-alt: #1d2735;
     --glass-highlight: transparent;
-    --text: #e5e7eb;
+    --text: #f3f4f6;
+    --body-text: #c4cbd5;
     --muted: #a8b0bb;
     --line: var(--acrylic-border);
     --line-strong: #465366;
@@ -366,9 +368,30 @@ p {
     margin: 0;
 }
 
+h1,
+h2,
+h3,
+strong,
+b,
+th,
+.panel-title,
+.sidebar-brand-row h1,
+.calendar-header h2,
+.calendar-date,
+.mini-calendar-head,
+.stat strong,
+.summary strong,
+.task h2,
+.calendar-task-preview h3,
+.tab.active,
+.view-btn.active {
+    color: var(--text);
+    font-weight: 400;
+}
+
 h1 {
     font-size: 1.08rem;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0;
 }
 
@@ -419,7 +442,7 @@ h1 {
     background: var(--main);
     color: white;
     padding: 0 14px;
-    font-weight: 600;
+    font-weight: 400;
     border-radius: 6px;
 }
 
@@ -653,7 +676,7 @@ main {
     gap: 8px;
     color: var(--text);
     font-size: .86rem;
-    font-weight: 700;
+    font-weight: 400;
     text-transform: capitalize;
 }
 
@@ -671,7 +694,7 @@ main {
     background: var(--surface-solid);
     color: var(--muted);
     font-size: .78rem;
-    font-weight: 700;
+    font-weight: 400;
     border-radius: 4px;
 }
 
@@ -692,7 +715,7 @@ main {
     place-items: center;
     color: var(--muted);
     font-size: .66rem;
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .mini-calendar-day {
@@ -705,7 +728,7 @@ main {
     background: transparent;
     color: var(--text);
     font-size: .75rem;
-    font-weight: 600;
+    font-weight: 400;
     border-radius: 4px;
 }
 
@@ -809,7 +832,7 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    font-weight: 500;
+    font-weight: 400;
     font-size: .9rem;
     border-radius: 4px;
 }
@@ -911,7 +934,7 @@ main {
     display: block;
     font-size: 1.18rem;
     letter-spacing: 0;
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .stat span,
@@ -955,7 +978,7 @@ main {
 .calendar-header h2 {
     margin: 0;
     font-size: 1.08rem;
-    font-weight: 600;
+    font-weight: 400;
     text-transform: capitalize;
 }
 
@@ -993,7 +1016,7 @@ main {
     color: var(--muted);
     padding: 0 10px;
     font-size: .8rem;
-    font-weight: 600;
+    font-weight: 400;
     border-radius: 4px;
 }
 
@@ -1009,7 +1032,7 @@ main {
     gap: 0;
     color: var(--muted);
     font-size: .75rem;
-    font-weight: 600;
+    font-weight: 400;
     text-transform: uppercase;
     background: var(--surface-solid);
     border-bottom: 1px solid var(--line);
@@ -1121,7 +1144,7 @@ main {
     display: grid;
     place-items: center;
     border-radius: 999px;
-    font-weight: 800;
+    font-weight: 400;
 }
 
 .calendar-day.today .calendar-date {
@@ -1183,7 +1206,7 @@ main {
     background: rgba(255, 236, 170, .88);
     color: #6f5200;
     font-size: .82rem;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.28;
 }
 
@@ -1212,7 +1235,7 @@ main {
     margin-left: auto;
     color: #1f7a4f;
     font-size: .72rem;
-    font-weight: 800;
+    font-weight: 400;
 }
 
 .calendar-task-status svg {
@@ -1270,7 +1293,7 @@ main {
 
 .calendar-more {
     color: var(--muted);
-    font-weight: 800;
+    font-weight: 400;
 }
 
 .calendar-context-menu {
@@ -1297,7 +1320,7 @@ main {
     color: var(--text);
     padding: 0 10px;
     text-align: left;
-    font-weight: 500;
+    font-weight: 400;
     border-radius: 4px;
 }
 
@@ -1407,7 +1430,7 @@ main {
     color: var(--muted);
     padding: 5px 7px;
     font-size: .72rem;
-    font-weight: 700;
+    font-weight: 400;
     border-radius: 4px;
 }
 
@@ -1536,7 +1559,7 @@ label {
     font-size: .76rem;
     color: var(--muted);
     margin: 10px 0 5px;
-    font-weight: 600;
+    font-weight: 400;
     text-transform: none;
 }
 
@@ -1574,7 +1597,7 @@ select:focus {
 
 input[readonly] {
     background: var(--surface-alt);
-    font-weight: 800;
+    font-weight: 400;
 }
 
 .routine-control {
@@ -1593,7 +1616,7 @@ input[readonly] {
     margin: 0;
     color: var(--text);
     font-size: .86rem;
-    font-weight: 650;
+    font-weight: 400;
     cursor: pointer;
     user-select: none;
 }
@@ -1693,7 +1716,7 @@ input[readonly] {
 .secondary {
     border: 1px solid transparent;
     padding: 11px 13px;
-    font-weight: 700;
+    font-weight: 400;
     flex: 1;
 }
 
@@ -1798,7 +1821,7 @@ input[readonly] {
     background: var(--surface-solid);
     color: var(--muted);
     font-size: .82rem;
-    font-weight: 700;
+    font-weight: 400;
     padding: 8px 10px;
     border-radius: var(--radius);
 }
@@ -1809,7 +1832,7 @@ input[readonly] {
     background: var(--surface-alt);
     padding: 8px 12px;
     color: var(--muted);
-    font-weight: 600;
+    font-weight: 400;
     border-radius: 6px;
 }
 
@@ -1860,7 +1883,7 @@ input[readonly] {
     background: var(--danger);
     color: white;
     font-size: .68rem;
-    font-weight: 800;
+    font-weight: 400;
     border-radius: 999px;
 }
 
@@ -2000,7 +2023,7 @@ body.dark-mode .task.done .badge {
 .badge {
     padding: 5px 7px;
     font-size: .7rem;
-    font-weight: 800;
+    font-weight: 400;
     flex: none;
     border: 1px solid transparent;
     text-transform: uppercase;
@@ -2073,7 +2096,7 @@ body.dark-mode .task-actions {
 .row-actions button {
     border: 1px solid var(--line);
     padding: 9px 9px;
-    font-weight: 700;
+    font-weight: 400;
     background: var(--surface-alt);
     color: var(--text);
     border-radius: var(--radius);
