@@ -1,14 +1,29 @@
 ﻿:root {
     --bg: #dfe8ef;
+    --liquid-bg: #dfe8ef;
+    --liquid-card-opacity: .86;
+    --liquid-panel-opacity: .84;
+    --liquid-nav-opacity: .74;
+    --liquid-calendar-opacity: .90;
+    --liquid-blur: 24px;
+    --liquid-border: rgba(255, 255, 255, .56);
+    --liquid-shadow: 0 18px 38px rgba(69, 91, 110, .12), 0 1px 0 rgba(255, 255, 255, .62) inset;
+    --liquid-radius: 18px;
+    --liquid-noise-opacity: .026;
+    --liquid-transition: .18s ease;
     --acrylic-rgb: 248 251 253;
-    --acrylic-opacity: .72;
-    --acrylic-blur: 26px;
-    --acrylic-texture-opacity: .035;
-    --acrylic-border: rgba(255, 255, 255, .58);
+    --acrylic-opacity: var(--liquid-panel-opacity);
+    --acrylic-blur: var(--liquid-blur);
+    --acrylic-texture-opacity: var(--liquid-noise-opacity);
+    --acrylic-border: var(--liquid-border);
     --acrylic-shadow-strength: .13;
-    --acrylic-radius: 16px;
+    --acrylic-radius: var(--liquid-radius);
     --acrylic-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
     --surface: rgb(var(--acrylic-rgb) / var(--acrylic-opacity));
+    --surface-card: rgb(var(--acrylic-rgb) / var(--liquid-card-opacity));
+    --surface-panel: rgb(var(--acrylic-rgb) / var(--liquid-panel-opacity));
+    --surface-nav: rgb(var(--acrylic-rgb) / var(--liquid-nav-opacity));
+    --surface-calendar: rgb(var(--acrylic-rgb) / var(--liquid-calendar-opacity));
     --surface-solid: #f8fbfd;
     --surface-alt: rgba(244, 248, 251, .56);
     --glass-highlight: rgba(255, 255, 255, .55);
@@ -25,7 +40,7 @@
     --priority-medium: #a98b48;
     --priority-low: #5f8b7d;
     --priority-routine: #5f7fa8;
-    --shadow: 0 18px 42px rgb(64 88 108 / var(--acrylic-shadow-strength)), 0 1px 0 rgba(255, 255, 255, .62) inset;
+    --shadow: var(--liquid-shadow);
     --radius: var(--acrylic-radius);
 }
 
@@ -47,13 +62,26 @@ body {
 
 body.dark-mode {
     --bg: #101820;
+    --liquid-bg: #101820;
+    --liquid-card-opacity: .84;
+    --liquid-panel-opacity: .82;
+    --liquid-nav-opacity: .74;
+    --liquid-calendar-opacity: .88;
+    --liquid-blur: 26px;
+    --liquid-border: rgba(255, 255, 255, .14);
+    --liquid-shadow: 0 18px 38px rgba(0, 0, 0, .30), 0 1px 0 rgba(255, 255, 255, .08) inset;
+    --liquid-noise-opacity: .032;
     --acrylic-rgb: 25 35 45;
-    --acrylic-opacity: .76;
-    --acrylic-blur: 28px;
-    --acrylic-texture-opacity: .045;
-    --acrylic-border: rgba(255, 255, 255, .14);
+    --acrylic-opacity: var(--liquid-panel-opacity);
+    --acrylic-blur: var(--liquid-blur);
+    --acrylic-texture-opacity: var(--liquid-noise-opacity);
+    --acrylic-border: var(--liquid-border);
     --acrylic-shadow-strength: .30;
     --surface: rgb(var(--acrylic-rgb) / var(--acrylic-opacity));
+    --surface-card: rgb(var(--acrylic-rgb) / var(--liquid-card-opacity));
+    --surface-panel: rgb(var(--acrylic-rgb) / var(--liquid-panel-opacity));
+    --surface-nav: rgb(var(--acrylic-rgb) / var(--liquid-nav-opacity));
+    --surface-calendar: rgb(var(--acrylic-rgb) / var(--liquid-calendar-opacity));
     --surface-solid: #18232d;
     --surface-alt: rgba(34, 47, 59, .70);
     --glass-highlight: rgba(255, 255, 255, .08);
@@ -70,7 +98,7 @@ body.dark-mode {
     --priority-medium: #d2bb7a;
     --priority-low: #97b9ad;
     --priority-routine: #9db5d4;
-    --shadow: 0 18px 42px rgb(0 0 0 / var(--acrylic-shadow-strength)), 0 1px 0 rgba(255, 255, 255, .08) inset;
+    --shadow: var(--liquid-shadow);
 }
 
 body.dark-mode {
@@ -138,6 +166,34 @@ header,
 }
 
 header,
+.tabs,
+.tab,
+.toolbar,
+.calendar-view-switch,
+.calendar-context-menu,
+.floating-popover {
+    background: var(--surface-nav);
+}
+
+.auth-card,
+.stat,
+.summary div,
+.panel,
+.table-wrap {
+    background: var(--surface-panel);
+}
+
+.calendar-panel,
+.calendar-day {
+    background: var(--surface-calendar);
+}
+
+.task,
+.calendar-task-preview {
+    background: var(--surface-card);
+}
+
+header,
 .auth-card,
 .stat,
 .summary div,
@@ -170,10 +226,13 @@ header::before,
     content: "";
     position: absolute;
     inset: 0 0 auto;
-    height: 48%;
+    height: 56%;
     pointer-events: none;
-    background: linear-gradient(180deg, var(--glass-highlight), transparent 72%);
-    opacity: .58;
+    background:
+        linear-gradient(180deg, var(--glass-highlight), transparent 68%),
+        radial-gradient(circle at 12% 0%, rgba(255, 255, 255, .26), transparent 38%),
+        radial-gradient(circle at 88% 6%, rgba(255, 255, 255, .16), transparent 34%);
+    opacity: .48;
 }
 
 header::after,
@@ -214,6 +273,44 @@ header > *,
 .table-wrap > * {
     position: relative;
     z-index: 1;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    :root {
+        --surface: rgba(248, 251, 253, .96);
+        --surface-card: rgba(248, 251, 253, .98);
+        --surface-panel: rgba(248, 251, 253, .97);
+        --surface-nav: rgba(248, 251, 253, .95);
+        --surface-calendar: rgba(248, 251, 253, .98);
+        --acrylic-texture-opacity: .012;
+    }
+
+    body.dark-mode {
+        --surface: rgba(25, 35, 45, .96);
+        --surface-card: rgba(25, 35, 45, .98);
+        --surface-panel: rgba(25, 35, 45, .97);
+        --surface-nav: rgba(25, 35, 45, .95);
+        --surface-calendar: rgba(25, 35, 45, .98);
+    }
+
+    header,
+    .auth-card,
+    .tab,
+    .stat,
+    .summary div,
+    .panel,
+    .tabs,
+    .toolbar,
+    .calendar-day,
+    .calendar-view-switch,
+    .calendar-context-menu,
+    .calendar-task-preview,
+    .floating-popover,
+    .task,
+    .table-wrap {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
 }
 
 .topbar {
@@ -1572,7 +1669,7 @@ td strong {
 .row-actions button {
     min-height: 34px;
     padding: 0 10px;
-    background: white;
+    background: var(--surface-alt);
 }
 
 body.dark-mode .row-actions button {
@@ -1635,6 +1732,12 @@ body.dark-mode .row-actions button {
 }
 
 @media (max-width: 620px) {
+    :root {
+        --liquid-blur: 16px;
+        --liquid-shadow: 0 10px 24px rgba(69, 91, 110, .10), 0 1px 0 rgba(255, 255, 255, .48) inset;
+        --liquid-noise-opacity: .018;
+    }
+
     body {
         padding-bottom: 24px;
     }
