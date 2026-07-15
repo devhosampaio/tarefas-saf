@@ -61,6 +61,7 @@ const todayMonthButton = document.getElementById("todayMonth");
 const calendarContextMenu = document.getElementById("calendarContextMenu");
 const calendarTaskPreview = document.getElementById("calendarTaskPreview");
 const miniCalendar = document.getElementById("miniCalendar");
+const miniCalendarPanel = document.querySelector(".mini-calendar");
 const miniCalendarTitle = document.getElementById("miniCalendarTitle");
 const miniPrevMonthButton = document.getElementById("miniPrevMonth");
 const miniNextMonthButton = document.getElementById("miniNextMonth");
@@ -706,13 +707,13 @@ function toggleMiniCalendarPopup() {
     if (!appShell?.classList.contains("is-sidebar-collapsed")) return;
 
     const isOpen = appShell.classList.toggle("is-mini-calendar-open");
-    miniCalendar?.classList.toggle("is-popup-open", isOpen);
+    miniCalendarPanel?.classList.toggle("is-popup-open", isOpen);
     miniCalendarPopupToggle?.setAttribute("aria-expanded", String(isOpen));
 }
 
 function closeMiniCalendarPopup() {
     appShell?.classList.remove("is-mini-calendar-open");
-    miniCalendar?.classList.remove("is-popup-open");
+    miniCalendarPanel?.classList.remove("is-popup-open");
     miniCalendarPopupToggle?.setAttribute("aria-expanded", "false");
 }
 

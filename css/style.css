@@ -664,6 +664,7 @@ main {
 #appShell.is-sidebar-collapsed .mini-calendar-popup-toggle {
     display: inline-grid;
     margin-top: auto;
+    margin-bottom: 0;
 }
 
 #appShell.is-sidebar-collapsed .sidebar-footer {
