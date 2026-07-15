@@ -42,8 +42,22 @@
       </nav>
 
       <div class="sidebar-actions">
-        <button class="add-btn requires-auth hidden" id="openForm" title="Nova tarefa">Nova tarefa</button>
-        <button class="add-btn meeting-shortcut requires-auth hidden" id="newMeetingButton" title="Nova reunião">Nova reunião</button>
+        <button class="add-btn requires-auth hidden" id="openForm" title="Nova tarefa">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+          <span>Nova tarefa</span>
+        </button>
+        <button class="add-btn meeting-shortcut requires-auth hidden" id="newMeetingButton" title="Nova reunião">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M7 3v4"></path>
+            <path d="M17 3v4"></path>
+            <path d="M4 8h16"></path>
+            <rect x="4" y="5" width="16" height="16" rx="2"></rect>
+          </svg>
+          <span>Nova reunião</span>
+        </button>
       </div>
 
       <div class="sidebar-footer">

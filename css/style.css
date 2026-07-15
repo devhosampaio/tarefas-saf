@@ -399,6 +399,10 @@ h1 {
 }
 
 .add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     border: 1px solid var(--main);
     min-height: 34px;
     background: var(--main);
@@ -406,6 +410,17 @@ h1 {
     padding: 0 14px;
     font-weight: 600;
     border-radius: 999px;
+}
+
+.add-btn svg {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
 }
 
 .add-btn:hover {
