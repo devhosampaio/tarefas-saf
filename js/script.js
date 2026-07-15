@@ -488,6 +488,13 @@ function toISODate(date) {
     return `${year}-${month}-${day}`;
 }
 
+function isWeekendDate(value) {
+    if (!value) return false;
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.getDay() === 0 || date.getDay() === 6;
+}
+
 function formatMonthTitle(date) {
     return new Intl.DateTimeFormat("pt-BR", {
         month: "long",
@@ -689,9 +696,10 @@ function renderCalendar() {
             .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
         const isCurrentMonth = date.getMonth() === month;
         const isToday = isoDate === today;
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
         return `
-            <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""}" type="button" data-date="${isoDate}" aria-label="Adicionar tarefa em ${formatDate(isoDate)}">
+            <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""} ${isWeekend ? "weekend-day" : ""}" type="button" data-date="${isoDate}" aria-label="${isWeekend ? "Fim de semana indisponível" : `Adicionar tarefa em ${formatDate(isoDate)}`}" ${isWeekend ? "aria-disabled=\"true\"" : ""}>
                 <span class="calendar-date">${date.getDate()}</span>
                 <span class="calendar-items">
                     ${dayTasks.map(task => `
@@ -1083,7 +1091,7 @@ monthCalendar?.addEventListener("pointerdown", event => {
         }
 
         const day = event.target.closest(".calendar-day");
-        if (day?.dataset.date) {
+        if (day?.dataset.date && !isWeekendDate(day.dataset.date)) {
             suppressNextCalendarClick = true;
             showCalendarContextMenu("day", day.dataset.date, "", event.clientX, event.clientY);
         }
@@ -1093,6 +1101,10 @@ monthCalendar?.addEventListener("pointerdown", event => {
 monthCalendar?.addEventListener("dragover", event => {
     const day = event.target.closest(".calendar-day");
     if (!day?.dataset.date) return;
+    if (isWeekendDate(day.dataset.date)) {
+        event.dataTransfer.dropEffect = "none";
+        return;
+    }
 
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -1111,6 +1123,11 @@ monthCalendar?.addEventListener("dragleave", event => {
 monthCalendar?.addEventListener("drop", event => {
     const day = event.target.closest(".calendar-day");
     if (!day?.dataset.date) return;
+    if (isWeekendDate(day.dataset.date)) {
+        event.preventDefault();
+        setSyncStatus("Sábado e domingo estão desativados");
+        return;
+    }
 
     event.preventDefault();
     const draggedTaskId = event.dataTransfer.getData("text/plain");
@@ -1162,6 +1179,11 @@ monthCalendar?.addEventListener("contextmenu", event => {
     if (!day?.dataset.date) return;
 
     event.preventDefault();
+    if (isWeekendDate(day.dataset.date)) {
+        setSyncStatus("Sábado e domingo estão desativados");
+        return;
+    }
+
     showCalendarContextMenu("day", day.dataset.date, "", event.clientX, event.clientY);
 });
 
