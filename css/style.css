@@ -714,6 +714,11 @@ main {
     display: block;
 }
 
+#dashboardView,
+#tasksView {
+    display: none;
+}
+
 .stats,
 .summary {
     display: grid;
