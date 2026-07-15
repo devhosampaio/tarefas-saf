@@ -702,8 +702,8 @@ main {
 }
 
 .calendar-header {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     gap: 16px;
     padding: 14px 16px;
@@ -727,10 +727,12 @@ main {
     gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
+    justify-self: end;
 }
 
 .calendar-view-switch {
     display: inline-flex;
+    justify-self: center;
     gap: 2px;
     border: 1px solid var(--line);
     background: var(--surface-alt);
@@ -2014,15 +2016,21 @@ body.dark-mode .row-actions button {
         padding: 12px;
     }
 
-    .calendar-header,
+    .calendar-header {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
     .calendar-actions {
         align-items: stretch;
         flex-direction: column;
+        justify-self: stretch;
     }
 
     .calendar-view-switch {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
+        justify-self: stretch;
     }
 
     .calendar-weekdays {
