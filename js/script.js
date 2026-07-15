@@ -799,14 +799,9 @@ window.toggleDone = async function (id) {
     }
 }
 
-async function completeTaskFromCalendar(id) {
+async function toggleTaskFromCalendar(id) {
     const task = tasks.find(item => item.id === id);
     if (!task) return;
-
-    if (task.done) {
-        setSyncStatus("Tarefa já concluída");
-        return;
-    }
 
     await toggleDone(id);
 }
@@ -1066,7 +1061,7 @@ monthCalendar?.addEventListener("click", event => {
         event.preventDefault();
         hideCalendarContextMenu();
         hideCalendarTaskPreview();
-        completeTaskFromCalendar(taskItem.dataset.taskId);
+        toggleTaskFromCalendar(taskItem.dataset.taskId);
         return;
     }
 
