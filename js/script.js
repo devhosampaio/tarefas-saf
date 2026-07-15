@@ -525,6 +525,8 @@ function shouldCarryTaskToToday(task, isoDate) {
 }
 
 function shouldShowTaskOnCalendarDay(task, isoDate) {
+    if (isWeekendDate(isoDate)) return false;
+
     if (!isRoutineTask(task)) {
         return task.date === isoDate || shouldCarryTaskToToday(task, isoDate);
     }
@@ -754,6 +756,16 @@ taskForm.addEventListener("submit", async event => {
     if (submitButton) {
         submitButton.disabled = true;
         submitButton.textContent = "Salvando...";
+    }
+
+    if (isWeekendDate(dateInput.value)) {
+        setSyncStatus("Sábado e domingo estão desativados");
+        dateInput.focus();
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalSubmitText;
+        }
+        return;
     }
 
     const previousTasks = [...tasks];
