@@ -61,12 +61,9 @@ const todayMonthButton = document.getElementById("todayMonth");
 const calendarContextMenu = document.getElementById("calendarContextMenu");
 const calendarTaskPreview = document.getElementById("calendarTaskPreview");
 const miniCalendar = document.getElementById("miniCalendar");
-const miniCalendarPanel = document.querySelector(".mini-calendar");
 const miniCalendarTitle = document.getElementById("miniCalendarTitle");
 const miniPrevMonthButton = document.getElementById("miniPrevMonth");
 const miniNextMonthButton = document.getElementById("miniNextMonth");
-const miniCalendarPopupState = document.getElementById("miniCalendarPopupState");
-const miniCalendarPopupToggle = document.getElementById("miniCalendarPopupToggle");
 const authGate = document.getElementById("authGate");
 const appShell = document.getElementById("appShell");
 const authForm = document.getElementById("authForm");
@@ -691,9 +688,6 @@ function toggleTheme() {
 
 function applySidebarState(isCollapsed) {
     appShell?.classList.toggle("is-sidebar-collapsed", isCollapsed);
-    if (!isCollapsed) {
-        closeMiniCalendarPopup();
-    }
     sidebarToggle?.setAttribute("aria-label", isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral");
     sidebarToggle?.setAttribute("title", isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral");
 }
@@ -702,22 +696,6 @@ function toggleSidebar() {
     const isCollapsed = !appShell?.classList.contains("is-sidebar-collapsed");
     localStorage.setItem("tarefas_saf_sidebar_collapsed", String(isCollapsed));
     applySidebarState(isCollapsed);
-}
-
-function toggleMiniCalendarPopup() {
-    if (!appShell?.classList.contains("is-sidebar-collapsed")) return;
-
-    const isOpen = Boolean(miniCalendarPopupState?.checked);
-    appShell.classList.toggle("is-mini-calendar-open", isOpen);
-    miniCalendarPanel?.classList.toggle("is-popup-open", isOpen);
-    miniCalendarPopupToggle?.setAttribute("aria-expanded", String(isOpen));
-}
-
-function closeMiniCalendarPopup() {
-    appShell?.classList.remove("is-mini-calendar-open");
-    miniCalendarPanel?.classList.remove("is-popup-open");
-    if (miniCalendarPopupState) miniCalendarPopupState.checked = false;
-    miniCalendarPopupToggle?.setAttribute("aria-expanded", "false");
 }
 
 function activeFiltersCount() {
@@ -1384,24 +1362,6 @@ taskSearchInput.addEventListener("input", () => {
 
 themeToggle?.addEventListener("click", toggleTheme);
 sidebarToggle?.addEventListener("click", toggleSidebar);
-miniCalendarPopupState?.addEventListener("change", () => {
-    toggleMiniCalendarPopup();
-});
-miniCalendarPopupToggle?.addEventListener("keydown", event => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
-    if (miniCalendarPopupState) {
-        miniCalendarPopupState.checked = !miniCalendarPopupState.checked;
-    }
-    toggleMiniCalendarPopup();
-});
-
-document.addEventListener("click", event => {
-    if (!appShell?.classList.contains("is-mini-calendar-open")) return;
-    if (event.target.closest(".mini-calendar") || event.target.closest("#miniCalendarPopupToggle")) return;
-
-    closeMiniCalendarPopup();
-});
 
 authForm?.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1698,7 +1658,6 @@ document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
         hideCalendarContextMenu();
         hideCalendarTaskPreview();
-        closeMiniCalendarPopup();
     }
 });
 
