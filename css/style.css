@@ -1,13 +1,21 @@
 ﻿:root {
     --bg: #dfe8ef;
-    --surface: rgba(255, 255, 255, .74);
+    --acrylic-rgb: 248 251 253;
+    --acrylic-opacity: .72;
+    --acrylic-blur: 26px;
+    --acrylic-texture-opacity: .035;
+    --acrylic-border: rgba(255, 255, 255, .58);
+    --acrylic-shadow-strength: .13;
+    --acrylic-radius: 16px;
+    --acrylic-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    --surface: rgb(var(--acrylic-rgb) / var(--acrylic-opacity));
     --surface-solid: #f8fbfd;
-    --surface-alt: rgba(244, 248, 251, .72);
-    --glass-highlight: rgba(255, 255, 255, .62);
+    --surface-alt: rgba(244, 248, 251, .56);
+    --glass-highlight: rgba(255, 255, 255, .55);
     --text: #27323d;
     --muted: #6c7883;
-    --line: rgba(123, 143, 160, .34);
-    --line-strong: rgba(103, 123, 140, .52);
+    --line: var(--acrylic-border);
+    --line-strong: rgba(113, 132, 148, .42);
     --main: #4f7893;
     --main-dark: #375f77;
     --main-soft: rgba(215, 230, 239, .72);
@@ -17,8 +25,8 @@
     --priority-medium: #a98b48;
     --priority-low: #5f8b7d;
     --priority-routine: #5f7fa8;
-    --shadow: 0 18px 42px rgba(64, 88, 108, .14), 0 1px 1px rgba(255, 255, 255, .70) inset;
-    --radius: 6px;
+    --shadow: 0 18px 42px rgb(64 88 108 / var(--acrylic-shadow-strength)), 0 1px 0 rgba(255, 255, 255, .62) inset;
+    --radius: var(--acrylic-radius);
 }
 
 * {
@@ -39,13 +47,19 @@ body {
 
 body.dark-mode {
     --bg: #101820;
-    --surface: rgba(25, 35, 45, .76);
+    --acrylic-rgb: 25 35 45;
+    --acrylic-opacity: .76;
+    --acrylic-blur: 28px;
+    --acrylic-texture-opacity: .045;
+    --acrylic-border: rgba(255, 255, 255, .14);
+    --acrylic-shadow-strength: .30;
+    --surface: rgb(var(--acrylic-rgb) / var(--acrylic-opacity));
     --surface-solid: #18232d;
     --surface-alt: rgba(34, 47, 59, .70);
     --glass-highlight: rgba(255, 255, 255, .08);
     --text: #e3e8ed;
     --muted: #a8b3bd;
-    --line: rgba(147, 164, 179, .24);
+    --line: var(--acrylic-border);
     --line-strong: rgba(161, 176, 190, .38);
     --main: #8caec4;
     --main-dark: #b3c9d8;
@@ -56,7 +70,7 @@ body.dark-mode {
     --priority-medium: #d2bb7a;
     --priority-low: #97b9ad;
     --priority-routine: #9db5d4;
-    --shadow: 0 18px 42px rgba(0, 0, 0, .28), 0 1px 1px rgba(255, 255, 255, .08) inset;
+    --shadow: 0 18px 42px rgb(0 0 0 / var(--acrylic-shadow-strength)), 0 1px 0 rgba(255, 255, 255, .08) inset;
 }
 
 body.dark-mode {
@@ -97,8 +111,8 @@ header {
     border-bottom: 1px solid var(--line);
     padding: 0;
     box-shadow: var(--shadow);
-    backdrop-filter: blur(18px) saturate(1.15);
-    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
+    -webkit-backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
 }
 
 header,
@@ -107,57 +121,97 @@ header,
 .stat,
 .summary div,
 .panel,
+.tabs,
 .toolbar,
 .calendar-day,
+.calendar-view-switch,
 .calendar-context-menu,
 .calendar-task-preview,
 .floating-popover,
 .task,
 .table-wrap {
-    backdrop-filter: blur(18px) saturate(1.12);
-    -webkit-backdrop-filter: blur(18px) saturate(1.12);
+    background: var(--surface);
+    border-color: var(--line);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
+    -webkit-backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
 }
 
+header,
 .auth-card,
 .stat,
 .summary div,
 .panel,
+.tabs,
 .toolbar,
 .calendar-context-menu,
+.calendar-view-switch,
 .calendar-task-preview,
 .floating-popover,
-.task {
+.task,
+.table-wrap {
     position: relative;
     overflow: hidden;
 }
 
+header::before,
 .auth-card::before,
 .stat::before,
 .summary div::before,
 .panel::before,
+.tabs::before,
 .toolbar::before,
 .calendar-context-menu::before,
+.calendar-view-switch::before,
 .calendar-task-preview::before,
 .floating-popover::before,
-.task::before {
+.task::before,
+.table-wrap::before {
     content: "";
     position: absolute;
     inset: 0 0 auto;
-    height: 42%;
+    height: 48%;
     pointer-events: none;
-    background: linear-gradient(180deg, var(--glass-highlight), transparent);
-    opacity: .62;
+    background: linear-gradient(180deg, var(--glass-highlight), transparent 72%);
+    opacity: .58;
 }
 
+header::after,
+.auth-card::after,
+.stat::after,
+.summary div::after,
+.panel::after,
+.tabs::after,
+.toolbar::after,
+.calendar-context-menu::after,
+.calendar-view-switch::after,
+.calendar-task-preview::after,
+.floating-popover::after,
+.task::after,
+.table-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--acrylic-noise);
+    background-size: 140px 140px;
+    opacity: var(--acrylic-texture-opacity);
+    mix-blend-mode: multiply;
+}
+
+header > *,
 .auth-card > *,
 .stat > *,
 .summary div > *,
 .panel > *,
+.tabs > *,
 .toolbar > *,
 .calendar-context-menu > *,
+.calendar-view-switch > *,
 .calendar-task-preview > *,
 .floating-popover > *,
-.task > * {
+.task > *,
+.table-wrap > * {
     position: relative;
     z-index: 1;
 }
@@ -349,11 +403,14 @@ main {
     display: flex;
     gap: 6px;
     margin-bottom: 14px;
-    border: 0;
-    background: transparent;
-    box-shadow: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
     overflow-x: auto;
+    padding: 6px;
     border-radius: var(--radius);
+    backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
+    -webkit-backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
 }
 
 .tab {
@@ -459,9 +516,12 @@ main {
     display: inline-flex;
     gap: 2px;
     border: 1px solid var(--line);
-    background: var(--surface-alt);
+    background: var(--surface);
+    box-shadow: var(--shadow);
     padding: 3px;
     border-radius: var(--radius);
+    backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
+    -webkit-backdrop-filter: blur(var(--acrylic-blur)) saturate(1.08);
 }
 
 .view-btn {
@@ -1732,7 +1792,7 @@ body.dark-mode .row-actions button {
         bottom: 8px;
         width: auto;
         max-height: min(82vh, 680px);
-        border-radius: 10px;
+        border-radius: var(--radius);
     }
 
     .calendar-context-menu {
