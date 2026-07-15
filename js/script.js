@@ -562,13 +562,13 @@ function shouldShowTaskOnCalendarDay(task, isoDate) {
     if (isWeekendDate(isoDate)) return false;
 
     if (!isRoutineTask(task)) {
-        return task.date === isoDate || shouldCarryTaskToToday(task, isoDate);
+        return task.date === isoDate || task.completedAt === isoDate || shouldCarryTaskToToday(task, isoDate);
     }
 
     if (!task.date || isoDate < task.date) return false;
     if (!task.done) return true;
 
-    return Boolean(task.completedAt) && isoDate < task.completedAt;
+    return Boolean(task.completedAt) && isoDate <= task.completedAt;
 }
 
 function normalizeSearchText(value) {
@@ -888,11 +888,27 @@ window.toggleDone = async function (id) {
     }
 }
 
-async function toggleTaskFromCalendar(id) {
+async function toggleTaskFromCalendar(id, completionDate) {
+    const previousTasks = [...tasks];
     const task = tasks.find(item => item.id === id);
     if (!task) return;
 
-    await toggleDone(id);
+    const willBeDone = !task.done;
+    const nextTask = {
+        ...task,
+        done: willBeDone,
+        completedAt: willBeDone ? completionDate : ""
+    };
+
+    tasks = tasks.map(item => item.id === id ? nextTask : item);
+    render();
+    setSyncStatus("Salvando...");
+
+    const saved = await saveTask(nextTask);
+    if (!saved) {
+        tasks = previousTasks;
+        render();
+    }
 }
 
 window.scheduleTaskToday = async function (id) {
@@ -1227,11 +1243,12 @@ monthCalendar?.addEventListener("click", event => {
 
     const taskItem = event.target.closest(".calendar-task");
     if (taskItem?.dataset.taskId) {
+        const day = taskItem.closest(".calendar-day");
         event.stopPropagation();
         event.preventDefault();
         hideCalendarContextMenu();
         hideCalendarTaskPreview();
-        toggleTaskFromCalendar(taskItem.dataset.taskId);
+        toggleTaskFromCalendar(taskItem.dataset.taskId, day?.dataset.date || toISODate(new Date()));
         return;
     }
 
