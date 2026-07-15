@@ -54,7 +54,7 @@ body {
     font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding-bottom: 32px;
+    padding-bottom: 0;
 }
 
 body.dark-mode {
@@ -486,6 +486,7 @@ main {
 
 #appShell {
     min-height: 100vh;
+    min-height: 100dvh;
     display: grid;
     grid-template-columns: 248px minmax(0, 1fr);
     background: var(--bg);
@@ -499,6 +500,7 @@ main {
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -798,7 +800,8 @@ main {
 
 .calendar-panel {
     position: relative;
-    min-height: calc(100vh - 190px);
+    min-height: calc(100vh - 36px);
+    min-height: calc(100dvh - 36px);
     display: grid;
     grid-template-rows: auto auto 1fr;
     gap: 0;
@@ -2002,7 +2005,7 @@ body.dark-mode .row-actions button {
     }
 
     body {
-        padding-bottom: 24px;
+        padding-bottom: 0;
     }
 
     .topbar,
