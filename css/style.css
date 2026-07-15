@@ -499,10 +499,15 @@ main {
     grid-template-columns: 248px minmax(0, 1fr);
     background: var(--bg);
     overflow: hidden;
+    transition: grid-template-columns .18s ease;
 }
 
 #appShell.hidden {
     display: none;
+}
+
+#appShell.is-sidebar-collapsed {
+    grid-template-columns: 64px minmax(0, 1fr);
 }
 
 .app-sidebar {
@@ -516,12 +521,56 @@ main {
     padding: 18px 14px;
     background: var(--surface-solid);
     border-right: 1px solid var(--line);
+    overflow: hidden;
 }
 
 .sidebar-brand {
     display: grid;
     gap: 8px;
     padding: 2px 4px 0;
+}
+
+.sidebar-brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+}
+
+.sidebar-brand-row h1 {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-toggle {
+    width: 30px;
+    height: 30px;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    border: 1px solid var(--line);
+    background: var(--surface-alt);
+    color: var(--muted);
+    border-radius: 4px;
+}
+
+.sidebar-toggle:hover {
+    color: var(--main);
+    border-color: color-mix(in srgb, var(--main) 42%, var(--line));
+}
+
+.sidebar-toggle svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    transition: transform .18s ease;
 }
 
 .sidebar-actions {
@@ -540,6 +589,57 @@ main {
     min-height: 0;
     padding: 0;
     overflow: hidden;
+}
+
+#appShell.is-sidebar-collapsed .app-sidebar {
+    gap: 12px;
+    padding: 14px 10px;
+}
+
+#appShell.is-sidebar-collapsed .sidebar-brand {
+    padding: 0;
+}
+
+#appShell.is-sidebar-collapsed .sidebar-brand-row {
+    justify-content: center;
+}
+
+#appShell.is-sidebar-collapsed .sidebar-brand-row h1,
+#appShell.is-sidebar-collapsed .sync-status,
+#appShell.is-sidebar-collapsed .mini-calendar,
+#appShell.is-sidebar-collapsed .add-btn span,
+#appShell.is-sidebar-collapsed .top-signout {
+    display: none;
+}
+
+#appShell.is-sidebar-collapsed .sidebar-toggle svg {
+    transform: rotate(180deg);
+}
+
+#appShell.is-sidebar-collapsed .tabs {
+    padding: 3px;
+}
+
+#appShell.is-sidebar-collapsed .tab {
+    min-height: 34px;
+    padding: 0;
+    font-size: 0;
+    justify-content: center;
+}
+
+#appShell.is-sidebar-collapsed .tab::before {
+    content: attr(data-short);
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+#appShell.is-sidebar-collapsed .add-btn {
+    min-height: 36px;
+    padding: 0;
+}
+
+#appShell.is-sidebar-collapsed .sidebar-footer {
+    margin-top: auto;
 }
 
 .mini-calendar {
@@ -2087,6 +2187,10 @@ body.dark-mode .row-actions button {
         overflow: visible;
     }
 
+    #appShell.is-sidebar-collapsed {
+        grid-template-columns: 1fr;
+    }
+
     .app-sidebar {
         position: static;
         height: auto;
@@ -2098,6 +2202,25 @@ body.dark-mode .row-actions button {
 
     .sidebar-brand {
         padding: 0;
+    }
+
+    #appShell.is-sidebar-collapsed .sidebar-brand-row {
+        justify-content: space-between;
+    }
+
+    #appShell.is-sidebar-collapsed .sidebar-brand-row h1,
+    #appShell.is-sidebar-collapsed .sync-status,
+    #appShell.is-sidebar-collapsed .mini-calendar,
+    #appShell.is-sidebar-collapsed .add-btn span {
+        display: revert;
+    }
+
+    #appShell.is-sidebar-collapsed .tab {
+        font-size: .9rem;
+    }
+
+    #appShell.is-sidebar-collapsed .tab::before {
+        content: none;
     }
 
     .sidebar-actions {

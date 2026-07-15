@@ -69,6 +69,7 @@ const authMessage = document.getElementById("authMessage");
 const signUpButton = document.getElementById("signUpButton");
 const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
+const sidebarToggle = document.getElementById("sidebarToggle");
 
 let calendarDate = new Date();
 let calendarView = "day";
@@ -610,6 +611,18 @@ function toggleTheme() {
     const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
     localStorage.setItem("tarefas_saf_theme", nextTheme);
     applyTheme(nextTheme);
+}
+
+function applySidebarState(isCollapsed) {
+    appShell?.classList.toggle("is-sidebar-collapsed", isCollapsed);
+    sidebarToggle?.setAttribute("aria-label", isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral");
+    sidebarToggle?.setAttribute("title", isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral");
+}
+
+function toggleSidebar() {
+    const isCollapsed = !appShell?.classList.contains("is-sidebar-collapsed");
+    localStorage.setItem("tarefas_saf_sidebar_collapsed", String(isCollapsed));
+    applySidebarState(isCollapsed);
 }
 
 function activeFiltersCount() {
@@ -1199,6 +1212,7 @@ taskSearchInput.addEventListener("input", () => {
 });
 
 themeToggle?.addEventListener("click", toggleTheme);
+sidebarToggle?.addEventListener("click", toggleSidebar);
 
 authForm?.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1559,6 +1573,7 @@ miniNextMonthButton?.addEventListener("click", () => {
 });
 
 applyTheme(localStorage.getItem("tarefas_saf_theme") || "light");
+applySidebarState(localStorage.getItem("tarefas_saf_sidebar_collapsed") === "true");
 resetForm();
 updateFilterButton();
 
