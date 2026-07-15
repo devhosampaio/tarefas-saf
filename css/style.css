@@ -119,12 +119,15 @@ button:active {
     transform: translateY(1px);
 }
 
-button:focus-visible,
+button:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--main) 70%, white);
+    outline-offset: 2px;
+}
+
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--main) 70%, white);
-    outline-offset: 2px;
+    outline: none;
 }
 
 header {
@@ -1351,8 +1354,8 @@ textarea {
 input:focus,
 textarea:focus,
 select:focus {
-    border-color: var(--main);
-    box-shadow: 0 0 0 2px rgba(37, 71, 106, .14);
+    border-color: var(--line-strong);
+    box-shadow: none;
 }
 
 input[readonly] {
