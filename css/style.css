@@ -239,10 +239,7 @@ header::before,
     inset: 0 0 auto;
     height: 56%;
     pointer-events: none;
-    background:
-        linear-gradient(180deg, var(--glass-highlight), transparent 68%),
-        radial-gradient(circle at 12% 0%, rgba(255, 255, 255, .26), transparent 38%),
-        radial-gradient(circle at 88% 6%, rgba(255, 255, 255, .16), transparent 34%);
+    background: none;
     opacity: .48;
 }
 
@@ -628,9 +625,10 @@ main {
     gap: 0;
     margin: 0 0 12px;
     overflow: hidden;
-    border: 1px solid var(--line);
+    border: 0;
     background: var(--surface-solid);
     border-radius: 16px;
+    box-shadow: inset 0 0 0 1px var(--line);
 }
 
 .stat,
@@ -678,9 +676,9 @@ main {
     gap: 0;
     overflow: hidden;
     background: var(--surface-solid);
-    border: 1px solid var(--line);
+    border: 0;
     border-radius: 22px;
-    box-shadow: var(--shadow);
+    box-shadow: inset 0 0 0 1px var(--line), var(--shadow);
 }
 
 .calendar-header {
@@ -866,7 +864,7 @@ main {
 
 .calendar-items {
     display: grid;
-    gap: 5px;
+    gap: 7px;
     min-width: 0;
     min-height: 0;
     overflow-y: auto;
@@ -877,19 +875,28 @@ main {
 .calendar-task,
 .calendar-more {
     min-width: 0;
-    display: block;
+    display: flex;
+    align-items: center;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     border: 1px solid transparent;
     border-left-width: 3px;
-    border-radius: 6px;
-    padding: 4px 7px;
+    border-radius: 8px;
+    min-height: 30px;
+    padding: 6px 9px;
     background: var(--surface-alt);
     color: var(--text);
-    font-size: .73rem;
+    font-size: .82rem;
     font-weight: 600;
     line-height: 1.28;
+}
+
+.calendar-view-day .calendar-task,
+.calendar-view-day .calendar-more {
+    min-height: 38px;
+    padding: 8px 11px;
+    font-size: .9rem;
 }
 
 .calendar-task {
@@ -1097,10 +1104,10 @@ body.dark-mode .calendar-task.done {
 
 .panel {
     background: var(--surface-solid);
-    border: 1px solid var(--line);
+    border: 0;
     padding: 16px;
     margin-bottom: 12px;
-    box-shadow: none;
+    box-shadow: inset 0 0 0 1px var(--line);
     border-radius: 16px;
 }
 
@@ -1109,7 +1116,8 @@ body.dark-mode .calendar-task.done {
     overflow: hidden;
     background: var(--surface-solid);
     border-radius: 22px;
-    box-shadow: var(--shadow);
+    border: 0;
+    box-shadow: inset 0 0 0 1px var(--line), var(--shadow);
 }
 
 .form-panel {
@@ -1279,9 +1287,9 @@ input[readonly] {
     align-items: center;
     gap: 10px;
     background: var(--surface-solid);
-    border: 1px solid var(--line);
+    border: 0;
     padding: 7px;
-    box-shadow: none;
+    box-shadow: inset 0 0 0 1px var(--line);
     border-radius: 16px;
 }
 
@@ -1428,19 +1436,19 @@ input[readonly] {
 
 .task {
     background: var(--surface-solid);
-    border: 1px solid var(--line);
+    border: 0;
     border-left: 4px solid var(--line);
     padding: 13px;
-    box-shadow: none;
     display: flex;
     flex-direction: column;
     min-height: 282px;
     overflow: visible;
     border-radius: 12px;
+    box-shadow: inset 0 0 0 1px var(--line);
 }
 
 .task:hover {
-    box-shadow: 0 6px 18px rgba(15, 23, 42, .07);
+    box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px rgba(15, 23, 42, .07);
 }
 
 .task[draggable="true"] {
@@ -1455,23 +1463,23 @@ input[readonly] {
 
 .task.priority-high {
     border-left-color: var(--priority-high);
-    background: linear-gradient(90deg, rgba(215, 90, 85, .09), var(--surface-solid) 28%);
+    background: var(--surface-solid);
 }
 
 .task.priority-medium {
     border-left-color: var(--priority-medium);
-    background: linear-gradient(90deg, rgba(215, 166, 47, .11), var(--surface-solid) 28%);
+    background: var(--surface-solid);
 }
 
 .task.priority-low {
     border-left-color: var(--priority-low);
-    background: linear-gradient(90deg, rgba(66, 166, 117, .10), var(--surface-solid) 28%);
+    background: var(--surface-solid);
 }
 
 .task.priority-routine,
 .task.priority-continuous {
     border-left-color: var(--priority-routine);
-    background: linear-gradient(90deg, rgba(22, 159, 230, .10), var(--surface-solid) 28%);
+    background: var(--surface-solid);
 }
 
 body.dark-mode .task {
@@ -1479,20 +1487,20 @@ body.dark-mode .task {
 }
 
 body.dark-mode .task.priority-high {
-    background: linear-gradient(90deg, rgba(238, 141, 138, .14), var(--surface-solid) 30%);
+    background: var(--surface-solid);
 }
 
 body.dark-mode .task.priority-medium {
-    background: linear-gradient(90deg, rgba(229, 199, 107, .14), var(--surface-solid) 30%);
+    background: var(--surface-solid);
 }
 
 body.dark-mode .task.priority-low {
-    background: linear-gradient(90deg, rgba(117, 198, 158, .13), var(--surface-solid) 30%);
+    background: var(--surface-solid);
 }
 
 body.dark-mode .task.priority-routine,
 body.dark-mode .task.priority-continuous {
-    background: linear-gradient(90deg, rgba(91, 189, 234, .14), var(--surface-solid) 30%);
+    background: var(--surface-solid);
 }
 
 body.dark-mode .task.done {
@@ -1509,7 +1517,7 @@ body.dark-mode .task.done .badge {
 
 .task.done {
     border-left-color: #98a2b3;
-    background: linear-gradient(180deg, #f7f8fa 0%, #ffffff 48%);
+    background: var(--surface-solid);
     color: #667085;
     opacity: .9;
 }
@@ -1736,7 +1744,8 @@ body.dark-mode .icon-only {
 
 .table-wrap {
     overflow-x: auto;
-    border: 1px solid var(--line);
+    border: 0;
+    box-shadow: inset 0 0 0 1px var(--line);
     border-radius: var(--radius);
 }
 

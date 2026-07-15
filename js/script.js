@@ -715,8 +715,10 @@ function renderCalendar() {
         days = [new Date(calendarDate)];
         weekdayLabels = [new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(calendarDate)];
         calendarTitle.textContent = formatDayTitle(calendarDate);
-        prevMonthButton.textContent = "Dia anterior";
-        nextMonthButton.textContent = "Próximo dia";
+        prevMonthButton.textContent = "<";
+        nextMonthButton.textContent = ">";
+        prevMonthButton.setAttribute("aria-label", "Dia anterior");
+        nextMonthButton.setAttribute("aria-label", "Próximo dia");
     } else if (calendarView === "week") {
         const weekStart = startOfWorkWeek(calendarDate);
         days = Array.from({ length: 5 }, (_, index) => {
@@ -728,6 +730,8 @@ function renderCalendar() {
         calendarTitle.textContent = formatWeekTitle(days);
         prevMonthButton.textContent = "Semana anterior";
         nextMonthButton.textContent = "Próxima semana";
+        prevMonthButton.setAttribute("aria-label", "Semana anterior");
+        nextMonthButton.setAttribute("aria-label", "Próxima semana");
     } else {
         const firstDay = new Date(year, month, 1);
         const gridStart = new Date(firstDay);
@@ -741,6 +745,8 @@ function renderCalendar() {
         calendarTitle.textContent = formatMonthTitle(calendarDate);
         prevMonthButton.textContent = "Mês anterior";
         nextMonthButton.textContent = "Próximo mês";
+        prevMonthButton.setAttribute("aria-label", "Mês anterior");
+        nextMonthButton.setAttribute("aria-label", "Próximo mês");
     }
 
     calendarWeekdays.innerHTML = weekdayLabels.map(label => `<span>${label}</span>`).join("");
