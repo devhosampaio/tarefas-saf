@@ -77,6 +77,7 @@ let selectedCalendarTaskId = "";
 let selectedCalendarPointer = { x: 0, y: 0 };
 let calendarLongPressTimer = null;
 let suppressNextCalendarClick = false;
+let copiedCalendarTask = null;
 
 function setSyncStatus(message) {
     if (syncStatus) syncStatus.textContent = message;
@@ -111,6 +112,10 @@ function renderCalendarContextMenu(mode) {
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
                 <span>Editar tarefa</span>
             </button>
+            <button type="button" data-calendar-action="copy-task" role="menuitem">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+                <span>Copiar tarefa</span>
+            </button>
             <button type="button" data-calendar-action="delete-task" role="menuitem" class="danger-menu-item">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
                 <span>Excluir tarefa</span>
@@ -135,6 +140,10 @@ function renderCalendarContextMenu(mode) {
                 <rect x="4" y="5" width="16" height="16" rx="2"></rect>
             </svg>
             <span>Nova reunião</span>
+        </button>
+        <button type="button" data-calendar-action="paste-task" role="menuitem" ${copiedCalendarTask ? "" : "disabled"}>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M9 14h6"></path><path d="M12 11v6"></path></svg>
+            <span>Colar tarefa</span>
         </button>
     `;
 }
@@ -380,7 +389,7 @@ async function migrateLocalTasks() {
 async function saveTask(task) {
     if (!SUPABASE_READY) {
         saveLocalTasks();
-        setSyncStatus(successMessage);
+        setSyncStatus("Salvo localmente");
         return true;
     }
 
@@ -1010,6 +1019,46 @@ async function moveTaskToDate(id, date) {
     }
 }
 
+function copyCalendarTask(id) {
+    const task = tasks.find(item => item.id === id);
+    if (!task) return;
+
+    copiedCalendarTask = { ...task };
+    setSyncStatus("Tarefa copiada");
+}
+
+async function pasteCalendarTask(date) {
+    if (!copiedCalendarTask || !date) {
+        setSyncStatus("Copie uma tarefa antes de colar");
+        return;
+    }
+
+    if (isWeekendDate(date)) {
+        setSyncStatus("Sábado e domingo estão desativados");
+        return;
+    }
+
+    const previousTasks = [...tasks];
+    const pastedTask = {
+        ...copiedCalendarTask,
+        id: crypto.randomUUID(),
+        date,
+        done: false,
+        completedAt: "",
+        createdAt: new Date().toISOString()
+    };
+
+    tasks.push(pastedTask);
+    render();
+    setSyncStatus(`Colando tarefa em ${formatDate(date)}...`);
+
+    const saved = await saveTask(pastedTask);
+    if (!saved) {
+        tasks = previousTasks;
+        render();
+    }
+}
+
 window.editTask = function (id, sourceEvent) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
@@ -1397,6 +1446,11 @@ calendarContextMenu?.addEventListener("click", event => {
         return;
     }
 
+    if (button.dataset.calendarAction === "copy-task") {
+        copyCalendarTask(taskId);
+        return;
+    }
+
     if (button.dataset.calendarAction === "delete-task") {
         deleteTask(taskId);
         return;
@@ -1416,6 +1470,11 @@ calendarContextMenu?.addEventListener("click", event => {
     if (button.dataset.calendarAction === "new-meeting") {
         closeForm();
         window.openMeetingFormPopover?.(date, x, y);
+        return;
+    }
+
+    if (button.dataset.calendarAction === "paste-task") {
+        pasteCalendarTask(date);
     }
 });
 

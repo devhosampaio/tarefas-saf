@@ -1156,6 +1156,17 @@ main {
     outline: none;
 }
 
+.calendar-context-menu button:disabled {
+    cursor: not-allowed;
+    color: var(--muted);
+    opacity: .48;
+}
+
+.calendar-context-menu button:disabled:hover {
+    background: transparent;
+    color: var(--muted);
+}
+
 .calendar-context-menu .danger-menu-item {
     color: var(--danger);
 }
