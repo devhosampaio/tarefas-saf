@@ -65,6 +65,7 @@ const miniCalendarPanel = document.querySelector(".mini-calendar");
 const miniCalendarTitle = document.getElementById("miniCalendarTitle");
 const miniPrevMonthButton = document.getElementById("miniPrevMonth");
 const miniNextMonthButton = document.getElementById("miniNextMonth");
+const miniCalendarPopupState = document.getElementById("miniCalendarPopupState");
 const miniCalendarPopupToggle = document.getElementById("miniCalendarPopupToggle");
 const authGate = document.getElementById("authGate");
 const appShell = document.getElementById("appShell");
@@ -706,7 +707,8 @@ function toggleSidebar() {
 function toggleMiniCalendarPopup() {
     if (!appShell?.classList.contains("is-sidebar-collapsed")) return;
 
-    const isOpen = appShell.classList.toggle("is-mini-calendar-open");
+    const isOpen = Boolean(miniCalendarPopupState?.checked);
+    appShell.classList.toggle("is-mini-calendar-open", isOpen);
     miniCalendarPanel?.classList.toggle("is-popup-open", isOpen);
     miniCalendarPopupToggle?.setAttribute("aria-expanded", String(isOpen));
 }
@@ -714,6 +716,7 @@ function toggleMiniCalendarPopup() {
 function closeMiniCalendarPopup() {
     appShell?.classList.remove("is-mini-calendar-open");
     miniCalendarPanel?.classList.remove("is-popup-open");
+    if (miniCalendarPopupState) miniCalendarPopupState.checked = false;
     miniCalendarPopupToggle?.setAttribute("aria-expanded", "false");
 }
 
@@ -1381,8 +1384,15 @@ taskSearchInput.addEventListener("input", () => {
 
 themeToggle?.addEventListener("click", toggleTheme);
 sidebarToggle?.addEventListener("click", toggleSidebar);
-miniCalendarPopupToggle?.addEventListener("click", event => {
-    event.stopPropagation();
+miniCalendarPopupState?.addEventListener("change", () => {
+    toggleMiniCalendarPopup();
+});
+miniCalendarPopupToggle?.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    if (miniCalendarPopupState) {
+        miniCalendarPopupState.checked = !miniCalendarPopupState.checked;
+    }
     toggleMiniCalendarPopup();
 });
 
