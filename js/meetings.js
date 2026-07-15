@@ -510,7 +510,7 @@ window.deleteMeeting = async function (id) {
     }
 };
 
-document.getElementById("newMeetingButton").addEventListener("click", () => {
+document.getElementById("newMeetingButton")?.addEventListener("click", () => {
     showTab("meetingsTab");
     resetMeetingForm();
     meetingFields.subject.focus();

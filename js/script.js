@@ -1274,7 +1274,7 @@ function escapeHTML(text) {
         .replaceAll("'", "&#039;");
 }
 
-document.getElementById("openForm").addEventListener("click", () => {
+document.getElementById("openForm")?.addEventListener("click", () => {
     resetForm();
     openForm();
 });
