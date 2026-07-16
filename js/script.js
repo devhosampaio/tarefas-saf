@@ -266,8 +266,7 @@ function showCalendarTaskPreview(taskId, dayElement) {
         <h3>${escapeHTML(task.name)}</h3>
         ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
         <div class="calendar-preview-meta">
-            <span>${escapeHTML(priority)}</span>
-            <span>Fazer em: ${formatDate(task.date)}</span>
+            <span>Criada em: ${formatCreatedDate(task.createdAt || task.date)}</span>
             <span>${task.done ? "Concluída" : "Pendente"}</span>
             ${task.requestedBy ? `<span>Solicitante: ${escapeHTML(task.requestedBy)}</span>` : ""}
             ${task.reminderDay ? `<span>Lembrete: ${escapeHTML(task.reminderDay)}</span>` : ""}
@@ -289,7 +288,7 @@ function showCalendarCounterPreview(date, type, x, y) {
 
     const dayTasks = tasks
         .filter(task => shouldShowTaskOnCalendarDay(task, date))
-        .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
+        .sort(compareTasksForDisplay);
     const counterTasks = getMonthlyCounterTasks(dayTasks, type);
 
     if (counterTasks.length === 0) {
@@ -314,7 +313,7 @@ function showCalendarCounterPreview(date, type, x, y) {
                         <h3>${escapeHTML(task.name)}</h3>
                         ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
                         <div class="calendar-preview-meta">
-                            <span>${escapeHTML(priority)}</span>
+                            <span>Criada em: ${formatCreatedDate(task.createdAt || task.date)}</span>
                             <span>${task.done ? "Concluída" : "Pendente"}</span>
                             ${task.requestedBy ? `<span>Solicitante: ${escapeHTML(task.requestedBy)}</span>` : ""}
                         </div>
@@ -626,6 +625,19 @@ function formatDate(value) {
     return `${day}/${month}/${year}`;
 }
 
+function formatCreatedDate(value) {
+    if (!value) return "Não informada";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return formatDate(value);
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return formatDate(value);
+    return new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    }).format(date);
+}
+
 function toISODate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -694,6 +706,22 @@ function priorityRank(priority) {
 
 function isRoutineTask(task) {
     return normalizePriority(task.priority) === "Rotineira";
+}
+
+function taskDisplayGroup(task) {
+    if (isRoutineTask(task)) return 0;
+    if (task.done) return 1;
+    return 2;
+}
+
+function compareTasksForDisplay(a, b) {
+    const groupA = taskDisplayGroup(a);
+    const groupB = taskDisplayGroup(b);
+    if (groupA !== groupB) return groupA - groupB;
+
+    const createdA = new Date(a.createdAt || a.date || 0).getTime();
+    const createdB = new Date(b.createdAt || b.date || 0).getTime();
+    return createdB - createdA;
 }
 
 function getRoutineDayInputs() {
@@ -877,6 +905,8 @@ function activeFiltersCount() {
 }
 
 function updateFilterButton() {
+    if (!openFiltersButton || !filterCount || !filterPanel) return;
+
     const count = activeFiltersCount();
     const isOpen = !filterPanel.classList.contains("hidden");
 
@@ -901,8 +931,8 @@ function getFilteredTasks() {
                 task.name,
                 task.description,
                 task.requestedBy,
-                normalizePriority(task.priority),
                 task.date,
+                task.createdAt,
                 task.reminderDay,
                 task.done ? "concluida concluída" : "pendente"
             ].join(" "));
@@ -924,13 +954,7 @@ function getFilteredTasks() {
         filtered = filtered.filter(t => (t.requestedBy || "").toLowerCase().includes(requester));
     }
 
-    return filtered.sort((a, b) => {
-        if (a.done !== b.done) return a.done ? 1 : -1;
-        if (priorityRank(a.priority) !== priorityRank(b.priority)) {
-            return priorityRank(a.priority) - priorityRank(b.priority);
-        }
-        return new Date(a.date) - new Date(b.date);
-    });
+    return filtered.sort(compareTasksForDisplay);
 }
 
 function renderStats() {
@@ -951,13 +975,12 @@ function renderTasks() {
     <article class="task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" draggable="true" data-task-id="${task.id}">
       <div class="task-head">
         <h2>${escapeHTML(task.name)}</h2>
-        <span class="badge ${priorityClass(task.priority)}">${normalizePriority(task.priority)}</span>
       </div>
 
       ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
 
       <div class="meta">
-        <span>Fazer em: ${formatDate(task.date)}</span>
+        <span>Criada em: ${formatCreatedDate(task.createdAt || task.date)}</span>
         <span>Solicitante: ${escapeHTML(task.requestedBy || "Não informado")}</span>
         ${task.reminderDay ? `<span>Lembrete: ${escapeHTML(task.reminderDay)}</span>` : ""}
       </div>
@@ -1076,7 +1099,7 @@ function renderCalendar() {
         const isoDate = toISODate(date);
         const dayTasks = tasks
             .filter(task => shouldShowTaskOnCalendarDay(task, isoDate))
-            .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
+            .sort(compareTasksForDisplay);
         const isCurrentMonth = calendarView !== "month" || date.getMonth() === month;
         const isToday = isoDate === today;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
@@ -1502,40 +1525,40 @@ taskList.addEventListener("dragend", event => {
     });
 });
 
-openFiltersButton.addEventListener("click", () => {
-    filterPanel.classList.toggle("hidden");
+openFiltersButton?.addEventListener("click", () => {
+    filterPanel?.classList.toggle("hidden");
     updateFilterButton();
 });
 
-document.getElementById("applyFilters").addEventListener("click", () => {
+document.getElementById("applyFilters")?.addEventListener("click", () => {
     advancedFilters = {
         ...advancedFilters,
-        date: filterDateInput.value,
-        priority: filterPriorityInput.value,
-        requestedBy: filterRequestedByInput.value.trim()
+        date: filterDateInput?.value || "",
+        priority: filterPriorityInput?.value || "",
+        requestedBy: filterRequestedByInput?.value.trim() || ""
     };
-    filterPanel.classList.add("hidden");
+    filterPanel?.classList.add("hidden");
     updateFilterButton();
     renderTasks();
 });
 
-document.getElementById("clearFilters").addEventListener("click", () => {
+document.getElementById("clearFilters")?.addEventListener("click", () => {
     advancedFilters = {
         query: "",
         date: "",
         priority: "",
         requestedBy: ""
     };
-    taskSearchInput.value = "";
-    filterDateInput.value = "";
-    filterPriorityInput.value = "";
-    filterRequestedByInput.value = "";
-    filterPanel.classList.add("hidden");
+    if (taskSearchInput) taskSearchInput.value = "";
+    if (filterDateInput) filterDateInput.value = "";
+    if (filterPriorityInput) filterPriorityInput.value = "";
+    if (filterRequestedByInput) filterRequestedByInput.value = "";
+    filterPanel?.classList.add("hidden");
     updateFilterButton();
     renderTasks();
 });
 
-taskSearchInput.addEventListener("input", () => {
+taskSearchInput?.addEventListener("input", () => {
     advancedFilters.query = taskSearchInput.value.trim();
     updateFilterButton();
     renderTasks();

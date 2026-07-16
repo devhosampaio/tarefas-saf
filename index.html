@@ -226,62 +226,6 @@
           <h3>Tarefas</h3>
           <span>Arraste para o calendário</span>
         </div>
-        <div class="toolbar">
-          <div class="filters">
-            <button class="chip active" data-filter="todas">Todas</button>
-            <button class="chip" data-filter="pendentes">Pendentes</button>
-            <button class="chip" data-filter="concluidas">Concluídas</button>
-          </div>
-
-          <div class="task-search-wrap">
-            <svg aria-hidden="true" viewBox="0 0 24 24">
-              <path d="m21 21-4.3-4.3"></path>
-              <circle cx="11" cy="11" r="7"></circle>
-            </svg>
-            <input id="taskSearchInput" class="task-search" placeholder="Buscar tarefa, descrição, solicitante, prioridade..." />
-          </div>
-
-          <button class="icon-btn filter-toggle" id="openFilters" type="button" aria-label="Abrir filtros" title="Filtros" aria-expanded="false">
-            <svg aria-hidden="true" viewBox="0 0 24 24">
-              <path d="M4 5h16l-6 7v5l-4 2v-7L4 5z"></path>
-            </svg>
-            <span class="filter-count hidden" id="filterCount">0</span>
-          </button>
-        </div>
-
-        <section class="panel filter-panel hidden" id="filterPanel">
-          <div class="filter-head">
-            <h3 class="panel-title">Refinar lista</h3>
-            <button class="text-btn" type="button" id="clearFilters">Limpar</button>
-          </div>
-
-          <div class="filter-grid">
-            <div>
-              <label for="filterDate">Data em que vou fazer</label>
-              <input id="filterDate" type="date" />
-            </div>
-
-            <div>
-              <label for="filterPriority">Prioridade</label>
-              <select id="filterPriority">
-                <option value="">Todas</option>
-                <option value="Alta">Alta</option>
-                <option value="Média">Média</option>
-                <option value="Baixa">Baixa</option>
-                <option value="Rotineira">Rotineira</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="filterRequestedBy">Solicitante</label>
-              <input id="filterRequestedBy" placeholder="Nome de quem passou a tarefa" />
-            </div>
-
-            <div class="filter-actions">
-              <button class="primary" type="button" id="applyFilters">Aplicar</button>
-            </div>
-          </div>
-        </section>
 
         <div class="task-list" id="taskList"></div>
       </aside>
