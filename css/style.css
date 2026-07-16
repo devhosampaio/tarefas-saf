@@ -587,14 +587,13 @@ main {
 .sidebar-brand-row {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 8px;
     min-width: 0;
 }
 
 .sidebar-brand-row h1 {
     min-width: 0;
-    flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
