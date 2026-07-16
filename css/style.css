@@ -2190,8 +2190,10 @@ input[readonly] {
 }
 
 .task-sidebar-panel .task {
-    min-height: 176px;
-    padding: 11px;
+    min-height: auto;
+    height: auto;
+    padding: 13px;
+    overflow: hidden;
 }
 
 .task-sidebar-panel .task h2 {
@@ -2201,6 +2203,23 @@ input[readonly] {
 .task-sidebar-panel .task p,
 .task-sidebar-panel .meta {
     font-size: .76rem;
+}
+
+.task-sidebar-panel .task p {
+    margin-top: 9px;
+    line-height: 1.48;
+}
+
+.task-sidebar-panel .meta {
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.task-sidebar-panel .meta span {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: 5px 7px;
 }
 
 .task-sidebar-panel .task-actions {
