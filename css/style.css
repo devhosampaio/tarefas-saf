@@ -702,6 +702,30 @@ main {
     grid-column: 3;
 }
 
+.sidebar-footer .settings-toggle,
+.sidebar-footer .theme-toggle,
+.sidebar-footer .top-signout {
+    width: var(--icon-button-size);
+    min-width: var(--icon-button-size);
+    max-width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    min-height: var(--icon-button-size);
+    max-height: var(--icon-button-size);
+    display: inline-grid;
+    place-items: center;
+    justify-self: start;
+    align-self: center;
+    padding: 0;
+    font-size: 0;
+}
+
+.sidebar-footer .settings-toggle svg,
+.sidebar-footer .theme-toggle svg,
+.sidebar-footer .top-signout svg {
+    width: 18px;
+    height: 18px;
+}
+
 .sidebar-settings {
     display: grid;
     gap: 12px;
