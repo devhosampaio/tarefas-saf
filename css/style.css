@@ -528,6 +528,36 @@ body.dark-mode .add-btn:hover {
     stroke-width: 2;
 }
 
+.settings-toggle,
+.settings-back {
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    border: 1px solid var(--line);
+    background: var(--surface-alt);
+    color: var(--muted);
+    border-radius: 4px;
+}
+
+.settings-toggle:hover,
+.settings-back:hover {
+    color: var(--main);
+    border-color: color-mix(in srgb, var(--main) 42%, var(--line));
+}
+
+.settings-toggle svg,
+.settings-back svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+
 .meeting-shortcut {
     background: var(--surface-alt);
     border-color: var(--line-strong);
@@ -634,8 +664,55 @@ main {
 
 .sidebar-footer {
     display: grid;
+    grid-template-columns: var(--icon-button-size) minmax(0, 1fr) var(--icon-button-size);
+    align-items: center;
     gap: 8px;
-    margin-top: 0;
+    margin-top: auto;
+}
+
+.settings-toggle {
+    grid-column: 1;
+}
+
+.theme-toggle {
+    grid-column: 3;
+}
+
+.sidebar-footer .top-signout {
+    grid-column: 1 / -1;
+}
+
+.sidebar-settings {
+    display: grid;
+    gap: 12px;
+    min-height: 0;
+}
+
+.sidebar-settings.hidden {
+    display: none;
+}
+
+.sidebar-settings-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--text);
+    font-size: .92rem;
+}
+
+.settings-placeholder {
+    border: 1px dashed var(--line-strong);
+    background: var(--surface-alt);
+    color: var(--muted);
+    padding: 14px;
+    font-size: .82rem;
+    line-height: 1.45;
+    border-radius: 4px;
+}
+
+.app-sidebar.is-settings-open .tabs,
+.app-sidebar.is-settings-open .mini-calendar {
+    display: none;
 }
 
 .app-content {
@@ -693,6 +770,19 @@ main {
 
 #appShell.is-sidebar-collapsed .sidebar-footer {
     margin-top: auto;
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+#appShell.is-sidebar-collapsed .settings-toggle,
+#appShell.is-sidebar-collapsed .theme-toggle {
+    grid-column: 1;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+}
+
+#appShell.is-sidebar-collapsed .app-sidebar.is-settings-open .sidebar-settings {
+    display: none;
 }
 
 .mini-calendar {
@@ -903,18 +993,13 @@ main {
 }
 
 .app-sidebar .add-btn,
-.app-sidebar .top-signout,
-.app-sidebar .theme-toggle {
+.app-sidebar .top-signout {
     width: 100%;
 }
 
 .app-sidebar .add-btn,
 .app-sidebar .top-signout {
     justify-content: center;
-}
-
-.app-sidebar .theme-toggle {
-    height: 38px;
 }
 
 .tab-panel {

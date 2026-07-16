@@ -74,6 +74,9 @@ const signUpButton = document.getElementById("signUpButton");
 const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
 const sidebarToggle = document.getElementById("sidebarToggle");
+const appSidebar = document.querySelector(".app-sidebar");
+const settingsToggle = document.getElementById("settingsToggle");
+const settingsBackButton = document.getElementById("settingsBackButton");
 const taskSidebarPanel = document.getElementById("tasksView");
 
 let calendarDate = new Date();
@@ -913,6 +916,21 @@ function toggleSidebar() {
     applySidebarState(isCollapsed);
 }
 
+function setSettingsPanelOpen(isOpen) {
+    appSidebar?.classList.toggle("is-settings-open", isOpen);
+    settingsToggle?.setAttribute("aria-expanded", String(isOpen));
+    settingsToggle?.setAttribute("title", isOpen ? "Fechar configurações" : "Configurações");
+}
+
+function openSettingsPanel() {
+    if (appShell?.classList.contains("is-sidebar-collapsed")) {
+        localStorage.setItem("tarefas_saf_sidebar_collapsed", "false");
+        applySidebarState(false);
+    }
+
+    setSettingsPanelOpen(true);
+}
+
 function applyTaskSidebarState(isOpen) {
     appShell?.classList.toggle("is-task-sidebar-open", isOpen);
     taskSidebarPanel?.setAttribute("aria-hidden", String(!isOpen));
@@ -1650,6 +1668,16 @@ taskSearchInput?.addEventListener("input", () => {
 
 themeToggle?.addEventListener("click", toggleTheme);
 sidebarToggle?.addEventListener("click", toggleSidebar);
+settingsToggle?.addEventListener("click", () => {
+    const isOpen = appSidebar?.classList.contains("is-settings-open");
+    if (isOpen) {
+        setSettingsPanelOpen(false);
+        return;
+    }
+
+    openSettingsPanel();
+});
+settingsBackButton?.addEventListener("click", () => setSettingsPanelOpen(false));
 
 authForm?.addEventListener("submit", async event => {
     event.preventDefault();
