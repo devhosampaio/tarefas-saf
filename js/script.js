@@ -1739,6 +1739,17 @@ monthCalendar?.addEventListener("click", event => {
         return;
     }
 
+    const day = event.target.closest(".calendar-day");
+    if (calendarView === "month" && day?.dataset.date) {
+        event.preventDefault();
+        const [year, month, dayNumber] = day.dataset.date.split("-").map(Number);
+        calendarDate = new Date(year, month - 1, dayNumber);
+        hideCalendarContextMenu();
+        hideCalendarTaskPreview();
+        setCalendarView("day");
+        return;
+    }
+
     hideCalendarContextMenu();
 });
 
@@ -1926,13 +1937,17 @@ window.openTaskFormPopover = function (date, x, y) {
     openFormPopover(x, y);
 };
 
+function setCalendarView(view) {
+    calendarView = view || "day";
+    document.querySelectorAll("[data-calendar-view]").forEach(item => {
+        item.classList.toggle("active", item.dataset.calendarView === calendarView);
+    });
+    renderCalendar();
+}
+
 document.querySelectorAll("[data-calendar-view]").forEach(button => {
     button.addEventListener("click", () => {
-        calendarView = button.dataset.calendarView || "day";
-        document.querySelectorAll("[data-calendar-view]").forEach(item => {
-            item.classList.toggle("active", item === button);
-        });
-        renderCalendar();
+        setCalendarView(button.dataset.calendarView || "day");
     });
 });
 
