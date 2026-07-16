@@ -36,7 +36,9 @@
           <h1>Tarefas SAF</h1>
           <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Recolher barra lateral" title="Recolher barra lateral">
             <svg aria-hidden="true" viewBox="0 0 24 24">
-              <path d="m15 18-6-6 6-6"></path>
+              <path d="M4 7h16"></path>
+              <path d="M4 12h16"></path>
+              <path d="M4 17h16"></path>
             </svg>
           </button>
         </div>
@@ -101,7 +103,11 @@
     <section class="tab-panel active" id="tasksTab">
       <section class="calendar-panel panel" aria-label="Calendário de tarefas">
         <div class="calendar-header">
-          <div>
+          <div class="calendar-title-group">
+            <div class="calendar-title-nav" aria-label="Navegação do calendário">
+              <button class="text-btn" type="button" id="prevMonth" aria-label="Voltar">&lt;</button>
+              <button class="text-btn" type="button" id="nextMonth" aria-label="Avançar">&gt;</button>
+            </div>
             <h2 id="calendarTitle">Calendário</h2>
             <p>Clique com o botão direito em uma data para cadastrar nesse dia.</p>
           </div>
@@ -111,10 +117,17 @@
             <button class="view-btn" type="button" data-calendar-view="month">Mensal</button>
           </div>
           <div class="calendar-actions">
-            <button class="text-btn task-sidebar-toggle" type="button" id="toggleTaskSidebar" aria-pressed="false" aria-controls="tasksView">Exibir tarefas</button>
-            <button class="text-btn" type="button" id="prevMonth">Mês anterior</button>
+            <button class="text-btn task-sidebar-toggle" type="button" id="toggleTaskSidebar" aria-pressed="false" aria-controls="tasksView" aria-label="Exibir tarefas" title="Exibir tarefas">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M9 6h11"></path>
+                <path d="M9 12h11"></path>
+                <path d="M9 18h11"></path>
+                <path d="m4 6 1 1 2-2"></path>
+                <path d="m4 12 1 1 2-2"></path>
+                <path d="m4 18 1 1 2-2"></path>
+              </svg>
+            </button>
             <button class="text-btn" type="button" id="todayMonth">Hoje</button>
-            <button class="text-btn" type="button" id="nextMonth">Próximo mês</button>
           </div>
         </div>
 

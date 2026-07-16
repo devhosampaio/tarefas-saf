@@ -637,7 +637,7 @@ main {
 }
 
 #appShell.is-sidebar-collapsed .sidebar-toggle svg {
-    transform: rotate(180deg);
+    transform: none;
 }
 
 #appShell.is-sidebar-collapsed .tabs {
@@ -994,6 +994,19 @@ main {
     background: var(--surface-solid);
 }
 
+.calendar-title-group {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.calendar-title-nav {
+    display: inline-flex;
+    gap: 6px;
+    flex: none;
+}
+
 .calendar-header h2 {
     margin: 0;
     font-size: 1.08rem;
@@ -1018,9 +1031,9 @@ main {
 }
 
 .task-sidebar-toggle {
-    width: auto;
-    min-width: 112px;
-    padding: 0 12px;
+    width: var(--icon-button-size);
+    min-width: 0;
+    padding: 0;
     color: var(--text);
 }
 
@@ -2006,8 +2019,27 @@ input[readonly] {
     line-height: 1;
 }
 
+.calendar-title-nav .text-btn {
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    line-height: 1;
+}
+
 .calendar-actions .task-sidebar-toggle {
-    width: auto;
+    width: var(--icon-button-size);
+}
+
+.calendar-actions .task-sidebar-toggle svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
 }
 
 .chip {
@@ -2175,7 +2207,7 @@ input[readonly] {
 }
 
 .task-sidebar-panel .task {
-    min-height: 132px;
+    min-height: 176px;
     padding: 11px;
 }
 

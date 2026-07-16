@@ -886,10 +886,9 @@ function toggleSidebar() {
 function applyTaskSidebarState(isOpen) {
     appShell?.classList.toggle("is-task-sidebar-open", isOpen);
     taskSidebarToggle?.setAttribute("aria-pressed", String(isOpen));
+    taskSidebarToggle?.setAttribute("aria-label", isOpen ? "Ocultar tarefas" : "Exibir tarefas");
+    taskSidebarToggle?.setAttribute("title", isOpen ? "Ocultar tarefas" : "Exibir tarefas");
     taskSidebarPanel?.setAttribute("aria-hidden", String(!isOpen));
-    if (taskSidebarToggle) {
-        taskSidebarToggle.textContent = isOpen ? "Ocultar tarefas" : "Exibir tarefas";
-    }
 }
 
 function toggleTaskSidebar() {
