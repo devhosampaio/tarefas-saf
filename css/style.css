@@ -1511,9 +1511,9 @@ main {
 }
 
 .calendar-counter-preview {
-    width: min(360px, calc(100vw - 24px));
-    max-height: min(520px, calc(100vh - 24px));
-    padding: 12px;
+    width: min(280px, calc(100vw - 24px));
+    max-height: min(420px, calc(100vh - 24px));
+    padding: 8px;
     pointer-events: auto;
     scrollbar-width: thin;
     scrollbar-color: color-mix(in srgb, var(--main) 52%, var(--line)) transparent;
@@ -1535,22 +1535,30 @@ main {
 }
 
 .calendar-counter-preview-title {
-    margin-bottom: 10px;
+    margin-bottom: 7px;
     color: var(--muted);
-    font-size: .78rem;
+    font-size: .7rem;
 }
 
 .calendar-preview-list {
     display: grid;
-    gap: 8px;
+    gap: 5px;
 }
 
 .calendar-preview-card {
-    padding: 10px;
+    padding: 7px 8px;
     border: 1px solid var(--line);
-    border-left: 4px solid #d7a62f;
+    border-left: 3px solid #d7a62f;
     background: var(--surface-alt);
-    border-radius: 5px;
+    border-radius: 4px;
+}
+
+.calendar-counter-preview .calendar-preview-card h3 {
+    font-size: .78rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .calendar-preview-card.priority-routine,
@@ -1577,6 +1585,16 @@ main {
     font-size: .72rem;
     font-weight: 400;
     border-radius: 4px;
+}
+
+.calendar-counter-preview .calendar-preview-meta {
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.calendar-counter-preview .calendar-preview-meta span {
+    padding: 3px 5px;
+    font-size: .64rem;
 }
 
 body.dark-mode .calendar-task.priority-high {

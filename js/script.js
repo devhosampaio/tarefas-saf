@@ -311,11 +311,9 @@ function showCalendarCounterPreview(date, type, x, y) {
                 return `
                     <article class="calendar-preview-card ${priorityClass(priority)} ${task.done ? "done" : ""}">
                         <h3>${escapeHTML(task.name)}</h3>
-                        ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
                         <div class="calendar-preview-meta">
                             <span>Criada em: ${formatCreatedDate(task.createdAt || task.date)}</span>
                             <span>${task.done ? "Concluída" : "Pendente"}</span>
-                            ${task.requestedBy ? `<span>Solicitante: ${escapeHTML(task.requestedBy)}</span>` : ""}
                         </div>
                     </article>
                 `;
