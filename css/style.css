@@ -2107,7 +2107,7 @@ input[readonly] {
     overflow: hidden;
     background: var(--surface-solid);
     border-left: 1px solid var(--line);
-    box-shadow: -12px 0 28px rgba(15, 23, 42, .06);
+    box-shadow: none;
 }
 
 #appShell.is-task-sidebar-open #tasksView.task-sidebar-panel {
