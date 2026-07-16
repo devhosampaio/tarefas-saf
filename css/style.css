@@ -1229,6 +1229,41 @@ body.dark-mode .calendar-date {
     height: 0;
 }
 
+.calendar-task-separator {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto minmax(12px, 1fr);
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    font-size: .64rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.calendar-task-separator::after {
+    content: "";
+    height: 1px;
+    background: var(--line);
+}
+
+.calendar-task-separator.routine {
+    color: var(--priority-routine);
+}
+
+.calendar-task-separator.routine::after {
+    background: color-mix(in srgb, var(--priority-routine) 42%, var(--line));
+}
+
+.calendar-task-separator.done {
+    color: var(--success);
+}
+
+.calendar-task-separator.done::after {
+    background: color-mix(in srgb, var(--success) 42%, var(--line));
+}
+
 .calendar-task,
 .calendar-more {
     min-width: 0;

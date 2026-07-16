@@ -783,6 +783,29 @@ function renderCalendarTask(task) {
     `;
 }
 
+function renderCalendarTaskGroup(label, groupClass, groupTasks) {
+    if (groupTasks.length === 0) return "";
+
+    return `
+        <span class="calendar-task-separator ${groupClass}" aria-hidden="true">
+            <span>${label}</span>
+        </span>
+        ${groupTasks.map(renderCalendarTask).join("")}
+    `;
+}
+
+function renderGroupedCalendarTasks(dayTasks) {
+    const routineTasks = dayTasks.filter(task => isRoutineTask(task) && !task.done);
+    const doneTasks = dayTasks.filter(task => task.done);
+    const otherTasks = dayTasks.filter(task => !isRoutineTask(task) && !task.done);
+
+    return [
+        renderCalendarTaskGroup("Rotineiras", "routine", routineTasks),
+        renderCalendarTaskGroup("Concluídas", "done", doneTasks),
+        renderCalendarTaskGroup("Outras", "other", otherTasks)
+    ].join("");
+}
+
 function renderMonthlyTaskCounters(dayTasks) {
     const counters = [
         {
@@ -1092,7 +1115,7 @@ function renderCalendar() {
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
         const calendarItems = calendarView === "month"
             ? renderMonthlyTaskCounters(dayTasks)
-            : dayTasks.map(renderCalendarTask).join("");
+            : renderGroupedCalendarTasks(dayTasks);
 
         return `
             <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""} ${isWeekend ? "weekend-day" : ""}" type="button" data-date="${isoDate}" aria-label="${isWeekend ? "Fim de semana indisponível" : `Adicionar tarefa em ${formatDate(isoDate)}`}" ${isWeekend ? "aria-disabled=\"true\"" : ""}>
