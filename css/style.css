@@ -2053,7 +2053,7 @@ input[readonly] {
     box-shadow: -12px 0 28px rgba(15, 23, 42, .06);
 }
 
-#appShell.is-task-sidebar-open .task-sidebar-panel {
+#appShell.is-task-sidebar-open #tasksView.task-sidebar-panel {
     display: grid;
 }
 

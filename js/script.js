@@ -75,6 +75,7 @@ const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const taskSidebarToggle = document.getElementById("toggleTaskSidebar");
+const taskSidebarPanel = document.getElementById("tasksView");
 
 let calendarDate = new Date();
 let calendarView = "day";
@@ -831,6 +832,7 @@ function toggleSidebar() {
 function applyTaskSidebarState(isOpen) {
     appShell?.classList.toggle("is-task-sidebar-open", isOpen);
     taskSidebarToggle?.setAttribute("aria-pressed", String(isOpen));
+    taskSidebarPanel?.setAttribute("aria-hidden", String(!isOpen));
     if (taskSidebarToggle) {
         taskSidebarToggle.textContent = isOpen ? "Ocultar tarefas" : "Exibir tarefas";
     }
