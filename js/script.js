@@ -205,30 +205,6 @@ function cancelCalendarTaskPreviewHide() {
     window.clearTimeout(calendarPreviewHideTimer);
 }
 
-function placePreviewBesideDay(dayElement) {
-    if (!calendarTaskPreview || !dayElement) return;
-
-    const margin = 12;
-    const dayRect = dayElement.getBoundingClientRect();
-    calendarTaskPreview.style.left = `${dayRect.right + 8}px`;
-    calendarTaskPreview.style.top = `${dayRect.top}px`;
-
-    requestAnimationFrame(() => {
-        const previewRect = calendarTaskPreview.getBoundingClientRect();
-        const hasRoomRight = dayRect.right + 8 + previewRect.width <= window.innerWidth - margin;
-        const left = hasRoomRight
-            ? dayRect.right + 8
-            : Math.max(margin, dayRect.left - previewRect.width - 8);
-        const top = Math.min(
-            Math.max(margin, dayRect.top),
-            window.innerHeight - previewRect.height - margin
-        );
-
-        calendarTaskPreview.style.left = `${left}px`;
-        calendarTaskPreview.style.top = `${top}px`;
-    });
-}
-
 function placePreviewBesidePointer(x, y) {
     if (!calendarTaskPreview) return;
 
@@ -239,12 +215,21 @@ function placePreviewBesidePointer(x, y) {
 
     requestAnimationFrame(() => {
         const previewRect = calendarTaskPreview.getBoundingClientRect();
-        const left = Math.min(
-            Math.max(margin, x + offset),
-            window.innerWidth - previewRect.width - margin
-        );
+        const rightLeft = x + offset;
+        const leftLeft = x - previewRect.width - offset;
+        const hasRoomRight = rightLeft + previewRect.width <= window.innerWidth - margin;
+        const hasRoomLeft = leftLeft >= margin;
+        const spaceRight = window.innerWidth - x - margin;
+        const spaceLeft = x - margin;
+        const left = hasRoomRight
+            ? rightLeft
+            : hasRoomLeft
+                ? leftLeft
+                : spaceRight >= spaceLeft
+                    ? Math.max(margin, window.innerWidth - previewRect.width - margin)
+                    : margin;
         const top = Math.min(
-            Math.max(margin, y + offset),
+            Math.max(margin, y - 12),
             window.innerHeight - previewRect.height - margin
         );
 
@@ -253,7 +238,7 @@ function placePreviewBesidePointer(x, y) {
     });
 }
 
-function showCalendarTaskPreview(taskId, dayElement) {
+function showCalendarTaskPreview(taskId, x, y) {
     if (!calendarTaskPreview) return;
 
     const task = tasks.find(item => item.id === taskId);
@@ -273,7 +258,7 @@ function showCalendarTaskPreview(taskId, dayElement) {
     `;
     calendarTaskPreview.classList.remove("hidden");
     calendarTaskPreview.setAttribute("aria-hidden", "false");
-    placePreviewBesideDay(dayElement);
+    placePreviewBesidePointer(x, y);
 }
 
 function getMonthlyCounterTasks(dayTasks, type) {
@@ -1825,17 +1810,23 @@ monthCalendar?.addEventListener("mouseover", event => {
 
     showCalendarTaskPreview(
         taskItem.dataset.taskId,
-        taskItem.closest(".calendar-day")
+        event.clientX,
+        event.clientY
     );
 });
 
 monthCalendar?.addEventListener("mousemove", event => {
     const counterItem = event.target.closest(".calendar-task-counter");
-    if (!counterItem?.dataset.counterType) return;
+    if (counterItem?.dataset.counterType) {
+        const day = counterItem.closest(".calendar-day");
+        if (!day?.dataset.date) return;
+        showCalendarCounterPreview(day.dataset.date, counterItem.dataset.counterType, event.clientX, event.clientY);
+        return;
+    }
 
-    const day = counterItem.closest(".calendar-day");
-    if (!day?.dataset.date) return;
-    showCalendarCounterPreview(day.dataset.date, counterItem.dataset.counterType, event.clientX, event.clientY);
+    const taskItem = event.target.closest(".calendar-task");
+    if (!taskItem?.dataset.taskId) return;
+    showCalendarTaskPreview(taskItem.dataset.taskId, event.clientX, event.clientY);
 });
 
 monthCalendar?.addEventListener("focusin", event => {
@@ -1856,9 +1847,11 @@ monthCalendar?.addEventListener("focusin", event => {
     const taskItem = event.target.closest(".calendar-task");
     if (!taskItem?.dataset.taskId) return;
 
+    const taskRect = taskItem.getBoundingClientRect();
     showCalendarTaskPreview(
         taskItem.dataset.taskId,
-        taskItem.closest(".calendar-day")
+        taskRect.right,
+        taskRect.top
     );
 });
 
