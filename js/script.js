@@ -773,12 +773,15 @@ function calendarTaskClass(task) {
 
 function renderCalendarTask(task) {
     const routineIcon = isRoutineTask(task) && !task.done ? renderPocketWatchIcon() : "";
+    const doneIcon = task.done
+        ? `<svg class="calendar-task-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg>`
+        : "";
 
     return `
         <span class="calendar-task ${calendarTaskClass(task)}" data-task-id="${task.id}" title="${escapeHTML(task.name)}" tabindex="0" draggable="true">
             ${routineIcon}
+            ${doneIcon}
             <span class="calendar-task-title">${escapeHTML(task.name)}</span>
-            ${task.done ? `<span class="calendar-task-status"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg><span>Concluído</span></span>` : ""}
         </span>
     `;
 }

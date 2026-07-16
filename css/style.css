@@ -1313,27 +1313,6 @@ body.dark-mode .calendar-date {
     stroke-linejoin: round;
 }
 
-.calendar-task-status {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    gap: 4px;
-    margin-left: auto;
-    color: #1f7a4f;
-    font-size: .72rem;
-    font-weight: 400;
-}
-
-.calendar-task-status svg {
-    width: 14px;
-    height: 14px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
 .calendar-task:hover {
     filter: saturate(1.04);
     box-shadow: 0 2px 7px rgba(15, 23, 42, .10);
@@ -1668,10 +1647,6 @@ body.dark-mode .calendar-task.priority-continuous {
 body.dark-mode .calendar-task.done {
     border-left-color: #75c69e;
     background: #173b2b;
-    color: #9be0b8;
-}
-
-body.dark-mode .calendar-task-status {
     color: #9be0b8;
 }
 
