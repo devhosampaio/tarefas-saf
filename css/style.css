@@ -1061,22 +1061,18 @@ main {
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 0;
+    gap: 1px;
     color: var(--muted);
     font-size: .75rem;
     font-weight: 400;
     text-transform: uppercase;
-    background: var(--surface-solid);
+    background: var(--line);
     border-bottom: 1px solid var(--line);
 }
 
 .calendar-weekdays span {
     padding: clamp(6px, 1.2vh, 9px) 10px;
-    border-right: 1px solid var(--line);
-}
-
-.calendar-weekdays span:last-child {
-    border-right: 0;
+    background: var(--surface-solid);
 }
 
 .month-calendar {
