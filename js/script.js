@@ -144,9 +144,9 @@ function renderCalendarContextMenu(mode) {
                 <svg aria-hidden="true" viewBox="0 0 24 24">${isDone ? `<path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path>` : `<path d="M20 6 9 17l-5-5"></path>`}</svg>
                 <span>${isDone ? "Desmarcar concluído" : "Marcar como concluída"}</span>
             </button>
-            <button type="button" data-calendar-action="delete-task" role="menuitem" class="danger-menu-item">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
-                <span>Excluir tarefa</span>
+            <button type="button" data-calendar-action="remove-task-from-calendar" role="menuitem">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="m9 16 6-6"></path><path d="m15 16-6-6"></path></svg>
+                <span>Remover tarefa</span>
             </button>
         `;
         return;
@@ -368,7 +368,7 @@ function toDatabaseTask(task) {
         description: task.description || "",
         requested_by: task.requestedBy || "",
         priority: normalizePriority(task.priority),
-        date: task.date,
+        date: task.date || null,
         reminder_day: task.reminderDay || "",
         done: Boolean(task.done),
         completed_at: task.completedAt || null,
@@ -384,7 +384,7 @@ function fromDatabaseTask(task) {
         description: task.description || "",
         requestedBy: task.requested_by || "",
         priority: normalizePriority(task.priority),
-        date: task.date,
+        date: task.date || "",
         reminderDay: task.reminder_day || "",
         done: Boolean(task.done),
         completedAt: task.completed_at || "",
@@ -932,7 +932,7 @@ function updateFilterButton() {
 }
 
 function getFilteredTasks() {
-    let filtered = [...tasks];
+    let filtered = tasks.filter(task => !task.done);
 
     if (currentFilter === "pendentes") filtered = filtered.filter(t => !t.done);
     if (currentFilter === "concluidas") filtered = filtered.filter(t => t.done);
@@ -1379,6 +1379,28 @@ async function moveTaskToDate(id, date) {
     setSyncStatus(`Movendo para ${formatDate(date)}...`);
 
     const saved = await saveTaskDate(id, date, `Tarefa movida para ${formatDate(date)}`);
+    if (!saved) {
+        tasks = previousTasks;
+        render();
+    }
+}
+
+async function removeTaskFromCalendar(id) {
+    const task = tasks.find(item => item.id === id);
+    if (!task) return;
+
+    const previousTasks = [...tasks];
+    const nextTask = {
+        ...task,
+        date: "",
+        completedAt: ""
+    };
+
+    tasks = tasks.map(item => item.id === id ? nextTask : item);
+    render();
+    setSyncStatus("Removendo tarefa do calendário...");
+
+    const saved = await saveTask(nextTask);
     if (!saved) {
         tasks = previousTasks;
         render();
@@ -1902,6 +1924,11 @@ calendarContextMenu?.addEventListener("click", event => {
 
     if (button.dataset.calendarAction === "delete-task") {
         deleteTask(taskId);
+        return;
+    }
+
+    if (button.dataset.calendarAction === "remove-task-from-calendar") {
+        removeTaskFromCalendar(taskId);
         return;
     }
 
