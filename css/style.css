@@ -455,7 +455,7 @@ h1 {
     border-radius: var(--radius);
 }
 
-.top-signout {
+.footer-icon-button {
     width: var(--icon-button-size);
     height: var(--icon-button-size);
     display: inline-grid;
@@ -468,15 +468,16 @@ h1 {
     border-radius: 4px;
     box-shadow: none;
     appearance: none;
+    -webkit-appearance: none;
 }
 
-.top-signout:hover {
-    background: var(--surface-alt);
-    color: var(--danger);
-    border-color: color-mix(in srgb, var(--danger) 38%, var(--line));
+.footer-icon-button:hover {
+    background: var(--main-soft);
+    color: var(--main);
+    border-color: color-mix(in srgb, var(--main) 42%, var(--line));
 }
 
-.top-signout svg {
+.footer-icon-button svg {
     width: 18px;
     height: 18px;
     fill: none;
@@ -524,32 +525,6 @@ body.dark-mode .add-btn:hover {
     background: var(--main-dark);
 }
 
-.theme-toggle {
-    width: 34px;
-    height: 34px;
-    display: inline-grid;
-    place-items: center;
-    border: 1px solid var(--line);
-    background: var(--surface-alt);
-    color: var(--muted);
-    border-radius: var(--radius);
-}
-
-.theme-toggle:hover {
-    background: var(--main-soft);
-    color: var(--main);
-}
-
-.theme-toggle svg {
-    width: 18px;
-    height: 18px;
-    fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
-}
-
 .settings-toggle,
 .settings-back {
     width: var(--icon-button-size);
@@ -587,7 +562,6 @@ body.dark-mode .add-btn:hover {
 }
 
 body.dark-mode .user-pill,
-body.dark-mode .top-signout,
 body.dark-mode .meeting-shortcut {
     background: rgba(255, 255, 255, .08);
 }
@@ -721,6 +695,7 @@ main {
     padding: 0;
     border: 1px solid var(--line);
     background: var(--surface-alt);
+    color: var(--muted);
     box-shadow: none;
     font-size: 0;
 }
