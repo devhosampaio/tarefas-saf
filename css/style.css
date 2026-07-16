@@ -1120,6 +1120,7 @@ main {
     padding: clamp(7px, 1.3vh, 10px);
     text-align: left;
     cursor: pointer;
+    border-radius: 0;
     transition: background-color .18s ease, box-shadow .18s ease;
 }
 
@@ -2877,7 +2878,7 @@ body.dark-mode .row-actions button {
     .calendar-day {
         min-height: 104px;
         border: 1px solid var(--line);
-        border-radius: var(--radius);
+        border-radius: 0;
         padding: 11px;
     }
 
