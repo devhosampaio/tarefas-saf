@@ -462,13 +462,16 @@ h1 {
     place-items: center;
     flex: none;
     padding: 0;
+    border: 1px solid var(--line);
     background: var(--surface-alt);
     color: var(--muted);
-    border-color: var(--line);
     border-radius: 4px;
+    box-shadow: none;
+    appearance: none;
 }
 
 .top-signout:hover {
+    background: var(--surface-alt);
     color: var(--danger);
     border-color: color-mix(in srgb, var(--danger) 38%, var(--line));
 }
@@ -716,6 +719,9 @@ main {
     justify-self: start;
     align-self: center;
     padding: 0;
+    border: 1px solid var(--line);
+    background: var(--surface-alt);
+    box-shadow: none;
     font-size: 0;
 }
 
