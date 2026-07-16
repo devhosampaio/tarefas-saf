@@ -1463,6 +1463,18 @@ main {
     border-left-color: #42a675;
 }
 
+.calendar-task-preview.counter-pending {
+    border-left-color: #d7a62f;
+}
+
+.calendar-task-preview.counter-routine {
+    border-left-color: var(--priority-routine);
+}
+
+.calendar-task-preview.counter-done {
+    border-left-color: var(--success);
+}
+
 .calendar-task-preview h3 {
     margin: 0;
     font-size: .98rem;
@@ -1477,6 +1489,39 @@ main {
     line-height: 1.42;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+}
+
+.calendar-counter-preview {
+    width: min(360px, calc(100vw - 24px));
+    padding: 12px;
+}
+
+.calendar-counter-preview-title {
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: .78rem;
+}
+
+.calendar-preview-list {
+    display: grid;
+    gap: 8px;
+}
+
+.calendar-preview-card {
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-left: 4px solid #d7a62f;
+    background: var(--surface-alt);
+    border-radius: 5px;
+}
+
+.calendar-preview-card.priority-routine,
+.calendar-preview-card.priority-continuous {
+    border-left-color: var(--priority-routine);
+}
+
+.calendar-preview-card.done {
+    border-left-color: var(--success);
 }
 
 .calendar-preview-meta {

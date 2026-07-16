@@ -201,6 +201,30 @@ function placePreviewBesideDay(dayElement) {
     });
 }
 
+function placePreviewBesidePointer(x, y) {
+    if (!calendarTaskPreview) return;
+
+    const margin = 12;
+    const offset = 14;
+    calendarTaskPreview.style.left = `${x + offset}px`;
+    calendarTaskPreview.style.top = `${y + offset}px`;
+
+    requestAnimationFrame(() => {
+        const previewRect = calendarTaskPreview.getBoundingClientRect();
+        const left = Math.min(
+            Math.max(margin, x + offset),
+            window.innerWidth - previewRect.width - margin
+        );
+        const top = Math.min(
+            Math.max(margin, y + offset),
+            window.innerHeight - previewRect.height - margin
+        );
+
+        calendarTaskPreview.style.left = `${left}px`;
+        calendarTaskPreview.style.top = `${top}px`;
+    });
+}
+
 function showCalendarTaskPreview(taskId, dayElement) {
     if (!calendarTaskPreview) return;
 
@@ -223,6 +247,56 @@ function showCalendarTaskPreview(taskId, dayElement) {
     calendarTaskPreview.classList.remove("hidden");
     calendarTaskPreview.setAttribute("aria-hidden", "false");
     placePreviewBesideDay(dayElement);
+}
+
+function getMonthlyCounterTasks(dayTasks, type) {
+    if (type === "done") return dayTasks.filter(task => task.done);
+    if (type === "routine") return dayTasks.filter(task => !task.done && isRoutineTask(task));
+    return dayTasks.filter(task => !task.done && !isRoutineTask(task));
+}
+
+function showCalendarCounterPreview(date, type, x, y) {
+    if (!calendarTaskPreview) return;
+
+    const dayTasks = tasks
+        .filter(task => shouldShowTaskOnCalendarDay(task, date))
+        .sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority));
+    const counterTasks = getMonthlyCounterTasks(dayTasks, type);
+
+    if (counterTasks.length === 0) {
+        hideCalendarTaskPreview();
+        return;
+    }
+
+    const labels = {
+        pending: "Pendentes",
+        routine: "Rotineiras",
+        done: "Concluídas"
+    };
+
+    calendarTaskPreview.className = `calendar-task-preview calendar-counter-preview counter-${type}`;
+    calendarTaskPreview.innerHTML = `
+        <div class="calendar-counter-preview-title">${labels[type] || "Atividades"} - ${formatDate(date)}</div>
+        <div class="calendar-preview-list">
+            ${counterTasks.map(task => {
+                const priority = normalizePriority(task.priority);
+                return `
+                    <article class="calendar-preview-card ${priorityClass(priority)} ${task.done ? "done" : ""}">
+                        <h3>${escapeHTML(task.name)}</h3>
+                        ${task.description ? `<p>${escapeHTML(task.description)}</p>` : ""}
+                        <div class="calendar-preview-meta">
+                            <span>${escapeHTML(priority)}</span>
+                            <span>${task.done ? "Concluída" : "Pendente"}</span>
+                            ${task.requestedBy ? `<span>Solicitante: ${escapeHTML(task.requestedBy)}</span>` : ""}
+                        </div>
+                    </article>
+                `;
+            }).join("")}
+        </div>
+    `;
+    calendarTaskPreview.classList.remove("hidden");
+    calendarTaskPreview.setAttribute("aria-hidden", "false");
+    placePreviewBesidePointer(x, y);
 }
 
 function setAuthMessage(message, isError = false) {
@@ -676,7 +750,7 @@ function renderMonthlyTaskCounters(dayTasks) {
     return counters
         .filter(counter => counter.total > 0)
         .map(counter => `
-            <span class="calendar-task-counter ${counter.key}" title="${counter.total} ${counter.total === 1 ? "atividade" : "atividades"} ${counter.label}${counter.total === 1 ? "" : "s"}">
+            <span class="calendar-task-counter ${counter.key}" data-counter-type="${counter.key}" title="${counter.total} ${counter.total === 1 ? "atividade" : "atividades"} ${counter.label}${counter.total === 1 ? "" : "s"}" tabindex="0">
                 ${counter.total}
             </span>
         `).join("");
@@ -968,7 +1042,7 @@ function renderCalendar() {
         return `
             <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""} ${isWeekend ? "weekend-day" : ""}" type="button" data-date="${isoDate}" aria-label="${isWeekend ? "Fim de semana indisponível" : `Adicionar tarefa em ${formatDate(isoDate)}`}" ${isWeekend ? "aria-disabled=\"true\"" : ""}>
                 <span class="calendar-date">${date.getDate()}</span>
-                <span class="calendar-items">
+                <span class="calendar-items" data-date="${isoDate}">
                     ${calendarItems}
                 </span>
             </button>
@@ -1615,6 +1689,14 @@ monthCalendar?.addEventListener("contextmenu", event => {
 });
 
 monthCalendar?.addEventListener("mouseover", event => {
+    const counterItem = event.target.closest(".calendar-task-counter");
+    if (counterItem?.dataset.counterType) {
+        const day = counterItem.closest(".calendar-day");
+        if (!day?.dataset.date) return;
+        showCalendarCounterPreview(day.dataset.date, counterItem.dataset.counterType, event.clientX, event.clientY);
+        return;
+    }
+
     const taskItem = event.target.closest(".calendar-task");
     if (!taskItem?.dataset.taskId) return;
 
@@ -1624,7 +1706,30 @@ monthCalendar?.addEventListener("mouseover", event => {
     );
 });
 
+monthCalendar?.addEventListener("mousemove", event => {
+    const counterItem = event.target.closest(".calendar-task-counter");
+    if (!counterItem?.dataset.counterType) return;
+
+    const day = counterItem.closest(".calendar-day");
+    if (!day?.dataset.date) return;
+    showCalendarCounterPreview(day.dataset.date, counterItem.dataset.counterType, event.clientX, event.clientY);
+});
+
 monthCalendar?.addEventListener("focusin", event => {
+    const counterItem = event.target.closest(".calendar-task-counter");
+    if (counterItem?.dataset.counterType) {
+        const day = counterItem.closest(".calendar-day");
+        const counterRect = counterItem.getBoundingClientRect();
+        if (!day?.dataset.date) return;
+        showCalendarCounterPreview(
+            day.dataset.date,
+            counterItem.dataset.counterType,
+            counterRect.right,
+            counterRect.top
+        );
+        return;
+    }
+
     const taskItem = event.target.closest(".calendar-task");
     if (!taskItem?.dataset.taskId) return;
 
@@ -1635,13 +1740,19 @@ monthCalendar?.addEventListener("focusin", event => {
 });
 
 monthCalendar?.addEventListener("mouseout", event => {
+    const counterItem = event.target.closest(".calendar-task-counter");
+    if (counterItem && !counterItem.contains(event.relatedTarget)) {
+        hideCalendarTaskPreview();
+        return;
+    }
+
     const taskItem = event.target.closest(".calendar-task");
     if (!taskItem || taskItem.contains(event.relatedTarget)) return;
     hideCalendarTaskPreview();
 });
 
 monthCalendar?.addEventListener("focusout", event => {
-    if (event.target.closest(".calendar-task")) {
+    if (event.target.closest(".calendar-task, .calendar-task-counter")) {
         hideCalendarTaskPreview();
     }
 });
