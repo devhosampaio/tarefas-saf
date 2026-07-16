@@ -75,6 +75,7 @@ const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const appSidebar = document.querySelector(".app-sidebar");
+const sidebarSettings = document.getElementById("sidebarSettings");
 const settingsToggle = document.getElementById("settingsToggle");
 const settingsBackButton = document.getElementById("settingsBackButton");
 const taskSidebarPanel = document.getElementById("tasksView");
@@ -918,6 +919,7 @@ function toggleSidebar() {
 
 function setSettingsPanelOpen(isOpen) {
     appSidebar?.classList.toggle("is-settings-open", isOpen);
+    sidebarSettings?.classList.toggle("hidden", !isOpen);
     settingsToggle?.setAttribute("aria-expanded", String(isOpen));
     settingsToggle?.setAttribute("title", isOpen ? "Fechar configurações" : "Configurações");
 }

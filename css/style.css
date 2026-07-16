@@ -456,12 +456,31 @@ h1 {
 }
 
 .top-signout {
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    display: inline-grid;
+    place-items: center;
     flex: none;
-    min-height: 34px;
-    padding: 0 12px;
-    background: transparent;
+    padding: 0;
+    background: var(--surface-alt);
     color: var(--muted);
     border-color: var(--line);
+    border-radius: 4px;
+}
+
+.top-signout:hover {
+    color: var(--danger);
+    border-color: color-mix(in srgb, var(--danger) 38%, var(--line));
+}
+
+.top-signout svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
 }
 
 .add-btn {
@@ -664,8 +683,9 @@ main {
 
 .sidebar-footer {
     display: grid;
-    grid-template-columns: var(--icon-button-size) minmax(0, 1fr) var(--icon-button-size);
+    grid-template-columns: repeat(3, var(--icon-button-size));
     align-items: center;
+    justify-content: start;
     gap: 8px;
     margin-top: auto;
 }
@@ -675,11 +695,11 @@ main {
 }
 
 .theme-toggle {
-    grid-column: 3;
+    grid-column: 2;
 }
 
 .sidebar-footer .top-signout {
-    grid-column: 1 / -1;
+    grid-column: 3;
 }
 
 .sidebar-settings {
@@ -710,6 +730,19 @@ main {
     border-radius: 4px;
 }
 
+.settings-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface-alt);
+    color: var(--muted);
+    padding: 8px 10px;
+    font-size: .82rem;
+    border-radius: 4px;
+}
+
 .app-sidebar.is-settings-open .tabs,
 .app-sidebar.is-settings-open .mini-calendar {
     display: none;
@@ -736,10 +769,8 @@ main {
 }
 
 #appShell.is-sidebar-collapsed .sidebar-brand-row h1,
-#appShell.is-sidebar-collapsed .sync-status,
 #appShell.is-sidebar-collapsed .mini-calendar,
-#appShell.is-sidebar-collapsed .tab span,
-#appShell.is-sidebar-collapsed .top-signout {
+#appShell.is-sidebar-collapsed .tab span {
     display: none;
 }
 
@@ -992,13 +1023,11 @@ main {
     box-shadow: 0 1px 4px rgba(15, 23, 42, .08);
 }
 
-.app-sidebar .add-btn,
-.app-sidebar .top-signout {
+.app-sidebar .add-btn {
     width: 100%;
 }
 
-.app-sidebar .add-btn,
-.app-sidebar .top-signout {
+.app-sidebar .add-btn {
     justify-content: center;
 }
 
@@ -3049,8 +3078,9 @@ body.dark-mode .row-actions button {
     }
 
     .sidebar-footer {
-        grid-template-columns: 1fr 42px 1fr;
+        grid-template-columns: repeat(3, var(--icon-button-size));
         align-items: center;
+        justify-content: start;
         margin-top: 0;
     }
 
@@ -3077,8 +3107,7 @@ body.dark-mode .row-actions button {
         min-height: 42px;
     }
 
-    .user-pill,
-    .top-signout {
+    .user-pill {
         width: 100%;
         max-width: none;
     }
@@ -3098,11 +3127,6 @@ body.dark-mode .row-actions button {
 
     .user-pill {
         grid-column: 1 / -1;
-    }
-
-    .theme-toggle,
-    .top-signout {
-        width: 100%;
     }
 
     .row,
