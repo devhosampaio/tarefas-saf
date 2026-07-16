@@ -111,6 +111,7 @@
             <button class="view-btn" type="button" data-calendar-view="month">Mensal</button>
           </div>
           <div class="calendar-actions">
+            <button class="text-btn task-sidebar-toggle" type="button" id="toggleTaskSidebar" aria-pressed="false" aria-controls="tasksView">Exibir tarefas</button>
             <button class="text-btn" type="button" id="prevMonth">Mês anterior</button>
             <button class="text-btn" type="button" id="todayMonth">Hoje</button>
             <button class="text-btn" type="button" id="nextMonth">Próximo mês</button>
@@ -220,11 +221,15 @@
         </form>
       </section>
 
-      <section id="tasksView" class="workspace">
+      <aside id="tasksView" class="workspace task-sidebar-panel" aria-label="Tarefas criadas">
+        <div class="task-sidebar-head">
+          <h3>Tarefas</h3>
+          <span>Arraste para o calendário</span>
+        </div>
         <div class="toolbar">
           <div class="filters">
-            <button class="chip" data-filter="todas">Todas</button>
-            <button class="chip active" data-filter="pendentes">Pendentes</button>
+            <button class="chip active" data-filter="todas">Todas</button>
+            <button class="chip" data-filter="pendentes">Pendentes</button>
             <button class="chip" data-filter="concluidas">Concluídas</button>
           </div>
 
@@ -279,7 +284,7 @@
         </section>
 
         <div class="task-list" id="taskList"></div>
-      </section>
+      </aside>
     </section>
 
     <section class="tab-panel" id="meetingsTab">

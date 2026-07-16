@@ -13,7 +13,7 @@ const SYNC_TIMEOUT_MS = 8000;
 let tasks = [];
 let currentUser = null;
 window.tarefasSafCurrentUser = null;
-let currentFilter = "pendentes";
+let currentFilter = "todas";
 let advancedFilters = {
     query: "",
     date: "",
@@ -74,6 +74,7 @@ const signUpButton = document.getElementById("signUpButton");
 const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
 const sidebarToggle = document.getElementById("sidebarToggle");
+const taskSidebarToggle = document.getElementById("toggleTaskSidebar");
 
 let calendarDate = new Date();
 let calendarView = "day";
@@ -827,6 +828,20 @@ function toggleSidebar() {
     applySidebarState(isCollapsed);
 }
 
+function applyTaskSidebarState(isOpen) {
+    appShell?.classList.toggle("is-task-sidebar-open", isOpen);
+    taskSidebarToggle?.setAttribute("aria-pressed", String(isOpen));
+    if (taskSidebarToggle) {
+        taskSidebarToggle.textContent = isOpen ? "Ocultar tarefas" : "Exibir tarefas";
+    }
+}
+
+function toggleTaskSidebar() {
+    const isOpen = !appShell?.classList.contains("is-task-sidebar-open");
+    localStorage.setItem("tarefas_saf_task_sidebar_open", String(isOpen));
+    applyTaskSidebarState(isOpen);
+}
+
 function activeFiltersCount() {
     return Object.values(advancedFilters).filter(Boolean).length;
 }
@@ -1489,6 +1504,7 @@ taskSearchInput.addEventListener("input", () => {
 
 themeToggle?.addEventListener("click", toggleTheme);
 sidebarToggle?.addEventListener("click", toggleSidebar);
+taskSidebarToggle?.addEventListener("click", toggleTaskSidebar);
 
 authForm?.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1895,6 +1911,7 @@ miniNextMonthButton?.addEventListener("click", () => {
 
 applyTheme(localStorage.getItem("tarefas_saf_theme") || "light");
 applySidebarState(localStorage.getItem("tarefas_saf_sidebar_collapsed") === "true");
+applyTaskSidebarState(localStorage.getItem("tarefas_saf_task_sidebar_open") === "true");
 resetForm();
 updateFilterButton();
 
