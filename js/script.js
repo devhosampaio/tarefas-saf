@@ -964,6 +964,8 @@ function renderStats() {
 function renderTasks() {
     const filtered = getFilteredTasks();
 
+    taskList.classList.remove("is-detail-view");
+
     if (filtered.length === 0) {
         taskList.innerHTML = `<div class="empty">Nenhuma tarefa encontrada.</div>`;
         return;
@@ -1002,6 +1004,34 @@ function renderTasks() {
       </div>
     </article>
   `).join("");
+}
+
+function renderTaskDetail(id) {
+    const task = tasks.find(item => item.id === id);
+    if (!task) return;
+
+    taskList.classList.add("is-detail-view");
+    taskList.innerHTML = `
+        <article class="task-detail ${priorityClass(task.priority)} ${task.done ? "done" : ""}">
+            <button class="task-detail-back" type="button" data-action="back-to-tasks">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg>
+                <span>Voltar</span>
+            </button>
+
+            <div class="task-detail-body">
+                <h2>${escapeHTML(task.name)}</h2>
+                ${task.description ? `<p>${escapeHTML(task.description)}</p>` : `<p class="muted-detail">Sem descrição.</p>`}
+
+                <div class="task-detail-meta">
+                    <span>Criada em: ${formatCreatedDate(task.createdAt || task.date)}</span>
+                    <span>No calendário: ${task.date ? formatDate(task.date) : "Não programada"}</span>
+                    <span>Status: ${task.done ? "Concluída" : "Pendente"}</span>
+                    <span>Solicitante: ${escapeHTML(task.requestedBy || "Não informado")}</span>
+                    ${task.reminderDay ? `<span>Rotina: ${escapeHTML(task.reminderDay)}</span>` : ""}
+                </div>
+            </div>
+        </article>
+    `;
 }
 
 function render() {
@@ -1509,12 +1539,26 @@ document.querySelectorAll(".chip[data-filter]").forEach(chip => {
 });
 
 taskList.addEventListener("click", event => {
+    const backButton = event.target.closest("[data-action='back-to-tasks']");
+    if (backButton) {
+        event.preventDefault();
+        renderTasks();
+        return;
+    }
+
     const button = event.target.closest("[data-action='schedule-today']");
-    if (!button) return;
+    if (button) {
+        event.preventDefault();
+        event.stopPropagation();
+        scheduleTaskToday(button.dataset.taskId);
+        return;
+    }
+
+    const taskCard = event.target.closest(".task[data-task-id]");
+    if (!taskCard) return;
 
     event.preventDefault();
-    event.stopPropagation();
-    scheduleTaskToday(button.dataset.taskId);
+    renderTaskDetail(taskCard.dataset.taskId);
 });
 
 taskList.addEventListener("contextmenu", event => {
