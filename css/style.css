@@ -1112,7 +1112,7 @@ main {
     gap: clamp(7px, 1.1vh, 10px);
     border: 0;
     background: var(--surface-solid);
-    color: var(--text);
+    color: #374151;
     padding: clamp(7px, 1.3vh, 10px);
     text-align: left;
     cursor: pointer;
@@ -1170,17 +1170,25 @@ main {
 .calendar-date {
     width: 44px;
     height: 44px;
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 999px;
     font-size: 1.45rem;
     font-weight: 400;
+    line-height: 1;
+    color: #374151;
 }
 
 .calendar-day.today .calendar-date {
     background: transparent;
     color: var(--main);
-    box-shadow: inset 0 0 0 2px var(--main);
+    box-shadow: inset 0 0 0 1px var(--main);
+}
+
+body.dark-mode .calendar-day,
+body.dark-mode .calendar-date {
+    color: #c4cbd5;
 }
 
 .calendar-items {
