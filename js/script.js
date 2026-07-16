@@ -113,6 +113,20 @@ function hideCalendarContextMenu() {
 function renderCalendarContextMenu(mode) {
     if (!calendarContextMenu) return;
 
+    if (mode === "sidebar-task") {
+        calendarContextMenu.innerHTML = `
+            <button type="button" data-calendar-action="edit-task" role="menuitem">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="m16.5 3.5 4 4L8 20H4v-4L16.5 3.5z"></path></svg>
+                <span>Editar</span>
+            </button>
+            <button type="button" data-calendar-action="delete-task" role="menuitem" class="danger-menu-item">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
+                <span>Excluir</span>
+            </button>
+        `;
+        return;
+    }
+
     if (mode === "task") {
         const selectedTask = tasks.find(task => task.id === selectedCalendarTaskId);
         const isDone = Boolean(selectedTask?.done);
@@ -1444,6 +1458,15 @@ taskList.addEventListener("click", event => {
     event.preventDefault();
     event.stopPropagation();
     scheduleTaskToday(button.dataset.taskId);
+});
+
+taskList.addEventListener("contextmenu", event => {
+    const taskCard = event.target.closest(".task[data-task-id]");
+    if (!taskCard) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    showCalendarContextMenu("sidebar-task", taskCard.dataset.date || "", taskCard.dataset.taskId, event.clientX, event.clientY);
 });
 
 taskList.addEventListener("dragstart", event => {
