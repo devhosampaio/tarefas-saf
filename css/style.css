@@ -1512,7 +1512,26 @@ main {
 
 .calendar-counter-preview {
     width: min(360px, calc(100vw - 24px));
+    max-height: min(520px, calc(100vh - 24px));
     padding: 12px;
+    pointer-events: auto;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--main) 52%, var(--line)) transparent;
+}
+
+.calendar-counter-preview::-webkit-scrollbar {
+    width: 8px;
+}
+
+.calendar-counter-preview::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.calendar-counter-preview::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--main) 52%, var(--line));
+    background-clip: content-box;
 }
 
 .calendar-counter-preview-title {

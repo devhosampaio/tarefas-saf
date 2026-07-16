@@ -85,6 +85,7 @@ let selectedCalendarPointer = { x: 0, y: 0 };
 let calendarLongPressTimer = null;
 let suppressNextCalendarClick = false;
 let copiedCalendarTask = null;
+let calendarPreviewHideTimer = null;
 
 function setSyncStatus(message) {
     if (syncStatus) syncStatus.textContent = message;
@@ -189,8 +190,20 @@ function showCalendarContextMenu(mode, date, taskId, x, y) {
 }
 
 function hideCalendarTaskPreview() {
+    window.clearTimeout(calendarPreviewHideTimer);
     calendarTaskPreview?.classList.add("hidden");
     calendarTaskPreview?.setAttribute("aria-hidden", "true");
+}
+
+function scheduleCalendarTaskPreviewHide() {
+    window.clearTimeout(calendarPreviewHideTimer);
+    calendarPreviewHideTimer = window.setTimeout(() => {
+        hideCalendarTaskPreview();
+    }, 180);
+}
+
+function cancelCalendarTaskPreviewHide() {
+    window.clearTimeout(calendarPreviewHideTimer);
 }
 
 function placePreviewBesideDay(dayElement) {
@@ -312,6 +325,7 @@ function showCalendarCounterPreview(date, type, x, y) {
     `;
     calendarTaskPreview.classList.remove("hidden");
     calendarTaskPreview.setAttribute("aria-hidden", "false");
+    cancelCalendarTaskPreviewHide();
     placePreviewBesidePointer(x, y);
 }
 
@@ -1783,13 +1797,26 @@ monthCalendar?.addEventListener("focusin", event => {
 monthCalendar?.addEventListener("mouseout", event => {
     const counterItem = event.target.closest(".calendar-task-counter");
     if (counterItem && !counterItem.contains(event.relatedTarget)) {
-        hideCalendarTaskPreview();
+        if (calendarTaskPreview?.contains(event.relatedTarget)) return;
+        scheduleCalendarTaskPreviewHide();
         return;
     }
 
     const taskItem = event.target.closest(".calendar-task");
     if (!taskItem || taskItem.contains(event.relatedTarget)) return;
     hideCalendarTaskPreview();
+});
+
+calendarTaskPreview?.addEventListener("mouseenter", () => {
+    if (calendarTaskPreview.classList.contains("calendar-counter-preview")) {
+        cancelCalendarTaskPreviewHide();
+    }
+});
+
+calendarTaskPreview?.addEventListener("mouseleave", () => {
+    if (calendarTaskPreview.classList.contains("calendar-counter-preview")) {
+        scheduleCalendarTaskPreviewHide();
+    }
 });
 
 monthCalendar?.addEventListener("focusout", event => {
