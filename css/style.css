@@ -402,13 +402,44 @@ h1 {
 
 .sync-status {
     margin: 0;
-    border: 1px solid var(--line);
-    background: var(--surface-alt);
-    padding: 6px 9px;
+    width: 26px;
+    height: 26px;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
     color: var(--muted);
-    font-size: .76rem;
-    white-space: nowrap;
-    border-radius: var(--radius);
+}
+
+.sync-status svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.sync-status .sync-cloud {
+    stroke-width: 1.8;
+}
+
+.sync-status .sync-mark {
+    stroke-width: 2.6;
+}
+
+.sync-status.ok .sync-mark {
+    color: #16a34a;
+    stroke: currentColor;
+}
+
+.sync-status.error .sync-mark {
+    color: #dc2626;
+    stroke: currentColor;
+}
+
+.sync-status.pending .sync-mark {
+    color: var(--muted);
+    stroke: currentColor;
 }
 
 .user-pill {
@@ -503,7 +534,6 @@ body.dark-mode .add-btn:hover {
     color: var(--main);
 }
 
-body.dark-mode .sync-status,
 body.dark-mode .user-pill,
 body.dark-mode .top-signout,
 body.dark-mode .meeting-shortcut {
@@ -557,13 +587,14 @@ main {
 .sidebar-brand-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 8px;
     min-width: 0;
 }
 
 .sidebar-brand-row h1 {
     min-width: 0;
+    flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -2962,10 +2993,6 @@ body.dark-mode .row-actions button {
         min-height: 42px;
     }
 
-    .sync-status {
-        white-space: normal;
-    }
-
     .user-pill,
     .top-signout {
         width: 100%;
@@ -2985,7 +3012,6 @@ body.dark-mode .row-actions button {
         width: 100%;
     }
 
-    .sync-status,
     .user-pill {
         grid-column: 1 / -1;
     }

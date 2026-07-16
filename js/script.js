@@ -87,7 +87,27 @@ let copiedCalendarTask = null;
 let calendarPreviewHideTimer = null;
 
 function setSyncStatus(message) {
-    if (syncStatus) syncStatus.textContent = message;
+    if (!syncStatus) return;
+
+    const normalized = normalizeSearchText(message);
+    const isError = /\b(erro|falha|indisponivel)\b/.test(normalized);
+    const isPending = /\b(carregando|sincronizando|salvando|programando|movendo|removendo|colando|excluindo)\b/.test(normalized);
+    const state = isError ? "error" : isPending ? "pending" : "ok";
+    const mark = state === "error"
+        ? `<path class="sync-mark" d="m15 9-6 6"></path><path class="sync-mark" d="m9 9 6 6"></path>`
+        : state === "ok"
+            ? `<path class="sync-mark" d="m8.5 12.5 2.2 2.2 4.8-5.4"></path>`
+            : `<path class="sync-mark" d="M12 8v4l2.5 1.5"></path>`;
+
+    syncStatus.className = `sync-status ${state}`;
+    syncStatus.title = message;
+    syncStatus.setAttribute("aria-label", message);
+    syncStatus.innerHTML = `
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path class="sync-cloud" d="M7 18a4.5 4.5 0 0 1 .8-8.9A6 6 0 0 1 19 11.5 3.3 3.3 0 0 1 18.5 18H7z"></path>
+            ${mark}
+        </svg>
+    `;
 }
 
 function placeFloatingElement(element, x, y) {
