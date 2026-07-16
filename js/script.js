@@ -74,7 +74,6 @@ const signUpButton = document.getElementById("signUpButton");
 const signOutButton = document.getElementById("signOutButton");
 const userIdentity = document.getElementById("userIdentity");
 const sidebarToggle = document.getElementById("sidebarToggle");
-const taskSidebarToggle = document.getElementById("toggleTaskSidebar");
 const taskSidebarPanel = document.getElementById("tasksView");
 
 let calendarDate = new Date();
@@ -885,16 +884,7 @@ function toggleSidebar() {
 
 function applyTaskSidebarState(isOpen) {
     appShell?.classList.toggle("is-task-sidebar-open", isOpen);
-    taskSidebarToggle?.setAttribute("aria-pressed", String(isOpen));
-    taskSidebarToggle?.setAttribute("aria-label", isOpen ? "Ocultar tarefas" : "Exibir tarefas");
-    taskSidebarToggle?.setAttribute("title", isOpen ? "Ocultar tarefas" : "Exibir tarefas");
     taskSidebarPanel?.setAttribute("aria-hidden", String(!isOpen));
-}
-
-function toggleTaskSidebar() {
-    const isOpen = !appShell?.classList.contains("is-task-sidebar-open");
-    localStorage.setItem("tarefas_saf_task_sidebar_open", String(isOpen));
-    applyTaskSidebarState(isOpen);
 }
 
 function activeFiltersCount() {
@@ -1563,7 +1553,6 @@ taskSearchInput?.addEventListener("input", () => {
 
 themeToggle?.addEventListener("click", toggleTheme);
 sidebarToggle?.addEventListener("click", toggleSidebar);
-taskSidebarToggle?.addEventListener("click", toggleTaskSidebar);
 
 authForm?.addEventListener("submit", async event => {
     event.preventDefault();
@@ -1998,7 +1987,7 @@ miniNextMonthButton?.addEventListener("click", () => {
 
 applyTheme(localStorage.getItem("tarefas_saf_theme") || "light");
 applySidebarState(localStorage.getItem("tarefas_saf_sidebar_collapsed") === "true");
-applyTaskSidebarState(localStorage.getItem("tarefas_saf_task_sidebar_open") === "true");
+applyTaskSidebarState(true);
 resetForm();
 updateFilterButton();
 

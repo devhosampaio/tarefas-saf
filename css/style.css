@@ -1030,19 +1030,6 @@ main {
     display: none;
 }
 
-.task-sidebar-toggle {
-    width: var(--icon-button-size);
-    min-width: 0;
-    padding: 0;
-    color: var(--text);
-}
-
-#appShell.is-task-sidebar-open .task-sidebar-toggle {
-    background: var(--main);
-    border-color: var(--main);
-    color: white;
-}
-
 .calendar-view-switch {
     display: inline-flex;
     justify-self: center;
@@ -2026,20 +2013,6 @@ input[readonly] {
     place-items: center;
     padding: 0;
     line-height: 1;
-}
-
-.calendar-actions .task-sidebar-toggle {
-    width: var(--icon-button-size);
-}
-
-.calendar-actions .task-sidebar-toggle svg {
-    width: 18px;
-    height: 18px;
-    fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
 }
 
 .chip {
