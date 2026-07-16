@@ -1207,6 +1207,7 @@ main {
     min-width: 0;
     display: flex;
     align-items: center;
+    gap: 7px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1237,6 +1238,17 @@ main {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.calendar-task-icon {
+    width: 15px;
+    height: 15px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .calendar-task-status {
@@ -1290,9 +1302,9 @@ main {
 
 .calendar-task.priority-routine,
 .calendar-task.priority-continuous {
-    border-left-color: #d7a62f;
-    background: rgba(255, 236, 170, .88);
-    color: #6f5200;
+    border-left-color: var(--priority-routine);
+    background: rgba(210, 237, 250, .94);
+    color: #075985;
 }
 
 .calendar-task.done {
@@ -1306,6 +1318,44 @@ main {
 .calendar-more {
     color: var(--muted);
     font-weight: 400;
+}
+
+.calendar-view-month .calendar-items {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 6px;
+    overflow: hidden;
+    padding-right: 0;
+}
+
+.calendar-task-counter {
+    width: 24px;
+    height: 24px;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: .76rem;
+    line-height: 1;
+    color: #fff;
+    cursor: default;
+}
+
+.calendar-task-counter.pending {
+    background: #d7a62f;
+    border-color: #c99720;
+}
+
+.calendar-task-counter.routine {
+    background: var(--priority-routine);
+    border-color: color-mix(in srgb, var(--priority-routine) 82%, #075985);
+}
+
+.calendar-task-counter.done {
+    background: var(--success);
+    border-color: color-mix(in srgb, var(--success) 82%, #1f7a4f);
 }
 
 .calendar-context-menu {
@@ -1406,7 +1456,7 @@ main {
 
 .calendar-task-preview.priority-routine,
 .calendar-task-preview.priority-continuous {
-    border-left-color: #d7a62f;
+    border-left-color: var(--priority-routine);
 }
 
 .calendar-task-preview.done {
@@ -1466,9 +1516,9 @@ body.dark-mode .calendar-task.priority-low {
 
 body.dark-mode .calendar-task.priority-routine,
 body.dark-mode .calendar-task.priority-continuous {
-    border-left-color: #e5c76b;
-    background: #3b3213;
-    color: #e5c76b;
+    border-left-color: var(--priority-routine);
+    background: #12364d;
+    color: #9bddf4;
 }
 
 body.dark-mode .calendar-task.done {

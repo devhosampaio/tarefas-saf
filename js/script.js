@@ -627,6 +627,61 @@ function shouldShowTaskOnCalendarDay(task, isoDate) {
     return Boolean(task.completedAt) && isoDate <= task.completedAt;
 }
 
+function renderPocketWatchIcon() {
+    return `
+        <svg class="calendar-task-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 7v5l3 2"></path>
+            <circle cx="12" cy="13" r="7"></circle>
+            <path d="M9 2h6"></path>
+            <path d="M12 2v4"></path>
+        </svg>
+    `;
+}
+
+function calendarTaskClass(task) {
+    return `${priorityClass(task.priority)} ${task.done ? "done" : ""}`;
+}
+
+function renderCalendarTask(task) {
+    const routineIcon = isRoutineTask(task) && !task.done ? renderPocketWatchIcon() : "";
+
+    return `
+        <span class="calendar-task ${calendarTaskClass(task)}" data-task-id="${task.id}" title="${escapeHTML(task.name)}" tabindex="0" draggable="true">
+            ${routineIcon}
+            <span class="calendar-task-title">${escapeHTML(task.name)}</span>
+            ${task.done ? `<span class="calendar-task-status"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg><span>Concluído</span></span>` : ""}
+        </span>
+    `;
+}
+
+function renderMonthlyTaskCounters(dayTasks) {
+    const counters = [
+        {
+            key: "pending",
+            label: "pendente",
+            total: dayTasks.filter(task => !task.done && !isRoutineTask(task)).length
+        },
+        {
+            key: "routine",
+            label: "rotineira",
+            total: dayTasks.filter(task => !task.done && isRoutineTask(task)).length
+        },
+        {
+            key: "done",
+            label: "concluida",
+            total: dayTasks.filter(task => task.done).length
+        }
+    ];
+
+    return counters
+        .filter(counter => counter.total > 0)
+        .map(counter => `
+            <span class="calendar-task-counter ${counter.key}" title="${counter.total} ${counter.total === 1 ? "atividade" : "atividades"} ${counter.label}${counter.total === 1 ? "" : "s"}">
+                ${counter.total}
+            </span>
+        `).join("");
+}
+
 function getNextBusinessDate(date = new Date()) {
     const nextDate = new Date(date);
     while (nextDate.getDay() === 0 || nextDate.getDay() === 6) {
@@ -906,17 +961,15 @@ function renderCalendar() {
         const isCurrentMonth = calendarView !== "month" || date.getMonth() === month;
         const isToday = isoDate === today;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+        const calendarItems = calendarView === "month"
+            ? renderMonthlyTaskCounters(dayTasks)
+            : dayTasks.map(renderCalendarTask).join("");
 
         return `
             <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""} ${isWeekend ? "weekend-day" : ""}" type="button" data-date="${isoDate}" aria-label="${isWeekend ? "Fim de semana indisponível" : `Adicionar tarefa em ${formatDate(isoDate)}`}" ${isWeekend ? "aria-disabled=\"true\"" : ""}>
                 <span class="calendar-date">${date.getDate()}</span>
                 <span class="calendar-items">
-                    ${dayTasks.map(task => `
-                        <span class="calendar-task ${priorityClass(task.priority)} ${task.done ? "done" : ""}" data-task-id="${task.id}" title="${escapeHTML(task.name)}" tabindex="0" draggable="true">
-                            <span class="calendar-task-title">${escapeHTML(task.name)}</span>
-                            ${task.done ? `<span class="calendar-task-status"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg><span>Concluído</span></span>` : ""}
-                        </span>
-                    `).join("")}
+                    ${calendarItems}
                 </span>
             </button>
         `;
