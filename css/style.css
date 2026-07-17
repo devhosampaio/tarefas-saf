@@ -1,14 +1,14 @@
 :root {
-    --bg: #f3f4f6;
-    --liquid-bg: #f3f4f6;
+    --bg: #f5f3ee;
+    --liquid-bg: #f5f3ee;
     --liquid-card-opacity: 1;
     --liquid-panel-opacity: 1;
     --liquid-nav-opacity: 1;
     --liquid-calendar-opacity: 1;
     --liquid-blur: 0px;
-    --liquid-border: #e5e7eb;
-    --liquid-shadow: 0 8px 30px rgba(15, 23, 42, .05);
-    --liquid-radius: 6px;
+    --liquid-border: #dad7cf;
+    --liquid-shadow: 0 10px 26px rgba(45, 48, 53, .07);
+    --liquid-radius: 5px;
     --liquid-noise-opacity: 0;
     --liquid-transition: .18s ease;
     --acrylic-rgb: 255 255 255;
@@ -24,26 +24,37 @@
     --surface-panel: rgb(var(--acrylic-rgb) / var(--liquid-panel-opacity));
     --surface-nav: rgb(var(--acrylic-rgb) / var(--liquid-nav-opacity));
     --surface-calendar: rgb(var(--acrylic-rgb) / var(--liquid-calendar-opacity));
-    --surface-solid: #ffffff;
-    --surface-alt: #f7f7f8;
+    --surface-solid: #fffcf6;
+    --surface-alt: #f2efe8;
     --glass-highlight: transparent;
-    --text: #111827;
-    --body-text: #5f6673;
-    --muted: #7b828e;
+    --text: #252a2f;
+    --body-text: #5f6468;
+    --muted: #7b7f82;
     --line: var(--acrylic-border);
-    --line-strong: #d1d5db;
-    --main: #169fe6;
-    --main-dark: #0879b7;
-    --main-soft: #e8f5fc;
-    --success: #42a675;
-    --danger: #d75a55;
-    --priority-high: #d75a55;
-    --priority-medium: #d7a62f;
-    --priority-low: #42a675;
-    --priority-routine: #169fe6;
+    --line-strong: #c7c2b8;
+    --main: #2d6f73;
+    --main-dark: #20565a;
+    --main-soft: #e4efee;
+    --success: #3f7c5b;
+    --danger: #b4564d;
+    --priority-high: #c99420;
+    --priority-medium: #c99420;
+    --priority-low: #c99420;
+    --priority-routine: #3a7fa7;
     --shadow: var(--liquid-shadow);
     --radius: var(--acrylic-radius);
     --icon-button-size: 34px;
+    --sidebar-bg: #182027;
+    --sidebar-surface: #202a33;
+    --sidebar-text: #eef1ee;
+    --sidebar-muted: #9da8ad;
+    --sidebar-line: #303b45;
+    --task-pending-bg: #f7e5aa;
+    --task-pending-border: #c99420;
+    --task-routine-bg: #d8e9f2;
+    --task-routine-border: #3a7fa7;
+    --task-done-bg: #dbe9dd;
+    --task-done-border: #3f7c5b;
 }
 
 * {
@@ -68,17 +79,17 @@ body {
 }
 
 body.dark-mode {
-    --bg: #111827;
-    --liquid-bg: #111827;
+    --bg: #141a1f;
+    --liquid-bg: #141a1f;
     --liquid-card-opacity: 1;
     --liquid-panel-opacity: 1;
     --liquid-nav-opacity: 1;
     --liquid-calendar-opacity: 1;
     --liquid-blur: 0px;
-    --liquid-border: #2f3a4a;
-    --liquid-shadow: 0 8px 30px rgba(0, 0, 0, .20);
+    --liquid-border: #303941;
+    --liquid-shadow: 0 10px 28px rgba(0, 0, 0, .24);
     --liquid-noise-opacity: 0;
-    --acrylic-rgb: 23 31 42;
+    --acrylic-rgb: 26 34 40;
     --acrylic-opacity: var(--liquid-panel-opacity);
     --acrylic-blur: var(--liquid-blur);
     --acrylic-texture-opacity: var(--liquid-noise-opacity);
@@ -89,24 +100,35 @@ body.dark-mode {
     --surface-panel: rgb(var(--acrylic-rgb) / var(--liquid-panel-opacity));
     --surface-nav: rgb(var(--acrylic-rgb) / var(--liquid-nav-opacity));
     --surface-calendar: rgb(var(--acrylic-rgb) / var(--liquid-calendar-opacity));
-    --surface-solid: #17202c;
-    --surface-alt: #1d2735;
+    --surface-solid: #192128;
+    --surface-alt: #202a32;
     --glass-highlight: transparent;
-    --text: #f3f4f6;
-    --body-text: #c4cbd5;
-    --muted: #a8b0bb;
+    --text: #eef1ee;
+    --body-text: #c7ccc9;
+    --muted: #9aa4a7;
     --line: var(--acrylic-border);
-    --line-strong: #465366;
-    --main: #5bbdea;
-    --main-dark: #8fd4f3;
-    --main-soft: #173548;
-    --success: #75c69e;
-    --danger: #ee8d8a;
-    --priority-high: #ee8d8a;
-    --priority-medium: #e5c76b;
-    --priority-low: #75c69e;
-    --priority-routine: #5bbdea;
+    --line-strong: #46515a;
+    --main: #6aa8a8;
+    --main-dark: #94c5c5;
+    --main-soft: #21393b;
+    --success: #83bd94;
+    --danger: #d9867f;
+    --priority-high: #d2ad55;
+    --priority-medium: #d2ad55;
+    --priority-low: #d2ad55;
+    --priority-routine: #77b5d5;
     --shadow: var(--liquid-shadow);
+    --sidebar-bg: #10171d;
+    --sidebar-surface: #182129;
+    --sidebar-text: #f0f2ef;
+    --sidebar-muted: #9aa6ab;
+    --sidebar-line: #2a3640;
+    --task-pending-bg: #493d1b;
+    --task-pending-border: #d2ad55;
+    --task-routine-bg: #1c3f53;
+    --task-routine-border: #77b5d5;
+    --task-done-bg: #213b2d;
+    --task-done-border: #83bd94;
 }
 
 body.dark-mode {
@@ -3265,5 +3287,467 @@ body.dark-mode .row-actions button {
 
     .auth-actions {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Agenda operacional SAF: camada final de identidade e consistencia visual. */
+body {
+    font-family: "Segoe UI", Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0;
+}
+
+#appShell {
+    background:
+        linear-gradient(90deg, var(--sidebar-bg) 0 248px, transparent 248px),
+        var(--bg);
+}
+
+#appShell.is-sidebar-collapsed {
+    background:
+        linear-gradient(90deg, var(--sidebar-bg) 0 64px, transparent 64px),
+        var(--bg);
+}
+
+.app-sidebar {
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-line);
+    color: var(--sidebar-text);
+    padding: 18px 14px 14px;
+}
+
+.sidebar-brand {
+    padding: 0 3px;
+}
+
+.sidebar-brand-row h1 {
+    color: var(--sidebar-text);
+    font-size: .98rem;
+    letter-spacing: .01em;
+}
+
+.sidebar-toggle,
+.footer-icon-button,
+.settings-back {
+    background: var(--sidebar-surface);
+    border: 1px solid var(--sidebar-line);
+    color: var(--sidebar-muted);
+    border-radius: 5px;
+}
+
+.sidebar-toggle:hover,
+.footer-icon-button:hover,
+.settings-back:hover {
+    background: color-mix(in srgb, var(--sidebar-surface) 82%, white);
+    border-color: color-mix(in srgb, var(--main) 58%, var(--sidebar-line));
+    color: var(--sidebar-text);
+}
+
+.app-sidebar .tabs {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    gap: 2px;
+}
+
+.app-sidebar .tab {
+    min-height: 36px;
+    padding: 0 10px;
+    color: var(--sidebar-muted);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+.app-sidebar .tab:hover {
+    background: rgba(255, 255, 255, .05);
+    color: var(--sidebar-text);
+}
+
+.app-sidebar .tab.active {
+    background: var(--sidebar-surface);
+    border-color: var(--sidebar-line);
+    color: var(--sidebar-text);
+    box-shadow: none;
+}
+
+.mini-calendar,
+.sidebar-settings {
+    background: transparent;
+    border: 0;
+    color: var(--sidebar-muted);
+}
+
+.mini-calendar {
+    padding: 0 2px;
+}
+
+.app-sidebar:not(.is-settings-open) .mini-calendar {
+    margin-top: auto;
+}
+
+.app-sidebar.is-settings-open .sidebar-settings {
+    margin-bottom: auto;
+}
+
+.sidebar-footer {
+    margin-top: 0;
+}
+
+#appShell.is-sidebar-collapsed .sidebar-footer {
+    margin-top: auto;
+}
+
+#appShell.is-sidebar-collapsed .footer-icon-button {
+    grid-column: 1;
+}
+
+.mini-calendar-head,
+.sidebar-settings-head {
+    color: var(--sidebar-text);
+}
+
+.mini-calendar-controls button {
+    background: var(--sidebar-surface);
+    border-color: var(--sidebar-line);
+    color: var(--sidebar-muted);
+}
+
+.mini-calendar-controls button:hover {
+    color: var(--sidebar-text);
+    border-color: color-mix(in srgb, var(--main) 52%, var(--sidebar-line));
+}
+
+.mini-calendar-weekdays,
+.mini-calendar-day.muted {
+    color: color-mix(in srgb, var(--sidebar-muted) 72%, transparent);
+}
+
+.mini-calendar-day {
+    color: var(--sidebar-text);
+    border-radius: 4px;
+}
+
+.mini-calendar-day.today,
+.mini-calendar-day.selected {
+    background: transparent;
+    outline: 1px solid var(--main);
+    color: var(--sidebar-text);
+}
+
+.mini-calendar-day.has-tasks::after {
+    background: var(--task-pending-border);
+}
+
+.settings-status-row,
+.settings-placeholder {
+    background: var(--sidebar-surface);
+    border-color: var(--sidebar-line);
+    color: var(--sidebar-muted);
+}
+
+.app-content {
+    background: var(--bg);
+}
+
+.calendar-panel.panel {
+    background: var(--surface-solid);
+    border: 0;
+    box-shadow: none;
+}
+
+.calendar-header {
+    min-height: 66px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-solid);
+}
+
+.calendar-title-group {
+    gap: 8px;
+}
+
+.calendar-title-group p {
+    color: var(--muted);
+    font-size: .78rem;
+}
+
+.calendar-header h2 {
+    color: var(--text);
+    font-size: 1.02rem;
+    line-height: 1.2;
+}
+
+.calendar-title-nav .text-btn,
+.calendar-actions .text-btn,
+.calendar-view-switch,
+.view-btn {
+    border-radius: 5px;
+}
+
+.text-btn,
+.view-btn,
+.mini-calendar-controls button {
+    transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+
+.calendar-view-switch {
+    background: var(--surface-alt);
+    border: 1px solid var(--line);
+    padding: 3px;
+}
+
+.view-btn {
+    min-height: 30px;
+    padding: 0 12px;
+    background: transparent;
+    color: var(--muted);
+}
+
+.view-btn.active {
+    background: var(--surface-solid);
+    color: var(--text);
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 2px rgba(37, 42, 47, .08);
+}
+
+.calendar-weekdays {
+    background: var(--surface-solid);
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .72rem;
+    letter-spacing: .08em;
+}
+
+.month-calendar {
+    gap: 0;
+    background: var(--line);
+    border: 0;
+}
+
+.calendar-day {
+    background: var(--surface-solid);
+    border: 0;
+    border-radius: 0;
+    padding: 12px 10px;
+}
+
+.calendar-day:hover {
+    background: color-mix(in srgb, var(--surface-solid) 92%, var(--main-soft));
+}
+
+.calendar-day.weekend-day {
+    background: color-mix(in srgb, var(--surface-alt) 78%, var(--surface-solid));
+}
+
+.calendar-day.today {
+    background: color-mix(in srgb, var(--surface-solid) 92%, var(--main-soft));
+}
+
+.calendar-day.today .calendar-date {
+    color: var(--text);
+    border: 1px solid var(--main);
+    box-shadow: none;
+}
+
+.calendar-date {
+    color: color-mix(in srgb, var(--text) 76%, var(--muted));
+    font-size: 1.28rem;
+    font-weight: 400;
+    margin-bottom: 14px;
+}
+
+.calendar-task-separator {
+    margin: 7px 0 5px;
+    color: var(--muted);
+    font-size: .66rem;
+    letter-spacing: .06em;
+}
+
+.calendar-task {
+    border: 1px solid var(--task-pending-border);
+    background: var(--task-pending-bg);
+    color: color-mix(in srgb, var(--task-pending-border) 34%, var(--text));
+    border-radius: 4px;
+    box-shadow: none;
+    min-height: 34px;
+}
+
+.calendar-task.priority-routine,
+.calendar-task.priority-continuous {
+    background: var(--task-routine-bg);
+    border-color: var(--task-routine-border);
+    color: color-mix(in srgb, var(--task-routine-border) 42%, var(--text));
+}
+
+.calendar-task.done {
+    background: var(--task-done-bg);
+    border-color: var(--task-done-border);
+    color: color-mix(in srgb, var(--task-done-border) 52%, var(--text));
+    opacity: 1;
+}
+
+.calendar-task:hover {
+    filter: brightness(.985);
+    transform: translateY(-1px);
+}
+
+.calendar-task-counter {
+    box-shadow: none;
+    border: 1px solid currentColor;
+}
+
+.calendar-task-preview,
+.calendar-context-menu,
+.floating-popover,
+.form-panel,
+.task-sidebar-panel {
+    background: var(--surface-solid);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: 0 18px 42px rgba(37, 42, 47, .14);
+}
+
+.calendar-context-menu button {
+    border-radius: 4px;
+}
+
+.task-sidebar-panel {
+    border-left: 1px solid var(--line);
+    box-shadow: none;
+}
+
+.task-sidebar-head {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 12px;
+}
+
+.task-sidebar-head h3,
+.panel-title {
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.task-sidebar-panel .task {
+    background: var(--task-pending-bg);
+    border-color: var(--task-pending-border);
+    border-radius: 6px;
+    box-shadow: none;
+}
+
+.task-sidebar-panel .task.priority-routine,
+.task-sidebar-panel .task.priority-continuous {
+    background: var(--task-routine-bg);
+    border-color: var(--task-routine-border);
+}
+
+.task-sidebar-panel .task.done {
+    background: var(--task-done-bg);
+    border-color: var(--task-done-border);
+}
+
+.task h2 {
+    color: var(--text);
+    font-size: .96rem;
+}
+
+.task p,
+.meta,
+.task-sidebar-head span {
+    color: var(--body-text);
+}
+
+input,
+textarea,
+select {
+    background: var(--surface-solid);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 5px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--main);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--main) 16%, transparent);
+}
+
+.primary {
+    background: var(--main);
+    border-color: var(--main);
+    color: #fff;
+}
+
+.primary:hover {
+    background: var(--main-dark);
+    border-color: var(--main-dark);
+}
+
+.secondary,
+.text-btn {
+    background: var(--surface-alt);
+    border-color: var(--line);
+    color: var(--text);
+}
+
+.secondary:hover,
+.text-btn:hover {
+    background: var(--main-soft);
+    border-color: color-mix(in srgb, var(--main) 42%, var(--line));
+    color: var(--main-dark);
+}
+
+.empty {
+    background: transparent;
+    border-color: var(--line-strong);
+    color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+    }
+}
+
+@media (max-width: 620px) {
+    #appShell {
+        background: var(--bg);
+    }
+
+    .app-sidebar {
+        background: var(--sidebar-bg);
+        padding: 12px;
+    }
+
+    .calendar-header {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .calendar-title-group p {
+        display: none;
+    }
+
+    .calendar-view-switch {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .view-btn {
+        flex: 1;
+        padding: 0 8px;
+    }
+
+    .calendar-date {
+        font-size: 1.05rem;
+        margin-bottom: 10px;
+    }
+
+    .task-sidebar-panel {
+        border-radius: 0;
     }
 }
