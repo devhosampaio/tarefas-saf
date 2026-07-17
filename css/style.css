@@ -3609,6 +3609,20 @@ body {
     opacity: 1;
 }
 
+.calendar-task.calendar-meeting {
+    background: color-mix(in srgb, var(--main-soft) 78%, var(--surface-solid));
+    border-color: var(--main);
+    color: var(--main-dark);
+}
+
+.calendar-task-separator.meeting {
+    color: var(--main);
+}
+
+.calendar-task-separator.meeting::after {
+    background: color-mix(in srgb, var(--main) 36%, transparent);
+}
+
 .calendar-task:hover {
     filter: brightness(.985);
     transform: translateY(-1px);
@@ -3617,6 +3631,18 @@ body {
 .calendar-task-counter {
     box-shadow: none;
     border: 1px solid currentColor;
+}
+
+.calendar-task-counter.meeting {
+    background: var(--main-soft);
+    color: var(--main-dark);
+    border-color: color-mix(in srgb, var(--main) 42%, transparent);
+}
+
+.calendar-task-preview.counter-meeting,
+.calendar-preview-card.meeting {
+    background: color-mix(in srgb, var(--main-soft) 82%, var(--surface-solid));
+    border-color: color-mix(in srgb, var(--main) 46%, var(--line));
 }
 
 .calendar-task-preview,

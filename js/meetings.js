@@ -436,6 +436,7 @@ function renderMeetings() {
 function renderMeetingArea() {
     updateMeetingSummary();
     renderMeetings();
+    window.renderMainCalendar?.();
 }
 
 meetingForm.addEventListener("submit", async event => {
@@ -505,6 +506,43 @@ window.deleteMeeting = async function (id) {
             renderMeetingArea();
         }
     }
+};
+
+window.getCalendarMeetings = function () {
+    return [...meetings].sort((a, b) => {
+        return `${a.date || ""} ${a.startTime || ""} ${a.subject || ""}`.localeCompare(`${b.date || ""} ${b.startTime || ""} ${b.subject || ""}`);
+    });
+};
+
+window.getMeetingsForCalendarDay = function (date) {
+    return meetings
+        .filter(meeting => meeting.date === date)
+        .sort((a, b) => `${a.startTime || ""} ${a.subject || ""}`.localeCompare(`${b.startTime || ""} ${b.subject || ""}`));
+};
+
+window.scheduleMeetingOnDate = async function (id, date) {
+    const meeting = meetings.find(item => item.id === id);
+    if (!meeting || !date) return;
+
+    const previousMeetings = [...meetings];
+    const updatedMeeting = {
+        ...meeting,
+        date,
+        updatedAt: new Date().toISOString()
+    };
+
+    meetings = meetings.map(item => item.id === id ? updatedMeeting : item);
+    renderMeetingArea();
+    setMeetingsSyncStatus("Salvando reunião...");
+
+    const saved = await saveMeeting(updatedMeeting);
+    if (!saved) {
+        meetings = previousMeetings;
+        renderMeetingArea();
+        return;
+    }
+
+    setMeetingsSyncStatus(`Reunião adicionada em ${formatMeetingDate(date)}`);
 };
 
 document.getElementById("newMeetingButton")?.addEventListener("click", () => {

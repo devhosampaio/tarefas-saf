@@ -195,6 +195,10 @@ function renderCalendarContextMenu(mode) {
             </svg>
             <span>Nova reunião</span>
         </button>
+        <button type="button" data-calendar-action="add-existing-meeting" role="menuitem">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M12 14v5"></path><path d="M9.5 16.5h5"></path></svg>
+            <span>Adicionar reunião</span>
+        </button>
         <button type="button" data-calendar-action="paste-task" role="menuitem" ${copiedCalendarTask ? "" : "disabled"}>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1"></rect><path d="M9 14h6"></path><path d="M12 11v6"></path></svg>
             <span>Colar tarefa</span>
@@ -212,6 +216,39 @@ function showCalendarContextMenu(mode, date, taskId, x, y) {
     renderCalendarContextMenu(mode);
     calendarContextMenu.classList.remove("hidden");
     placeFloatingElement(calendarContextMenu, x, y);
+}
+
+function renderExistingMeetingsMenu(date) {
+    if (!calendarContextMenu) return;
+
+    const meetings = typeof window.getCalendarMeetings === "function"
+        ? window.getCalendarMeetings()
+        : [];
+
+    if (meetings.length === 0) {
+        calendarContextMenu.innerHTML = `
+            <button type="button" role="menuitem" disabled>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect></svg>
+                <span>Nenhuma reunião cadastrada</span>
+            </button>
+        `;
+        return;
+    }
+
+    calendarContextMenu.innerHTML = `
+        <button type="button" data-calendar-action="back-to-day-menu" role="menuitem">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg>
+            <span>Voltar</span>
+        </button>
+        ${meetings.map(meeting => `
+            <button type="button" data-calendar-action="schedule-meeting" data-meeting-id="${meeting.id}" role="menuitem">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M3 10h18"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect></svg>
+                <span>${escapeHTML(meeting.subject || "Reunião sem assunto")} ${meeting.date ? `(${formatDate(meeting.date)})` : ""}</span>
+            </button>
+        `).join("")}
+    `;
+    calendarContextMenu.classList.remove("hidden");
+    placeFloatingElement(calendarContextMenu, selectedCalendarPointer.x, selectedCalendarPointer.y);
 }
 
 function hideCalendarTaskPreview() {
@@ -293,13 +330,21 @@ function getMonthlyCounterTasks(dayTasks, type) {
     return dayTasks.filter(task => !task.done && !isRoutineTask(task));
 }
 
+function getMeetingsForCalendarDay(date) {
+    return typeof window.getMeetingsForCalendarDay === "function"
+        ? window.getMeetingsForCalendarDay(date)
+        : [];
+}
+
 function showCalendarCounterPreview(date, type, x, y) {
     if (!calendarTaskPreview) return;
 
     const dayTasks = tasks
         .filter(task => shouldShowTaskOnCalendarDay(task, date))
         .sort(compareTasksForDisplay);
-    const counterTasks = getMonthlyCounterTasks(dayTasks, type);
+    const counterTasks = type === "meeting"
+        ? getMeetingsForCalendarDay(date)
+        : getMonthlyCounterTasks(dayTasks, type);
 
     if (counterTasks.length === 0) {
         hideCalendarTaskPreview();
@@ -309,7 +354,8 @@ function showCalendarCounterPreview(date, type, x, y) {
     const labels = {
         pending: "Pendentes",
         routine: "Rotineiras",
-        done: "Concluídas"
+        done: "Concluídas",
+        meeting: "Reuniões"
     };
 
     calendarTaskPreview.className = `calendar-task-preview calendar-counter-preview counter-${type}`;
@@ -317,13 +363,15 @@ function showCalendarCounterPreview(date, type, x, y) {
         <div class="calendar-counter-preview-title">${labels[type] || "Atividades"} - ${formatDate(date)}</div>
         <div class="calendar-preview-list">
             ${counterTasks.map(task => {
-                const priority = normalizePriority(task.priority);
+                const isMeeting = type === "meeting";
+                const priority = isMeeting ? "meeting" : normalizePriority(task.priority);
                 return `
-                    <article class="calendar-preview-card ${priorityClass(priority)} ${task.done ? "done" : ""}">
-                        <h3>${escapeHTML(task.name)}</h3>
+                    <article class="calendar-preview-card ${isMeeting ? "meeting" : priorityClass(priority)} ${task.done ? "done" : ""}">
+                        <h3>${escapeHTML(isMeeting ? task.subject : task.name)}</h3>
                         <div class="calendar-preview-meta">
-                            <span>Criada em: ${formatCreatedDate(task.createdAt || task.date)}</span>
-                            <span>${task.done ? "Concluída" : "Pendente"}</span>
+                            ${isMeeting
+                                ? `<span>${escapeHTML(task.startTime || "--:--")} - ${escapeHTML(task.endTime || "--:--")}</span><span>${escapeHTML(task.status || "Reunião")}</span>`
+                                : `<span>Criada em: ${formatCreatedDate(task.createdAt || task.date)}</span><span>${task.done ? "Concluída" : "Pendente"}</span>`}
                         </div>
                     </article>
                 `;
@@ -797,14 +845,34 @@ function renderCalendarTask(task) {
     `;
 }
 
+function renderCalendarMeeting(meeting) {
+    return `
+        <span class="calendar-task calendar-meeting" data-meeting-id="${meeting.id}" title="${escapeHTML(meeting.subject)}" tabindex="0">
+            <svg class="calendar-task-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <path d="M3 10h18"></path>
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            </svg>
+            <span class="calendar-task-title">${escapeHTML(meeting.subject || "Reunião")}</span>
+        </span>
+    `;
+}
+
 function renderCalendarTaskGroup(label, groupClass, groupTasks) {
     if (groupTasks.length === 0) return "";
+
+    return renderCalendarItemGroup(label, groupClass, groupTasks.map(renderCalendarTask).join(""));
+}
+
+function renderCalendarItemGroup(label, groupClass, content) {
+    if (!content) return "";
 
     return `
         <span class="calendar-task-separator ${groupClass}" aria-hidden="true">
             <span>${label}</span>
         </span>
-        ${groupTasks.map(renderCalendarTask).join("")}
+        ${content}
     `;
 }
 
@@ -820,8 +888,23 @@ function renderGroupedCalendarTasks(dayTasks) {
     ].join("");
 }
 
-function renderMonthlyTaskCounters(dayTasks) {
+function renderGroupedCalendarItems(dayTasks, dayMeetings) {
+    return [
+        dayMeetings.length > 0
+            ? renderCalendarItemGroup("Reuniões", "meeting", dayMeetings.map(renderCalendarMeeting).join(""))
+            : "",
+        renderGroupedCalendarTasks(dayTasks)
+    ].join("");
+}
+
+function renderMonthlyTaskCounters(dayTasks, dayMeetings = []) {
     const counters = [
+        {
+            key: "meeting",
+            label: "reunião",
+            plural: "reuniões",
+            total: dayMeetings.length
+        },
         {
             key: "pending",
             label: "pendente",
@@ -842,7 +925,7 @@ function renderMonthlyTaskCounters(dayTasks) {
     return counters
         .filter(counter => counter.total > 0)
         .map(counter => `
-            <span class="calendar-task-counter ${counter.key}" data-counter-type="${counter.key}" title="${counter.total} ${counter.total === 1 ? "atividade" : "atividades"} ${counter.label}${counter.total === 1 ? "" : "s"}" tabindex="0">
+            <span class="calendar-task-counter ${counter.key}" data-counter-type="${counter.key}" title="${counter.total} ${counter.total === 1 ? counter.label : counter.plural || `${counter.label}s`}" tabindex="0">
                 ${counter.total}
             </span>
         `).join("");
@@ -1170,12 +1253,13 @@ function renderCalendar() {
         const dayTasks = tasks
             .filter(task => shouldShowTaskOnCalendarDay(task, isoDate))
             .sort(compareTasksForDisplay);
+        const dayMeetings = getMeetingsForCalendarDay(isoDate);
         const isCurrentMonth = calendarView !== "month" || date.getMonth() === month;
         const isToday = isoDate === today;
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
         const calendarItems = calendarView === "month"
-            ? renderMonthlyTaskCounters(dayTasks)
-            : renderGroupedCalendarTasks(dayTasks);
+            ? renderMonthlyTaskCounters(dayTasks, dayMeetings)
+            : renderGroupedCalendarItems(dayTasks, dayMeetings);
 
         return `
             <button class="calendar-day ${isCurrentMonth ? "" : "muted-day"} ${isToday ? "today" : ""} ${isWeekend ? "weekend-day" : ""}" type="button" data-date="${isoDate}" aria-label="${isWeekend ? "Fim de semana indisponível" : `Adicionar tarefa em ${formatDate(isoDate)}`}" ${isWeekend ? "aria-disabled=\"true\"" : ""}>
@@ -1187,6 +1271,8 @@ function renderCalendar() {
         `;
     }).join("");
 }
+
+window.renderMainCalendar = renderCalendar;
 
 function resetForm() {
     taskId.value = "";
@@ -1989,39 +2075,59 @@ calendarContextMenu?.addEventListener("click", event => {
     const { x, y } = selectedCalendarPointer;
     const date = selectedCalendarDate || toISODate(new Date());
     const taskId = selectedCalendarTaskId;
+    const action = button.dataset.calendarAction;
+
+    if (action === "add-existing-meeting") {
+        renderExistingMeetingsMenu(date);
+        return;
+    }
+
+    if (action === "back-to-day-menu") {
+        renderCalendarContextMenu("day");
+        placeFloatingElement(calendarContextMenu, x, y);
+        return;
+    }
+
+    if (action === "schedule-meeting") {
+        const meetingId = button.dataset.meetingId;
+        hideCalendarContextMenu();
+        window.scheduleMeetingOnDate?.(meetingId, date);
+        return;
+    }
+
     hideCalendarContextMenu();
 
-    if (button.dataset.calendarAction === "edit-task") {
+    if (action === "edit-task") {
         editTask(taskId, { clientX: x, clientY: y });
         return;
     }
 
-    if (button.dataset.calendarAction === "copy-task") {
+    if (action === "copy-task") {
         copyCalendarTask(taskId);
         return;
     }
 
-    if (button.dataset.calendarAction === "complete-task") {
+    if (action === "complete-task") {
         completeTaskFromCalendar(taskId, date);
         return;
     }
 
-    if (button.dataset.calendarAction === "uncomplete-task") {
+    if (action === "uncomplete-task") {
         uncompleteTaskFromCalendar(taskId);
         return;
     }
 
-    if (button.dataset.calendarAction === "delete-task") {
+    if (action === "delete-task") {
         deleteTask(taskId);
         return;
     }
 
-    if (button.dataset.calendarAction === "remove-task-from-calendar") {
+    if (action === "remove-task-from-calendar") {
         removeTaskFromCalendar(taskId);
         return;
     }
 
-    if (button.dataset.calendarAction === "new-task") {
+    if (action === "new-task") {
         closeForm();
         window.closeMeetingPopover?.();
         window.showTab?.("tasksTab");
@@ -2032,13 +2138,13 @@ calendarContextMenu?.addEventListener("click", event => {
         return;
     }
 
-    if (button.dataset.calendarAction === "new-meeting") {
+    if (action === "new-meeting") {
         closeForm();
         window.openMeetingFormPopover?.(date, x, y);
         return;
     }
 
-    if (button.dataset.calendarAction === "paste-task") {
+    if (action === "paste-task") {
         pasteCalendarTask(date);
     }
 });
