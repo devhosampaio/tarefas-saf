@@ -3378,11 +3378,17 @@ body {
 }
 
 .mini-calendar {
-    width: 100%;
     max-width: none;
-    padding: 0;
+    width: calc(100% + 28px);
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 12px 14px;
     justify-self: stretch;
     align-self: stretch;
+    background: color-mix(in srgb, var(--sidebar-bg) 86%, black);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .app-sidebar:not(.is-settings-open) .mini-calendar {
@@ -3963,5 +3969,12 @@ select:focus {
 
     .task-sidebar-panel {
         border-radius: 0;
+    }
+
+    .mini-calendar {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding: 12px;
     }
 }
