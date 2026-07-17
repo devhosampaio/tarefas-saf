@@ -3378,7 +3378,11 @@ body {
 }
 
 .mini-calendar {
-    padding: 0 2px;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    justify-self: stretch;
+    align-self: stretch;
 }
 
 .app-sidebar:not(.is-settings-open) .mini-calendar {
@@ -3404,6 +3408,19 @@ body {
 .mini-calendar-head,
 .sidebar-settings-head {
     color: var(--sidebar-text);
+}
+
+.mini-calendar-head {
+    padding: 0;
+}
+
+.mini-calendar-weekdays,
+.mini-calendar-grid {
+    gap: 5px;
+}
+
+.mini-calendar-day {
+    min-width: 0;
 }
 
 .mini-calendar-controls button {
