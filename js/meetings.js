@@ -17,11 +17,8 @@ const meetingFields = {
     endTime: document.getElementById("meetingEndTime"),
     duration: document.getElementById("meetingDuration"),
     participants: document.getElementById("meetingParticipants"),
-    myRole: document.getElementById("meetingMyRole"),
     location: document.getElementById("meetingLocation"),
     decisions: document.getElementById("meetingDecisions"),
-    responsible: document.getElementById("meetingResponsible"),
-    deadline: document.getElementById("meetingDeadline"),
     status: document.getElementById("meetingStatus")
 };
 
@@ -32,6 +29,11 @@ const meetingSearchInput = document.getElementById("meetingSearchInput");
 const meetingFormTitle = document.getElementById("meetingFormTitle");
 
 function setMeetingsSyncStatus(message) {
+    if (typeof window.setSyncStatus === "function") {
+        window.setSyncStatus(message);
+        return;
+    }
+
     const syncStatus = document.getElementById("syncStatus");
     if (syncStatus) syncStatus.textContent = message;
 }
@@ -55,7 +57,7 @@ function toDatabaseMeeting(meeting) {
         end_time: meeting.endTime,
         duration_minutes: meeting.durationMinutes,
         participants: meeting.participants || "",
-        my_role: meeting.myRole,
+        my_role: meeting.myRole || "",
         location: meeting.location || "",
         decisions: meeting.decisions || "",
         responsible: meeting.responsible || "",
@@ -76,7 +78,7 @@ function fromDatabaseMeeting(meeting) {
         endTime: meeting.end_time,
         durationMinutes: meeting.duration_minutes,
         participants: meeting.participants || "",
-        myRole: meeting.my_role,
+        myRole: meeting.my_role || "",
         location: meeting.location || "",
         decisions: meeting.decisions || "",
         responsible: meeting.responsible || "",
@@ -349,11 +351,11 @@ function getMeetingFormData() {
         endTime: meetingFields.endTime.value,
         durationMinutes,
         participants: meetingFields.participants.value.trim(),
-        myRole: meetingFields.myRole.value,
+        myRole: "",
         location: meetingFields.location.value.trim(),
         decisions: meetingFields.decisions.value.trim(),
-        responsible: meetingFields.responsible.value.trim(),
-        deadline: meetingFields.deadline.value,
+        responsible: "",
+        deadline: "",
         status: meetingFields.status.value,
         createdAt: meetingFields.id.value
             ? meetings.find(meeting => meeting.id === meetingFields.id.value)?.createdAt
@@ -371,11 +373,8 @@ function fillMeetingForm(meeting) {
     meetingFields.endTime.value = meeting.endTime;
     meetingFields.duration.value = formatMeetingDuration(meeting.durationMinutes);
     meetingFields.participants.value = meeting.participants;
-    meetingFields.myRole.value = meeting.myRole;
     meetingFields.location.value = meeting.location;
     meetingFields.decisions.value = meeting.decisions;
-    meetingFields.responsible.value = meeting.responsible;
-    meetingFields.deadline.value = meeting.deadline;
     meetingFields.status.value = meeting.status;
     meetingFormTitle.textContent = "Editar reunião";
     document.getElementById("cancelMeetingEditButton").style.display = "block";
@@ -403,8 +402,6 @@ function getFilteredMeetings() {
             meeting.subject,
             meeting.participants,
             meeting.status,
-            meeting.myRole,
-            meeting.responsible,
             meeting.location
         ].join(" ")).includes(query))
         .sort((a, b) => `${b.date} ${b.startTime}`.localeCompare(`${a.date} ${a.startTime}`));
@@ -421,7 +418,7 @@ function renderMeetings() {
             <td>${formatMeetingDuration(meeting.durationMinutes)}</td>
             <td>
                 <strong>${escapeMeetingHTML(meeting.subject)}</strong>
-                <span class="cell-muted">${escapeMeetingHTML(meeting.format)} · ${escapeMeetingHTML(meeting.myRole)}</span>
+                <span class="cell-muted">${escapeMeetingHTML(meeting.format)}</span>
                 ${meeting.location ? `<span class="cell-muted">${escapeMeetingHTML(meeting.location)}</span>` : ""}
             </td>
             <td>${escapeMeetingHTML(meeting.participants || "Não informado")}</td>

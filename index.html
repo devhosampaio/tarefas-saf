@@ -264,14 +264,14 @@
     </section>
 
     <section class="tab-panel" id="meetingsTab">
-      <section class="summary" aria-label="Resumo das reuniões">
+      <section class="summary meeting-summary" aria-label="Resumo das reuniões">
         <div><strong id="totalMeetings">0</strong><span>reuniões</span></div>
         <div><strong id="monthMeetings">0</strong><span>neste mês</span></div>
         <div><strong id="totalHours">0h</strong><span>tempo total</span></div>
       </section>
 
       <section class="meeting-layout">
-        <form id="meetingForm" class="panel">
+        <form id="meetingForm" class="panel meeting-form-panel">
           <input type="hidden" id="meetingId" />
 
           <div class="section-title">
@@ -315,30 +315,11 @@
           <label for="meetingParticipants">Integrantes</label>
           <textarea id="meetingParticipants" placeholder="Separe os nomes por vírgula ou linha"></textarea>
 
-          <label for="meetingMyRole">Minha participação</label>
-          <select id="meetingMyRole">
-            <option value="Conduzi a reunião">Conduzi a reunião</option>
-            <option value="Participei ativamente">Participei ativamente</option>
-            <option value="Acompanhei">Acompanhei</option>
-            <option value="Fui responsável por encaminhamentos">Fui responsável por encaminhamentos</option>
-          </select>
-
           <label for="meetingLocation">Local ou link</label>
           <input id="meetingLocation" placeholder="Sala, endereço ou link da reunião" />
 
           <label for="meetingDecisions">Decisões e encaminhamentos</label>
           <textarea id="meetingDecisions" placeholder="O que ficou definido? Quais próximos passos?"></textarea>
-
-          <div class="row">
-            <div>
-              <label for="meetingResponsible">Responsável pelo próximo passo</label>
-              <input id="meetingResponsible" placeholder="Nome ou equipe" />
-            </div>
-            <div>
-              <label for="meetingDeadline">Prazo do encaminhamento</label>
-              <input id="meetingDeadline" type="date" />
-            </div>
-          </div>
 
           <label for="meetingStatus">Situação</label>
           <select id="meetingStatus">
@@ -354,7 +335,7 @@
           </div>
         </form>
 
-        <section class="panel">
+        <section class="panel meetings-list-panel">
           <div class="section-title list-title">
             <h2>Reuniões cadastradas</h2>
             <input id="meetingSearchInput" class="search" placeholder="Buscar por assunto, integrante ou status" />

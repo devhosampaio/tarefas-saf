@@ -3614,6 +3614,7 @@ body {
 .task-sidebar-panel {
     border-left: 1px solid var(--line);
     box-shadow: none;
+    border-radius: 0;
 }
 
 .task-sidebar-head {
@@ -3643,6 +3644,202 @@ body {
 .task-sidebar-panel .task.done {
     background: var(--task-done-bg);
     border-color: var(--task-done-border);
+}
+
+#meetingsTab.active {
+    background: var(--bg);
+    padding: 16px;
+    overflow: auto;
+}
+
+.meeting-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0 0 14px;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+    border-radius: 0;
+}
+
+.meeting-summary div {
+    background: transparent;
+    border: 0;
+    border-right: 1px solid var(--line);
+    box-shadow: none;
+    padding: 13px 16px;
+    border-radius: 0;
+}
+
+.meeting-summary div:last-child {
+    border-right: 0;
+}
+
+.meeting-summary strong {
+    display: block;
+    color: var(--text);
+    font-size: 1.16rem;
+    line-height: 1.1;
+}
+
+.meeting-summary span {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: .76rem;
+}
+
+.meeting-layout {
+    grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+    gap: 14px;
+}
+
+.meeting-form-panel,
+.meetings-list-panel {
+    background: var(--surface-solid);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.meeting-form-panel {
+    padding: 16px;
+}
+
+.meeting-form-panel .section-title,
+.meetings-list-panel .section-title {
+    border-bottom: 1px solid var(--line);
+    margin: -2px 0 14px;
+    padding-bottom: 12px;
+}
+
+.meeting-form-panel h2,
+.meetings-list-panel h2 {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.meeting-form-panel label {
+    margin-top: 11px;
+    color: var(--muted);
+    font-size: .76rem;
+    letter-spacing: .02em;
+}
+
+.meeting-form-panel input,
+.meeting-form-panel textarea,
+.meeting-form-panel select {
+    min-height: 36px;
+    background: var(--surface-alt);
+    border-color: var(--line);
+}
+
+.meeting-form-panel textarea {
+    min-height: 78px;
+    resize: vertical;
+}
+
+.meeting-form-panel .row,
+.meeting-form-panel .meeting-time-grid {
+    gap: 9px;
+}
+
+.meeting-form-panel .actions {
+    border-top: 1px solid var(--line);
+    margin-top: 16px;
+    padding-top: 12px;
+}
+
+.meetings-list-panel {
+    min-width: 0;
+    padding: 16px;
+}
+
+.meetings-list-panel .search {
+    max-width: 300px;
+    background: var(--surface-alt);
+}
+
+.meetings-list-panel .table-wrap {
+    border: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.meetings-list-panel table {
+    background: var(--surface-solid);
+    min-width: 760px;
+}
+
+.meetings-list-panel th {
+    background: var(--surface-alt);
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: .06em;
+}
+
+.meetings-list-panel td {
+    color: var(--body-text);
+}
+
+.meetings-list-panel td strong {
+    color: var(--text);
+    font-weight: 400;
+}
+
+.meetings-list-panel .plain-badge {
+    border-color: var(--line);
+    background: var(--surface-alt);
+    color: var(--text);
+}
+
+.meetings-list-panel .row-actions button {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--text);
+}
+
+.meetings-list-panel .row-actions .delete {
+    color: var(--danger);
+}
+
+@media (max-width: 980px) {
+    .meeting-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    #meetingsTab.active {
+        padding: 10px;
+    }
+
+    .meeting-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .meeting-summary div {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .meeting-summary div:last-child {
+        border-bottom: 0;
+    }
+
+    .meeting-form-panel,
+    .meetings-list-panel {
+        padding: 12px;
+    }
+
+    .meetings-list-panel .section-title {
+        align-items: stretch;
+    }
+
+    .meetings-list-panel .search {
+        max-width: none;
+    }
 }
 
 .task h2 {

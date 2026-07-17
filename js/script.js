@@ -114,6 +114,8 @@ function setSyncStatus(message) {
     `;
 }
 
+window.setSyncStatus = setSyncStatus;
+
 function placeFloatingElement(element, x, y) {
     if (!element) return;
 
