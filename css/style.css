@@ -3948,3 +3948,338 @@ select:focus {
         border-radius: 0;
     }
 }
+
+/* Apply Cartographic Identity: visual inspirado em atlas tecnico e site Coordenadas. */
+:root {
+    --map-paper: #f4efe3;
+    --map-paper-2: #ebe3d2;
+    --map-ink: #24302d;
+    --map-muted: #68736d;
+    --map-line: #d5ccb8;
+    --map-line-strong: #b9ad96;
+    --map-grid: rgba(86, 104, 95, .12);
+    --map-contour: rgba(125, 91, 58, .09);
+    --map-forest: #3f6657;
+    --map-water: #3d7890;
+    --map-route: #b8782f;
+    --map-danger: #a75242;
+    --map-sidebar: #19251f;
+    --map-sidebar-2: #223028;
+    --map-sidebar-line: #34443b;
+    --map-sidebar-text: #eef1e8;
+    --map-sidebar-muted: #a7b0a6;
+    --bg: var(--map-paper);
+    --surface-solid: #fbf7ed;
+    --surface-alt: #eee7d8;
+    --surface-card: #fbf7ed;
+    --surface-panel: #fbf7ed;
+    --surface-calendar: #fbf7ed;
+    --text: var(--map-ink);
+    --body-text: #56615b;
+    --muted: var(--map-muted);
+    --line: var(--map-line);
+    --line-strong: var(--map-line-strong);
+    --main: var(--map-forest);
+    --main-dark: #2f4e42;
+    --main-soft: #e1ebe4;
+    --success: #55785e;
+    --danger: var(--map-danger);
+    --sidebar-bg: var(--map-sidebar);
+    --sidebar-surface: var(--map-sidebar-2);
+    --sidebar-line: var(--map-sidebar-line);
+    --sidebar-text: var(--map-sidebar-text);
+    --sidebar-muted: var(--map-sidebar-muted);
+    --task-pending-bg: #f1dfb7;
+    --task-pending-border: var(--map-route);
+    --task-routine-bg: #d8e8ea;
+    --task-routine-border: var(--map-water);
+    --task-done-bg: #dce8d8;
+    --task-done-border: var(--success);
+    --liquid-radius: 3px;
+    --acrylic-radius: 3px;
+    --radius: 3px;
+}
+
+body.dark-mode {
+    --map-paper: #131a17;
+    --map-paper-2: #19211d;
+    --map-ink: #edf0e8;
+    --map-muted: #a7afa8;
+    --map-line: #303d35;
+    --map-line-strong: #465449;
+    --map-grid: rgba(202, 214, 202, .08);
+    --map-contour: rgba(190, 144, 83, .08);
+    --map-forest: #84aa94;
+    --map-water: #76aeca;
+    --map-route: #d4ad62;
+    --map-danger: #d38a79;
+    --map-sidebar: #101713;
+    --map-sidebar-2: #17221d;
+    --map-sidebar-line: #2d3a32;
+    --map-sidebar-text: #f1f4ec;
+    --map-sidebar-muted: #a4aea5;
+    --bg: var(--map-paper);
+    --surface-solid: #18211d;
+    --surface-alt: #202a25;
+    --surface-card: #18211d;
+    --surface-panel: #18211d;
+    --surface-calendar: #18211d;
+    --text: var(--map-ink);
+    --body-text: #c4cbc3;
+    --muted: var(--map-muted);
+    --line: var(--map-line);
+    --line-strong: var(--map-line-strong);
+    --main: var(--map-forest);
+    --main-dark: #a8c7b4;
+    --main-soft: #23362e;
+    --success: #8bbd93;
+    --danger: var(--map-danger);
+    --sidebar-bg: var(--map-sidebar);
+    --sidebar-surface: var(--map-sidebar-2);
+    --sidebar-line: var(--map-sidebar-line);
+    --sidebar-text: var(--map-sidebar-text);
+    --sidebar-muted: var(--map-sidebar-muted);
+    --task-pending-bg: #4b3d1f;
+    --task-pending-border: var(--map-route);
+    --task-routine-bg: #1f3d48;
+    --task-routine-border: var(--map-water);
+    --task-done-bg: #243b2b;
+    --task-done-border: var(--success);
+}
+
+body {
+    background:
+        linear-gradient(var(--map-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--map-grid) 1px, transparent 1px),
+        radial-gradient(ellipse at 14% 18%, var(--map-contour) 0 1px, transparent 2px),
+        radial-gradient(ellipse at 84% 72%, var(--map-contour) 0 1px, transparent 2px),
+        var(--bg);
+    background-size: 48px 48px, 48px 48px, 19px 13px, 23px 17px, auto;
+}
+
+#appShell,
+#appShell.is-sidebar-collapsed {
+    background:
+        linear-gradient(90deg, var(--sidebar-bg) 0 var(--sidebar-width, 248px), transparent var(--sidebar-width, 248px)),
+        linear-gradient(var(--map-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--map-grid) 1px, transparent 1px),
+        var(--bg);
+    background-size: auto, 48px 48px, 48px 48px, auto;
+}
+
+#appShell.is-sidebar-collapsed {
+    --sidebar-width: 64px;
+}
+
+.app-sidebar {
+    background:
+        linear-gradient(var(--sidebar-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--sidebar-line) 1px, transparent 1px),
+        var(--sidebar-bg);
+    background-size: 32px 32px, 32px 32px, auto;
+}
+
+.sidebar-brand-row h1::before {
+    content: "SAF / ";
+    color: var(--sidebar-muted);
+    font-size: .78em;
+    letter-spacing: .08em;
+}
+
+.app-sidebar .tab svg,
+.footer-icon-button svg,
+.sidebar-toggle svg {
+    stroke-width: 1.8;
+}
+
+.app-sidebar .tab.active {
+    box-shadow: inset 3px 0 0 var(--map-route);
+}
+
+.mini-calendar {
+    border-top: 1px solid var(--sidebar-line);
+    padding-top: 12px;
+}
+
+.mini-calendar-head span::after {
+    content: " / grade";
+    color: var(--sidebar-muted);
+    font-size: .72em;
+    letter-spacing: .05em;
+}
+
+.app-content {
+    background:
+        linear-gradient(var(--map-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--map-grid) 1px, transparent 1px),
+        var(--bg);
+    background-size: 48px 48px, 48px 48px, auto;
+}
+
+.calendar-panel.panel,
+.meeting-form-panel,
+.meetings-list-panel,
+.task-sidebar-panel,
+.floating-popover,
+.calendar-context-menu,
+.calendar-task-preview {
+    background:
+        linear-gradient(var(--map-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--map-grid) 1px, transparent 1px),
+        var(--surface-solid);
+    background-size: 48px 48px, 48px 48px, auto;
+    border-color: var(--line-strong);
+}
+
+.calendar-header,
+.task-sidebar-head,
+.meeting-form-panel .section-title,
+.meetings-list-panel .section-title {
+    background: color-mix(in srgb, var(--surface-solid) 84%, var(--map-paper-2));
+}
+
+.calendar-header h2,
+.task-sidebar-head h3,
+.meeting-form-panel h2,
+.meetings-list-panel h2 {
+    text-transform: none;
+    letter-spacing: .01em;
+}
+
+.calendar-title-group p {
+    font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+    letter-spacing: .02em;
+}
+
+.calendar-weekdays {
+    font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+    background: color-mix(in srgb, var(--surface-alt) 82%, var(--map-paper-2));
+}
+
+.month-calendar {
+    background:
+        linear-gradient(var(--line-strong), var(--line-strong)),
+        var(--line);
+}
+
+.calendar-day {
+    background:
+        linear-gradient(var(--map-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--map-grid) 1px, transparent 1px),
+        var(--surface-calendar);
+    background-size: 24px 24px, 24px 24px, auto;
+}
+
+.calendar-day.weekend-day {
+    background:
+        repeating-linear-gradient(-45deg, transparent 0 7px, rgba(104, 115, 109, .08) 7px 8px),
+        color-mix(in srgb, var(--surface-alt) 74%, var(--surface-calendar));
+}
+
+.calendar-day.today {
+    box-shadow: inset 0 0 0 1px var(--map-water);
+}
+
+.calendar-day.today .calendar-date {
+    border-color: var(--map-water);
+}
+
+.calendar-date {
+    font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+}
+
+.calendar-task {
+    border-left-width: 4px;
+    font-family: "Segoe UI", Inter, system-ui, sans-serif;
+}
+
+.calendar-task::before,
+.task-sidebar-panel .task::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    flex: none;
+    margin-right: 2px;
+    background: currentColor;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    opacity: .72;
+}
+
+.calendar-task.done::before,
+.task-sidebar-panel .task.done::before {
+    clip-path: circle(48%);
+}
+
+.calendar-task.priority-routine::before,
+.calendar-task.priority-continuous::before,
+.task-sidebar-panel .task.priority-routine::before,
+.task-sidebar-panel .task.priority-continuous::before {
+    clip-path: polygon(50% 0, 61% 36%, 98% 36%, 68% 57%, 79% 92%, 50% 70%, 21% 92%, 32% 57%, 2% 36%, 39% 36%);
+}
+
+.calendar-task-separator {
+    font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+}
+
+.calendar-task-separator::before {
+    content: "LAYER ";
+    color: var(--map-route);
+}
+
+.task-sidebar-panel {
+    border-radius: 0;
+}
+
+.task-sidebar-panel .task {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 6px;
+    border-left-width: 4px;
+    border-radius: 0;
+}
+
+.task-sidebar-panel .task h2,
+.task-sidebar-panel .task p,
+.task-sidebar-panel .task .meta,
+.task-sidebar-panel .task .task-actions {
+    grid-column: 2;
+}
+
+.meeting-summary {
+    background:
+        linear-gradient(var(--map-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--map-grid) 1px, transparent 1px),
+        var(--surface-solid);
+    background-size: 32px 32px, 32px 32px, auto;
+}
+
+.meeting-summary strong {
+    font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+}
+
+.meetings-list-panel th {
+    font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+}
+
+input,
+textarea,
+select {
+    background:
+        linear-gradient(var(--map-grid) 1px, transparent 1px),
+        var(--surface-alt);
+    background-size: 48px 48px, auto;
+}
+
+@media (max-width: 620px) {
+    #appShell,
+    #appShell.is-sidebar-collapsed {
+        background: var(--bg);
+    }
+
+    .calendar-panel.panel,
+    .meeting-form-panel,
+    .meetings-list-panel,
+    .task-sidebar-panel {
+        background: var(--surface-solid);
+    }
+}
